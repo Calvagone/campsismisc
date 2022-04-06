@@ -1,6 +1,8 @@
 Package: campsisnca
 Type: Package
 Collate:
+    'check.R'
+    'forest_plot_covariate.R'
     'forest_plot.R'
 Title: CAMPSIS Miscellaneous Package
 Version: 0.1.0

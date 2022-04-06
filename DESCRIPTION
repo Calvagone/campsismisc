@@ -1,0 +1,21 @@
+Package: campsisnca
+Type: Package
+Collate:
+    'forest_plot.R'
+Title: CAMPSIS Miscellaneous Package
+Version: 0.1.0
+Authors@R: c(
+  person("Nicolas", "Luyckx", role = c("aut", "cre"), email = "nicolas.luyckx@calvagone.com")
+  )
+Description: Campsis miscellaneous: a bunch of useful wrapper & helper functions.
+Depends: R (>= 4.0.0), campsismod, campsis
+Imports: assertthat, dplyr, ggplot2, purrr, tibble, tidyr, campsisnca
+License: file LICENSE
+Encoding: UTF-8
+Language: en-US
+LazyData: true
+Suggests: CalvaNCA, campsis, devtools, knitr, ggplot2, mrgsolve, ncappc, pkgdown, rmarkdown, roxygen2, RxODE, testthat
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
+URL: https://github.com/Calvagone/campsisnca
+BugReports: https://github.com/Calvagone/campsisnca/issues

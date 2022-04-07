@@ -2,28 +2,19 @@
 % Please edit documentation in R/generic.R, R/forest_plot.R
 \name{prepare}
 \alias{prepare}
-\alias{getPlot}
 \alias{prepare,forest_plot-method}
 \title{Prepare.}
 \usage{
 prepare(object)
 
-getPlot(object, ...)
-
 \S4method{prepare}{forest_plot}(object)
 }
 \arguments{
 \item{object}{generic object}
-
-\item{...}{extra arguments}
 }
 \value{
 same object
-
-ggplot
 }
 \description{
 Prepare.
-
-Get plot.
 }

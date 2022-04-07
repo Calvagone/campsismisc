@@ -26,7 +26,7 @@ setGeneric("prepare", function(object) {
 #' @param ... extra arguments
 #' @return ggplot
 #' @export
-#' @rdname prepare
+#' @rdname getPlot
 getPlot <- function(object, ...) {
   stop("No default function is provided")
 }

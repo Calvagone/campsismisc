@@ -61,20 +61,58 @@ setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
   model <- object@model
   base_dataset <- object@dataset %>% add(object@labeled_covariates@list)
   items <- object@items
+  seed <- 1
   
+  # Base scenario, no study replication needed
+  base_scenario <- simulate(model=model %>% disable(c("IIV")),
+                            dataset=base_dataset, seed=seed)
+  
+  # 1 scenario per forest plot item, replicated
   scenarios <- Scenarios()
   for (item in items@list) {
     covariates <-  item %>% getCovariates()
     dataset_ <- base_dataset
     for (covariate in covariates@list) {
-      dataset_ <- dataset_ %>% replace(covariate)
+      dataset_ <- dataset_ %>% campsismod::replace(covariate)
     }
     scenarios <- scenarios %>%
       add(Scenario(dataset=dataset_))
   }
   
   results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
-                      dataset=base_dataset, scenarios=scenarios, replicates=object@replicates)
+                      dataset=base_dataset, scenarios=scenarios, replicates=object@replicates, seed=seed)
   
+  # Processing results
+  object@results <- results %>%
+    dplyr::select(c("replicate", "SCENARIO", object@output)) %>%
+    dplyr::rename_at(.vars=object@output, .funs=~"VALUE") %>%
+    dplyr::mutate(BASELINE_VALUE=base_scenario %>% dplyr::pull(object@output)) %>%
+    dplyr::mutate(CFB=(.data$VALUE-.data$BASELINE_VALUE)/.data$BASELINE_VALUE + 1)
+
   return(object)
+})
+
+#_______________________________________________________________________________
+#----                               getPlot                                 ----
+#_______________________________________________________________________________
+
+#' @rdname getPlot
+setMethod("getPlot", signature=c("forest_plot"), definition=function(object) {
+  summary <- object@results %>%
+    dplyr::group_by(dplyr::across("SCENARIO")) %>%
+    dplyr::summarise(CFB_LOW=quantile(.data$CFB, 0.05),
+                     CFB_MED=median(.data$CFB),
+                     CFB_UP=quantile(.data$CFB, 0.95))
+  
+  p <- ggplot2::ggplot(summary, ggplot2::aes(x=factor(SCENARIO, levels=SCENARIO), y=CFB_MED)) + 
+    ggplot2::geom_point() +
+    ggplot2::geom_errorbar(ggplot2::aes(ymin=CFB_LOW, ymax=CFB_UP), width=0.2) +
+    ggplot2::geom_hline(yintercept=1, col="darkblue") +
+    ggplot2::geom_hline(yintercept=c(0.8, 1.25), linetype=2) +
+    ggplot2::geom_label(ggplot2::aes(label=paste0(round(CFB_MED,2), ' (', round(CFB_LOW,2), '-', round(CFB_UP,2), ')')),
+                        vjust=1, nudge_x=0.5, size=3, label.size=NA) +
+    ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4)) +
+    ggplot2::coord_flip(ylim=c(0.5,1.5))
+  
+  return(p)
 })

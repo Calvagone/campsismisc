@@ -59,8 +59,22 @@ setMethod("add", signature=c("forest_plot", "forest_plot_item"), definition=func
 #' @rdname prepare
 setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
   model <- object@model
-  dataset <- object@dataset
+  base_dataset <- object@dataset %>% add(object@labeled_covariates@list)
   items <- object@items
+  
+  scenarios <- Scenarios()
+  for (item in items@list) {
+    covariates <-  item %>% getCovariates()
+    dataset_ <- base_dataset
+    for (covariate in covariates@list) {
+      dataset_ <- dataset_ %>% replace(covariate)
+    }
+    scenarios <- scenarios %>%
+      add(Scenario(dataset=dataset_))
+  }
+  
+  results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
+                      dataset=base_dataset, scenarios=scenarios, replicates=object@replicates)
   
   return(object)
 })

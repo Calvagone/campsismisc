@@ -21,8 +21,8 @@ setClass(
 #' @export
 ForestPlotItem <- function(...) {
   args <- list(...)
-  areConstantCovariates <- args %>% purrr::map_lgl(~is(.x, "constant_covariate"))
-  assertthat::assert_that(all(areConstantCovariates), msg="Forest plot item can only accept constant covariates")
+  areConstantCovariates <- args %>% purrr::map_lgl(~is(.x, "fixed_covariate"))
+  assertthat::assert_that(all(areConstantCovariates), msg="Forest plot item can only accept fixed covariates")
   covariates <- new("covariates") %>% add(args)
   return(new("forest_plot_item", covariates=covariates))
 }
@@ -32,7 +32,7 @@ ForestPlotItem <- function(...) {
 #_______________________________________________________________________________
 
 setMethod("getName", signature=c("forest_plot_item"), definition=function(x) {
-  names <- x@covariates %>% purrr::map_chr(~paste0(.x@name, ":", .x@distribution@value))
+  names <- x@covariates@list %>% purrr::map_chr(~paste0(.x@name, ":", .x@distribution@value))
   return(paste0(names, collapse="/"))
 })
 
@@ -41,5 +41,5 @@ setMethod("getName", signature=c("forest_plot_item"), definition=function(x) {
 #_______________________________________________________________________________
 
 setMethod("getCovariates", signature=c("forest_plot_item"), definition=function(object) {
-  return(x@covariates)
+  return(object@covariates)
 })

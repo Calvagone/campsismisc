@@ -2,7 +2,11 @@ Package: campsisnca
 Type: Package
 Collate:
     'check.R'
-    'forest_plot_covariate.R'
+    'generic.R'
+    'labeled_covariate.R'
+    'labeled_covariates.R'
+    'forest_plot_item.R'
+    'forest_plot_items.R'
     'forest_plot.R'
 Title: CAMPSIS Miscellaneous Package
 Version: 0.1.0
@@ -16,8 +20,8 @@ License: file LICENSE
 Encoding: UTF-8
 Language: en-US
 LazyData: true
-Suggests: CalvaNCA, campsis, devtools, knitr, ggplot2, mrgsolve, ncappc, pkgdown, rmarkdown, roxygen2, RxODE, testthat
+Suggests: devtools, knitr, pkgdown, rmarkdown, roxygen2, testthat
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
-URL: https://github.com/Calvagone/campsisnca
-BugReports: https://github.com/Calvagone/campsisnca/issues
+URL: https://github.com/Calvagone/campsismisc
+BugReports: https://github.com/Calvagone/campsismisc/issues

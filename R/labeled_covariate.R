@@ -1,12 +1,12 @@
 #_______________________________________________________________________________
-#----                     forest_plot_covariate class                       ----
+#----                     labeled_covariate class                       ----
 #_______________________________________________________________________________
 
-#' Forest plot covariate.
+#' Labeled covariate.
 #' 
 #' @export
 setClass(
-  "forest_plot_covariate",
+  "labeled_covariate",
   representation(
     label="character",
     value_label="character",
@@ -21,16 +21,16 @@ setClass(
 )
 
 #' 
-#' Create a forest plot covariate.
+#' Create a labeled covariate.
 #' 
 #' @param name covariate name, single character value
 #' @param value covariate value, single numeric value to use in CAMPSIS model
 #' @param label covariate label, e.g. 'Weight'
 #' @param value_label value label (useful for discrete covariate), e.g. 'Fasted'
 #' @param unit value unit, e.g. 'kg'
-#' @return a forest plot covariate
+#' @return a labeled covariate
 #' @export
-ForestPlotCovariate <- function(name, value, label=NULL, value_label=NULL, unit=NULL) {
+LabeledCovariate <- function(name, value, label=NULL, value_label=NULL, unit=NULL) {
   if (is.null(label)) {
     label <- as.character(NA)
   }
@@ -40,7 +40,7 @@ ForestPlotCovariate <- function(name, value, label=NULL, value_label=NULL, unit=
   if (is.null(unit)) {
     unit <- as.character(NA)
   }
-  return(new("forest_plot_covariate", name=name, distribution=ConstantDistribution(value),
+  return(new("labeled_covariate", name=name, distribution=ConstantDistribution(value),
              label=label, value_label=value_label, unit=unit))
 }
 

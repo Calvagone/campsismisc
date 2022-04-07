@@ -10,10 +10,12 @@ setClass(
   "forest_plot",
   representation(
     model="campsis_model",
+    labeled_covariates="labeled_covariates",
     dataset="dataset",
     items="forest_plot_items",
     output="ANY",
-    replicates="integer"
+    replicates="integer",
+    results="data.frame"
   ),
   prototype=prototype(model=CampsisModel(), dataset=Dataset())
 )
@@ -40,7 +42,25 @@ ForestPlot <- function(model, output, dataset=NULL, replicates=1L) {
 #----                                add                                    ----
 #_______________________________________________________________________________
 
+setMethod("add", signature=c("forest_plot", "labeled_covariate"), definition=function(object, x) {
+  object@labeled_covariates <- object@labeled_covariates %>% add(x)
+  return(object)
+})
+
 setMethod("add", signature=c("forest_plot", "forest_plot_item"), definition=function(object, x) {
   object@items <- object@items %>% add(x)
+  return(object)
+})
+
+#_______________________________________________________________________________
+#----                               prepare                                 ----
+#_______________________________________________________________________________
+
+#' @rdname prepare
+setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
+  model <- object@model
+  dataset <- object@dataset
+  items <- object@items
+  
   return(object)
 })

@@ -7,7 +7,7 @@
 ForestPlotItem(...)
 }
 \arguments{
-\item{...}{all labeled covariates}
+\item{...}{all constant covariates}
 }
 \value{
 a forest plot item

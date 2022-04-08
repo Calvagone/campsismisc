@@ -15,12 +15,12 @@ test_that("Forest plot: effect of METAB (0/1) on CL (RxODE/mrgsolve)", {
   expect_equal(object@items %>% getNames(), c("METAB:0", "METAB:1"))
   
   object <- object %>% prepare()
-  plot1 <- object %>% getPlot(limits=c(0.5, 1.6))
+  plot1 <- object %>% getPlot()
   plot1
   
   object@dest <- "mrgsolve"
   object <- object %>% prepare()
-  plot2 <- object %>% getPlot(limits=c(0.5, 1.6))
+  plot2 <- object %>% getPlot()
   plot2
 })
 
@@ -40,11 +40,11 @@ test_that("Forest plot: effect of METAB (0/1) on AUC (RxODE/mrgsolve)", {
   expect_equal(object@items %>% getNames(), c("METAB:0", "METAB:1"))
   
   object <- object %>% prepare()
-  plot1 <- object %>% getPlot(limits=c(0.5, 1.6))
+  plot1 <- object %>% getPlot()
   plot1
   
   object@dest <- "mrgsolve"
   object <- object %>% prepare()
-  plot2 <- object %>% getPlot(limits=c(0.5, 1.6))
+  plot2 <- object %>% getPlot()
   plot2
 })

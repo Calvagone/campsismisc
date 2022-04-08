@@ -4,7 +4,7 @@
 \alias{ForestPlot}
 \title{Create a forest plot.}
 \usage{
-ForestPlot(model, output, dataset = NULL, replicates = 1L)
+ForestPlot(model, output, dataset = NULL, replicates = 1L, dest = "RxODE")
 }
 \arguments{
 \item{model}{CAMPSIS model}
@@ -15,6 +15,8 @@ ForestPlot(model, output, dataset = NULL, replicates = 1L)
 and single observation at time 0 is created}
 
 \item{replicates}{number of replicates}
+
+\item{dest}{destination engine: 'RxODE' or 'mrgsolve'}
 }
 \value{
 an empty forest plot

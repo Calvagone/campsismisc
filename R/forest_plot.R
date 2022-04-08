@@ -13,9 +13,10 @@ setClass(
     labeled_covariates="labeled_covariates",
     dataset="dataset",
     items="forest_plot_items",
-    output="ANY",
+    output="forest_plot_output",
     replicates="integer",
-    results="data.frame"
+    results="data.frame",
+    dest="character"
   ),
   prototype=prototype(model=CampsisModel(), dataset=Dataset())
 )
@@ -27,15 +28,16 @@ setClass(
 #' @param dataset CAMPSIS dataset, if NULL, minimalist dataset with 1 subject 
 #' and single observation at time 0 is created
 #' @param replicates number of replicates
+#' @param dest destination engine: 'RxODE' or 'mrgsolve'
 #' @return an empty forest plot
 #' @export
-ForestPlot <- function(model, output, dataset=NULL, replicates=1L) {
+ForestPlot <- function(model, output, dataset=NULL, replicates=1L, dest="RxODE") {
   if (is.null(dataset)) {
     dataset <- Dataset(1) %>%
       add(Observations(times=0))
   }
   return(new("forest_plot", model=model, dataset=dataset, output=output,
-             replicates=as.integer(replicates)))
+             replicates=as.integer(replicates), dest=dest))
 }
 
 #_______________________________________________________________________________
@@ -61,6 +63,9 @@ setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
   model <- object@model
   base_dataset <- object@dataset %>% add(object@labeled_covariates@list)
   items <- object@items
+  output <- object@output
+  replicates <- object@replicates
+  dest <- object@dest
   seed <- 1
   
   # Base scenario, no study replication needed
@@ -79,16 +84,27 @@ setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
       add(Scenario(name=item %>% getLabel(object@labeled_covariates), dataset=dataset_))
   }
   
-  results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
-                      dataset=base_dataset, scenarios=scenarios, replicates=object@replicates, seed=seed)
+  # Set outvars
+  outvars <- NULL
+  if (is(output, "model_parameter_output")) {
+    outvars <- output %>% getName()
+  }
   
-  # Processing results
-  object@results <- results %>%
-    dplyr::select(c("replicate", "SCENARIO", object@output)) %>%
-    dplyr::rename_at(.vars=object@output, .funs=~"VALUE") %>%
-    dplyr::mutate(BASELINE_VALUE=base_scenario %>% dplyr::pull(object@output)) %>%
-    dplyr::mutate(CFB=(.data$VALUE-.data$BASELINE_VALUE)/.data$BASELINE_VALUE + 1)
-
+  # Simulate all scenarios
+  results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
+                      dataset=base_dataset, scenarios=scenarios, replicates=replicates,
+                      seed=seed, dest=dest, outvars=outvars)
+  
+  
+  if (is(output, "model_parameter_output")) {
+    outputName <- output %>% getName()
+    object@results <- results %>%
+      dplyr::select(c("replicate", "SCENARIO", outputName)) %>%
+      dplyr::rename_at(.vars=outputName, .funs=~"VALUE") %>%
+      dplyr::mutate(BASELINE_VALUE=base_scenario %>% dplyr::pull(outputName)) %>%
+      dplyr::mutate(CFB=(.data$VALUE-.data$BASELINE_VALUE)/.data$BASELINE_VALUE + 1)
+  }
+  
   return(object)
 })
 
@@ -98,7 +114,7 @@ setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
 
 #' @rdname getPlot
 setMethod("getPlot", signature=c("forest_plot"), definition=function(object, limits=c(0.5,1.5), breaks=c(0.7,0.8,1,1.25,1.4),
-                                                                     vjust=1, nudge_x=0.3, nudge_y=0, size=3) {
+                                                                     vjust=0, nudge_x=0.15, nudge_y=0, size=3) {
   
   # Note when hjust not set, geom_labels are automatically aligned with data
   summary <- object@results %>%
@@ -116,7 +132,7 @@ setMethod("getPlot", signature=c("forest_plot"), definition=function(object, lim
                         vjust=vjust, nudge_x=nudge_x, nudge_y=nudge_y, size=size, label.size=NA, ) +
     ggplot2::scale_y_continuous(breaks=breaks) +
     ggplot2::coord_flip(ylim=limits) +
-    ggplot2::ylab(paste("Relative", object@output)) +
+    ggplot2::ylab(paste("Relative", object@output %>% getName())) +
     ggplot2::xlab(NULL)
   
   return(plot)

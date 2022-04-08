@@ -1,10 +1,11 @@
-Package: campsisnca
+Package: campsismisc
 Type: Package
 Collate:
     'check.R'
     'generic.R'
     'labeled_covariate.R'
     'labeled_covariates.R'
+    'forest_plot_output.R'
     'forest_plot_item.R'
     'forest_plot_items.R'
     'forest_plot.R'
@@ -14,8 +15,8 @@ Authors@R: c(
   person("Nicolas", "Luyckx", role = c("aut", "cre"), email = "nicolas.luyckx@calvagone.com")
   )
 Description: Campsis miscellaneous: a bunch of useful wrapper & helper functions.
-Depends: R (>= 4.0.0), campsismod, campsis
-Imports: assertthat, dplyr, ggplot2, purrr, tibble, tidyr, campsisnca
+Depends: R (>= 4.0.0), campsismod, campsis, campsisnca
+Imports: assertthat, dplyr, ggplot2, purrr, tibble, tidyr
 License: file LICENSE
 Encoding: UTF-8
 Language: en-US

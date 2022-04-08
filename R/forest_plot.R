@@ -58,6 +58,12 @@ setMethod("add", signature=c("forest_plot", "forest_plot_item"), definition=func
 #----                               prepare                                 ----
 #_______________________________________________________________________________
 
+outfunNCA <- function(metric, x) {
+  metric@x <- x
+  metric <- metric %>% calculate(level=0.9) # Level does not matter as we collect only individuals
+  return(metric@individual %>% dplyr::rename_at(.vars="value", .funs=~"VALUE"))
+}
+
 #' @rdname prepare
 setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
   model <- object@model
@@ -72,6 +78,15 @@ setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
   base_scenario <- simulate(model=model %>% disable(c("IIV")),
                             dataset=base_dataset, seed=seed)
   
+  if (is(output, "model_parameter_output")) {
+    outputName <- output %>% getName()
+    baseline <- base_scenario %>% dplyr::pull(outputName)
+  } else if (is(output, "nca_metric_output")) {
+    baseline <- outfunNCA(metric=output@metric, x=base_scenario) %>% dplyr::pull(VALUE)
+  } else {
+    stop()
+  }
+  
   # 1 scenario per forest plot item, replicated
   scenarios <- Scenarios()
   for (item in items@list) {
@@ -84,26 +99,29 @@ setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
       add(Scenario(name=item %>% getLabel(object@labeled_covariates), dataset=dataset_))
   }
   
-  # Set outvars
+  # Simulation of model parameter output
   outvars <- NULL
   if (is(output, "model_parameter_output")) {
-    outvars <- output %>% getName()
-  }
-  
-  # Simulate all scenarios
-  results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
-                      dataset=base_dataset, scenarios=scenarios, replicates=replicates,
-                      seed=seed, dest=dest, outvars=outvars)
-  
-  
-  if (is(output, "model_parameter_output")) {
     outputName <- output %>% getName()
-    object@results <- results %>%
+    results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
+                        dataset=base_dataset, scenarios=scenarios, replicates=replicates,
+                        seed=seed, dest=dest, outvars=outputName) %>%
       dplyr::select(c("replicate", "SCENARIO", outputName)) %>%
-      dplyr::rename_at(.vars=outputName, .funs=~"VALUE") %>%
-      dplyr::mutate(BASELINE_VALUE=base_scenario %>% dplyr::pull(outputName)) %>%
-      dplyr::mutate(CFB=(.data$VALUE-.data$BASELINE_VALUE)/.data$BASELINE_VALUE + 1)
+      dplyr::rename_at(.vars=outputName, .funs=~"VALUE")
+    
+  } else if (is(output, "nca_metric_output")) {
+    outfun <- function(x) {outfunNCA(metric=output@metric, x=x)}
+    results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
+                        dataset=base_dataset, scenarios=scenarios, replicates=replicates,
+                        seed=seed, dest=dest, outvars=output@metric@variable, outfun=outfun)
+  } else {
+    stop()
   }
+  
+  # Compute change from baseline
+  # TODO: several formula's should be available
+  object@results <- results %>% dplyr::mutate(BASELINE_VALUE=baseline) %>%
+    dplyr::mutate(CFB=(.data$VALUE-.data$BASELINE_VALUE)/.data$BASELINE_VALUE + 1)
   
   return(object)
 })

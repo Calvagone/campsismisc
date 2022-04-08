@@ -7,7 +7,15 @@
 \usage{
 getPlot(object, ...)
 
-\S4method{getPlot}{forest_plot}(object)
+\S4method{getPlot}{forest_plot}(
+  object,
+  limits = c(0.5, 1.5),
+  breaks = c(0.7, 0.8, 1, 1.25, 1.4),
+  vjust = 1,
+  nudge_x = 0.3,
+  nudge_y = 0,
+  size = 3
+)
 }
 \arguments{
 \item{object}{generic object}

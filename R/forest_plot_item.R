@@ -37,6 +37,28 @@ setMethod("getName", signature=c("forest_plot_item"), definition=function(x) {
 })
 
 #_______________________________________________________________________________
+#----                              getLabel                                 ----
+#_______________________________________________________________________________
+
+#' @rdname getLabel
+setMethod("getLabel", signature=c("forest_plot_item"), definition=function(object, labeled_covariates) {
+  if (!is(labeled_covariates, "labeled_covariates")) {
+    stop("Please provide all labeled covariates")
+  }
+  individualLabels <- object@covariates@list %>% purrr::map_chr(.f=function(covariate) {
+    labeledCovariate <- labeled_covariates %>% find(covariate)
+    if (is(labeledCovariate, "categorical_labeled_covariate")) {
+      return(paste0(labeledCovariate@label, ": ",
+                    names(which(labeledCovariate@categories==covariate@distribution@value))))
+    } else {
+      return(paste0(labeledCovariate@label, ": ", covariate@distribution@value, " ", labeledCovariate@unit))
+    }
+  })
+  
+  return(paste0(individualLabels, collapse=" / "))
+})
+
+#_______________________________________________________________________________
 #----                           getCovariates                               ----
 #_______________________________________________________________________________
 

@@ -17,6 +17,25 @@ setGeneric("prepare", function(object) {
 })
 
 #_______________________________________________________________________________
+#----                              getLabel                                 ----
+#_______________________________________________________________________________
+
+#' Get label.
+#' 
+#' @param object generic object
+#' @param ... extra arguments
+#' @return a label
+#' @export
+#' @rdname getLabel
+getLabel <- function(object, ...) {
+  stop("No default function is provided")
+}
+
+setGeneric("getLabel", function(object, ...) {
+  standardGeneric("getLabel")
+})
+
+#_______________________________________________________________________________
 #----                              getPlot                                  ----
 #_______________________________________________________________________________
 

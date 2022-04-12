@@ -8,3 +8,97 @@ always_allow_html: true
 
 # campsismisc
 
+## Forest plots
+
+Assume the following estimated 2-compartment model:
+
+```{r, message=FALSE}
+library(campsismisc)
+
+model <- read.campsis("tests/testthat/campsis_models/metaboliser_effect_on_cl/")
+model
+```
+
+This model contains:
+
+- a metabolism effect on the clearance: `THETA_METAB_CL`
+- allometric scaling on central and peripheral volumes with a fixed exponent of 1
+- a variance-covariance matrix
+
+### Effect of metabolism effect and weight on a model parameter
+
+Let's show how the metabolism effect and the weight influence the clearance. This can be achieved as follows:
+
+```{r fp_metabolism_effect_on_cl , fig.align='center', fig.height=4, fig.width=8, message=F}
+fp <- ForestPlot(model=model, output=ModelParameterOutput("CL"), replicates=100) %>%
+    add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
+    add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
+    add(ForestPlotItem(Covariate("METAB", 0))) %>%
+    add(ForestPlotItem(Covariate("METAB", 1))) %>%
+    add(ForestPlotItem(Covariate("WT", 60))) %>%
+    add(ForestPlotItem(Covariate("WT", 80)))
+  
+fp <- fp %>% prepare()
+plot <- fp %>% getPlot()
+plot
+```
+
+Now, let's see what happens with the central volume. The configuration is identical.
+
+```{r fp_metabolism_effect_on_vc , fig.align='center', fig.height=4, fig.width=8, message=F}
+fp <- ForestPlot(model=model, output=ModelParameterOutput("VC"), replicates=100) %>%
+    add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
+    add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
+    add(ForestPlotItem(Covariate("METAB", 0))) %>%
+    add(ForestPlotItem(Covariate("METAB", 1))) %>%
+    add(ForestPlotItem(Covariate("WT", 60))) %>%
+    add(ForestPlotItem(Covariate("WT", 80)))
+  
+fp <- fp %>% prepare()
+plot <- fp %>% getPlot()
+plot
+```
+
+### Effect of metabolism effect and weight on a PK metric
+
+Let's show how the metabolism effect and the weight influence AUC. For that, we need to create first a dataset.
+
+```{r}
+dataset <- Dataset(1) %>%
+    add(Infusion(time=0, amount=1000, compartment=1)) %>%
+    add(Observations(times=0:24))
+```
+
+Instead of creating a `ModelParameterOutput` object, we create a `NcaMetricOutput` and we use any metric from `campsisnca`.
+
+```{r fp_metabolism_effect_on_auc , fig.align='center', fig.height=4, fig.width=8, message=F}
+fp <- ForestPlot(model=model, dataset=dataset, 
+                       output=NcaMetricOutput(campsisnca::Auc(variable="CONC")), replicates=100) %>%
+    add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
+    add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
+    add(ForestPlotItem(Covariate("METAB", 0))) %>%
+    add(ForestPlotItem(Covariate("METAB", 1))) %>%
+    add(ForestPlotItem(Covariate("WT", 60))) %>%
+    add(ForestPlotItem(Covariate("WT", 80)))
+  
+fp <- fp %>% prepare()
+plot <- fp %>% getPlot()
+plot
+```
+
+Let's produce one more plot with Cmax.
+
+```{r fp_metabolism_effect_on_cmax , fig.align='center', fig.height=4, fig.width=8, message=F}
+fp <- ForestPlot(model=model, dataset=dataset, 
+                       output=NcaMetricOutput(campsisnca::Cmax(variable="CONC")), replicates=100) %>%
+    add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
+    add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
+    add(ForestPlotItem(Covariate("METAB", 0))) %>%
+    add(ForestPlotItem(Covariate("METAB", 1))) %>%
+    add(ForestPlotItem(Covariate("WT", 60))) %>%
+    add(ForestPlotItem(Covariate("WT", 80)))
+  
+fp <- fp %>% prepare()
+plot <- fp %>% getPlot()
+plot
+```

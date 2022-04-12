@@ -107,13 +107,15 @@ setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
                         dataset=base_dataset, scenarios=scenarios, replicates=replicates,
                         seed=seed, dest=dest, outvars=outputName) %>%
       dplyr::select(c("replicate", "SCENARIO", outputName)) %>%
-      dplyr::rename_at(.vars=outputName, .funs=~"VALUE")
+      dplyr::rename_at(.vars=outputName, .funs=~"VALUE") %>%
+      dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev()))
     
   } else if (is(output, "nca_metric_output")) {
     outfun <- function(x) {outfunNCA(metric=output@metric, x=x)}
     results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
                         dataset=base_dataset, scenarios=scenarios, replicates=replicates,
-                        seed=seed, dest=dest, outvars=output@metric@variable, outfun=outfun)
+                        seed=seed, dest=dest, outvars=output@metric@variable, outfun=outfun) %>% 
+      dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev()))
   } else {
     stop()
   }
@@ -141,7 +143,7 @@ setMethod("getPlot", signature=c("forest_plot"), definition=function(object, lim
                      CFB_MED=median(.data$CFB),
                      CFB_UP=quantile(.data$CFB, 0.95))
   
-  plot <- ggplot2::ggplot(summary, ggplot2::aes(x=factor(SCENARIO, levels=unique(SCENARIO)), y=CFB_MED)) + 
+  plot <- ggplot2::ggplot(summary, ggplot2::aes(x=SCENARIO, y=CFB_MED)) + 
     ggplot2::geom_point() +
     ggplot2::geom_errorbar(ggplot2::aes(ymin=CFB_LOW, ymax=CFB_UP), width=0.2) +
     ggplot2::geom_hline(yintercept=1, col="darkblue") +

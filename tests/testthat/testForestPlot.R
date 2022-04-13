@@ -2,12 +2,13 @@ library(testthat)
 
 context("Test the forest plot feature")
 
-source(paste0("C:/prj/campsismisc/tests/testthat/", "testUtils.R"))
+source(paste0("", "testUtils.R"))
 
 test_that("Forest plot: effect of METAB (0/1) and WT on CL (RxODE/mrgsolve)", {
   model <- getModel("metaboliser_effect_on_cl")
+  regFilename <- "meta_effect_cl_output"
   
-  object <- ForestPlot(model=model, output=ModelParameterOutput("CL"), replicates=20) %>%
+  object <- ForestPlot(model=model, output=ModelParameterOutput("CL"), replicates=10) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
@@ -17,25 +18,28 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (RxODE/mrgsolve)", {
   
   expect_equal(object@items %>% getNames(), c("METAB:0", "METAB:1", "WT:60", "WT:80"))
   
+  # RxODE
   object <- object %>% prepare()
-  plot1 <- object %>% getPlot()
-  plot1
+  forestPlotRegressionTest(object=object, filename=regFilename)
+  object %>% getPlot()
   
-  # object@dest <- "mrgsolve"
-  # object <- object %>% prepare()
-  # plot2 <- object %>% getPlot()
-  # plot2
+  # Mrgsolve
+  object@dest <- "mrgsolve"
+  object <- object %>% prepare()
+  forestPlotRegressionTest(object=object, filename=regFilename)
+  object %>% getPlot()
 })
 
 test_that("Forest plot: effect of METAB (0/1) and WT on AUC (RxODE/mrgsolve)", {
   model <- getModel("metaboliser_effect_on_cl")
+  regFilename <- "meta_effect_auc_output"
   
   dataset <- Dataset(1) %>%
     add(Infusion(time=0, amount=1000, compartment=1)) %>%
     add(Observations(times=0:24))
   
   object <- ForestPlot(model=model, dataset=dataset, 
-                       output=NcaMetricOutput(campsisnca::Auc(variable="CONC")), replicates=20) %>%
+                       output=NcaMetricOutput(campsisnca::Auc(variable="CONC")), replicates=10) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
@@ -45,12 +49,14 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC (RxODE/mrgsolve)", {
   
   expect_equal(object@items %>% getNames(), c("METAB:0", "METAB:1", "WT:60", "WT:80"))
   
+  # RxODE
   object <- object %>% prepare()
-  plot1 <- object %>% getPlot()
-  plot1
+  forestPlotRegressionTest(object=object, filename=regFilename)
+  object %>% getPlot()
   
-  # object@dest <- "mrgsolve"
-  # object <- object %>% prepare()
-  # plot2 <- object %>% getPlot()
-  # plot2
+  # Mrgsolve
+  object@dest <- "mrgsolve"
+  object <- object %>% prepare()
+  forestPlotRegressionTest(object=object, filename=regFilename)
+  object %>% getPlot()
 })

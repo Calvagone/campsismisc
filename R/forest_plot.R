@@ -123,7 +123,7 @@ setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
   # Compute change from baseline
   # TODO: several formula's should be available
   object@results <- results %>% dplyr::mutate(BASELINE_VALUE=baseline) %>%
-    dplyr::mutate(CFB=(.data$VALUE-.data$BASELINE_VALUE)/.data$BASELINE_VALUE + 1)
+    dplyr::mutate(CHANGE=(.data$VALUE-.data$BASELINE_VALUE)/.data$BASELINE_VALUE + 1)
   
   return(object)
 })
@@ -139,16 +139,16 @@ setMethod("getPlot", signature=c("forest_plot"), definition=function(object, lim
   # Note when hjust not set, geom_labels are automatically aligned with data
   summary <- object@results %>%
     dplyr::group_by(dplyr::across("SCENARIO")) %>%
-    dplyr::summarise(CFB_LOW=quantile(.data$CFB, 0.05),
-                     CFB_MED=median(.data$CFB),
-                     CFB_UP=quantile(.data$CFB, 0.95))
+    dplyr::summarise(CHANGE_LOW=quantile(.data$CHANGE, 0.05),
+                     CHANGE_MED=median(.data$CHANGE),
+                     CHANGE_UP=quantile(.data$CHANGE, 0.95))
   
-  plot <- ggplot2::ggplot(summary, ggplot2::aes(x=SCENARIO, y=CFB_MED)) + 
+  plot <- ggplot2::ggplot(summary, ggplot2::aes(x=SCENARIO, y=CHANGE_MED)) + 
     ggplot2::geom_point() +
-    ggplot2::geom_errorbar(ggplot2::aes(ymin=CFB_LOW, ymax=CFB_UP), width=0.2) +
+    ggplot2::geom_errorbar(ggplot2::aes(ymin=CHANGE_LOW, ymax=CHANGE_UP), width=0.2) +
     ggplot2::geom_hline(yintercept=1, col="darkblue") +
     ggplot2::geom_hline(yintercept=c(0.8, 1.25), linetype=2) +
-    ggplot2::geom_label(ggplot2::aes(label=paste0(round(CFB_MED,2), ' (', round(CFB_LOW,2), '-', round(CFB_UP,2), ')')),
+    ggplot2::geom_label(ggplot2::aes(label=paste0(round(CHANGE_MED,2), ' (', round(CHANGE_LOW,2), '-', round(CHANGE_UP,2), ')')),
                         vjust=vjust, nudge_x=nudge_x, nudge_y=nudge_y, size=size, label.size=NA, ) +
     ggplot2::scale_y_continuous(breaks=breaks) +
     ggplot2::coord_flip(ylim=limits) +

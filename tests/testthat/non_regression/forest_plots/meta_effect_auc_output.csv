@@ -1,4 +1,4 @@
-"replicate","id","VALUE","SCENARIO","BASELINE_VALUE","CFB"
+"replicate","id","VALUE","SCENARIO","BASELINE_VALUE","CHANGE"
 1,1,105.79,"Metaboliser: Slow",105.8,1
 1,1,88.1,"Metaboliser: Fast",105.8,0.83
 1,1,110.89,"Weight: 60 kg",105.8,1.05

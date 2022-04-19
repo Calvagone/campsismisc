@@ -1,12 +1,12 @@
 #_______________________________________________________________________________
-#----                       forest_plot_output class                        ----
+#----                      oat_analysis_output class                        ----
 #_______________________________________________________________________________
 
-#' Forest plot output, see this class as an interface.
+#' OAT analysis output, see this class as an interface.
 #' 
 #' @export
 setClass(
-  "forest_plot_output",
+  "oat_analysis_output",
   representation(
   )
 )
@@ -23,7 +23,7 @@ setClass(
   representation(
     name="character" # E.g. "CL"
   ),
-  contains="forest_plot_output",
+  contains="oat_analysis_output",
   validity=function(object) {
     return(c(expectOne(object, "name")))
   }
@@ -49,7 +49,7 @@ setClass(
   representation(
     metric="nca_metric" # E.g. "Auc()"
   ),
-  contains="forest_plot_output",
+  contains="oat_analysis_output",
   validity=function(object) {
     return(TRUE)
   }

@@ -6,10 +6,15 @@ Collate:
     'generic.R'
     'labeled_covariate.R'
     'labeled_covariates.R'
-    'forest_plot_output.R'
+    'oat_analysis_output.R'
+    'oat_analysis.R'
     'forest_plot_item.R'
     'forest_plot_items.R'
     'forest_plot.R'
+    'sensitivity_analysis_factor.R'
+    'sensitivity_analysis_factors.R'
+    'sensitivity_analysis_item.R'
+    'sensitivity_analysis_items.R'
     'sensitivity_analysis.R'
 Title: CAMPSIS Miscellaneous Package
 Version: 0.1.0

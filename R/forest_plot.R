@@ -16,7 +16,8 @@ setClass(
     output="forest_plot_output",
     replicates="integer",
     results="data.frame",
-    dest="character"
+    dest="character",
+    formula="function" # 2 args: value, baseline
   ),
   prototype=prototype(model=CampsisModel(), dataset=Dataset())
 )
@@ -36,8 +37,10 @@ ForestPlot <- function(model, output, dataset=NULL, replicates=1L, dest="RxODE")
     dataset <- Dataset(1) %>%
       add(Observations(times=0))
   }
+  formula <- ~(.x-.y)/.y + 1
+  formula <- preprocessFunction(fun=formula, name="forest_plot_fct")
   return(new("forest_plot", model=model, dataset=dataset, output=output,
-             replicates=as.integer(replicates), dest=dest))
+             replicates=as.integer(replicates), dest=dest, formula=formula))
 }
 
 #_______________________________________________________________________________
@@ -142,6 +145,7 @@ setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
   output <- object@output
   replicates <- object@replicates
   dest <- object@dest
+  formula <- object@formula
   seed <- 1
   
   # Compute baseline value
@@ -170,11 +174,10 @@ setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
            dataset=base_dataset, scenarios=scenarios, replicates=replicates,
            seed=seed, dest=dest, outvars=outvars, outfun=outfun) %>% postProcessScenarios(output=output)
   
-  # Compute change from baseline
-  # TODO: several formula's should be available
-  object@results <- results %>% dplyr::mutate(BASELINE_VALUE=baseline) %>%
-    dplyr::mutate(CHANGE=(.data$VALUE-.data$BASELINE_VALUE)/.data$BASELINE_VALUE + 1)
-  
+  # Apply formula
+  results$BASELINE <- baseline
+  results$CHANGE <- formula(results$VALUE, results$BASELINE)
+  object@results <- results
   return(object)
 })
 

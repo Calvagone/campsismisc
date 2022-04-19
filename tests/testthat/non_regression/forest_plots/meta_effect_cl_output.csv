@@ -1,4 +1,4 @@
-"replicate","SCENARIO","VALUE","BASELINE_VALUE","CHANGE"
+"replicate","SCENARIO","VALUE","BASELINE","CHANGE"
 1,"Metaboliser: Slow",5.3,5.26,1.01
 1,"Metaboliser: Fast",7.52,5.26,1.43
 1,"Weight: 60 kg",5.3,5.26,1.01

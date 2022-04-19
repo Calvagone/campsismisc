@@ -2,6 +2,7 @@ Package: campsismisc
 Type: Package
 Collate:
     'check.R'
+    'utilities.R'
     'generic.R'
     'labeled_covariate.R'
     'labeled_covariates.R'

@@ -205,3 +205,55 @@ plot
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_cmax -1.png" style="display: block; margin: auto;" />
+
+## OAT-method based sensitivity analysis
+
+### Effect of model parameters on a PK metric
+
+Assume the same 2-compartment model. Let’s see how the model parameters
+influence AUC if they are multiplied by two. This can be achieved with a
+one-at-a-time (OAT)-method-based sensitivity analysis.
+
+``` r
+  dataset <- Dataset(1) %>%
+    add(Infusion(time=0, amount=1000, compartment=1)) %>%
+    add(Observations(times=0:24)) %>%
+    add(Covariate("METAB", 0)) %>%
+    add(Covariate("WT", 70))
+  
+  object <- SensitivityAnalysis(model=model, dataset=dataset,
+                       output=NcaMetricOutput(campsisnca::Auc(variable="CONC")), replicates=100) %>%
+    add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
+    add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
+    add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
+    add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
+    add(SensitivityAnalysisItem(Factor("CL", 2)))
+
+  object <- object %>% prepare()
+  object %>% getPlot()
+```
+
+<img src="README_files/figure-gfm/sensibility_analysis_auc_example -1.png" style="display: block; margin: auto;" />
+
+Let’s do the same exercise on Cmax.
+
+``` r
+  dataset <- Dataset(1) %>%
+    add(Infusion(time=0, amount=1000, compartment=1)) %>%
+    add(Observations(times=0:24)) %>%
+    add(Covariate("METAB", 0)) %>%
+    add(Covariate("WT", 70))
+  
+  object <- SensitivityAnalysis(model=model, dataset=dataset,
+                       output=NcaMetricOutput(campsisnca::Cmax(variable="CONC")), replicates=100) %>%
+    add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
+    add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
+    add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
+    add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
+    add(SensitivityAnalysisItem(Factor("CL", 2)))
+
+  object <- object %>% prepare()
+  object %>% getPlot()
+```
+
+<img src="README_files/figure-gfm/sensibility_analysis_cmax_example -1.png" style="display: block; margin: auto;" />

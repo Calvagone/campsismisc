@@ -120,7 +120,10 @@ outfunNCA <- function(metric, x) {
 #' @rdname prepare
 setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   model <- object@model
-  base_dataset <- object@dataset %>% add(object@labeled_covariates@list)
+  base_dataset <- object@dataset
+  if (is(object, "forest_plot")) {
+    base_dataset <- base_dataset %>% add(object@labeled_covariates@list)
+  }
   items <- object@items
   output <- object@output
   replicates <- object@replicates
@@ -133,7 +136,7 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   baseline <- base_scenario %>% computeBaseline(output=output)
   
   # Generate scenarios
-  scenarios <- object %>% createScenarios(dataset=base_dataset)
+  scenarios <- object %>% createScenarios(dataset=base_dataset, model=model)
   
   # Simulation all scenarios
   outvars <- output %>% getOutvars()

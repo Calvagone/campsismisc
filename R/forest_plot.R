@@ -31,7 +31,7 @@ ForestPlot <- function(model, output, dataset=NULL, replicates=1L, dest="RxODE")
     dataset <- Dataset(1) %>%
       add(Observations(times=0))
   }
-  formula <- ~(.x-.y)/.y + 1
+  formula <- ~.x/.y
   formula <- preprocessFunction(fun=formula, name="forest_plot_fct")
   return(new("forest_plot", model=model, dataset=dataset, output=output,
              replicates=as.integer(replicates), dest=dest, formula=formula))
@@ -56,7 +56,7 @@ setMethod("add", signature=c("forest_plot", "forest_plot_item"), definition=func
 #_______________________________________________________________________________
 
 #' @rdname createScenarios
-setMethod("createScenarios", signature=c("forest_plot"), definition=function(object, dataset) {
+setMethod("createScenarios", signature=c("forest_plot"), definition=function(object, dataset, ...) {
   scenarios <- Scenarios()
   items <- object@items
   

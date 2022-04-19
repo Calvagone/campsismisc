@@ -20,13 +20,13 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (RxODE/mrgsolve)", {
   
   # RxODE
   object <- object %>% prepare()
-  forestPlotRegressionTest(object=object, filename=regFilename)
+  oatAnalysisRegressionTest(object=object, filename=regFilename)
   object %>% getPlot()
   
   # Mrgsolve
   object@dest <- "mrgsolve"
   object <- object %>% prepare()
-  forestPlotRegressionTest(object=object, filename=regFilename)
+  oatAnalysisRegressionTest(object=object, filename=regFilename)
   object %>% getPlot()
 })
 
@@ -51,12 +51,12 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC (RxODE/mrgsolve)", {
 
   # RxODE
   object <- object %>% prepare()
-  forestPlotRegressionTest(object=object, filename=regFilename)
+  oatAnalysisRegressionTest(object=object, filename=regFilename)
   object %>% getPlot()
 
   # Mrgsolve
   object@dest <- "mrgsolve"
   object <- object %>% prepare()
-  forestPlotRegressionTest(object=object, filename=regFilename)
+  oatAnalysisRegressionTest(object=object, filename=regFilename)
   object %>% getPlot()
 })

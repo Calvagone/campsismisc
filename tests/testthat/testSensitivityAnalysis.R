@@ -4,7 +4,7 @@ context("Test the sensitivity analysis feature")
 
 source(paste0("C:/prj/campsismisc/tests/testthat/", "testUtils.R"))
 
-test_that("Sensitivity analysis: effect of KA, CL, V on AUC", {
+test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC", {
   model <- getModel("metaboliser_effect_on_cl")
   regFilename <- "effect_of_parameters_on_auc"
   
@@ -14,13 +14,13 @@ test_that("Sensitivity analysis: effect of KA, CL, V on AUC", {
   
   object <- SensitivityAnalysis(model=model, dataset=dataset,
                        output=NcaMetricOutput(campsisnca::Auc(variable="CONC")), replicates=10) %>%
-    add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
-    add(ForestPlotItem(Covariate("METAB", 0))) %>%
-    add(ForestPlotItem(Covariate("METAB", 1))) %>%
-    add(ForestPlotItem(Covariate("WT", 60))) %>%
-    add(ForestPlotItem(Covariate("WT", 80)))
-  
-  expect_equal(object@items %>% getNames(), c("METAB:0", "METAB:1", "WT:60", "WT:80"))
+    add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
+    add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
+    add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
+    add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
+    add(SensitivityAnalysisItem(Factor("CL", 2)))
+    
+  expect_equal(object@items %>% getNames(), c("DUR", "VC", "VP", "Q", "CL"))
   
   # RxODE
   object <- object %>% prepare()

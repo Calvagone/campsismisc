@@ -15,7 +15,7 @@ setClass(
   prototype=prototype(model=CampsisModel(), dataset=Dataset())
 )
 
-#' Create an OAT-based sensibility analysis object.
+#' Create an OAT-based sensitivity analysis object.
 #'
 #' @param model CAMPSIS model
 #' @param output output of interest, e.g. 'CL' or a PK metric from campsisnca
@@ -25,7 +25,7 @@ setClass(
 #' @param dest destination engine: 'RxODE' or 'mrgsolve'
 #' @return an empty OAT-based sensibility analysis object
 #' @export
-SensibilityAnalysis <- function(model, output, dataset=NULL, replicates=1L, dest="RxODE") {
+SensitivityAnalysis <- function(model, output, dataset=NULL, replicates=1L, dest="RxODE") {
   if (is.null(dataset)) {
     dataset <- Dataset(1) %>%
       add(Observations(times=0))
@@ -36,3 +36,12 @@ SensibilityAnalysis <- function(model, output, dataset=NULL, replicates=1L, dest
              replicates=as.integer(replicates), dest=dest, formula=formula))
 }
 
+#_______________________________________________________________________________
+#----                                add                                    ----
+#_______________________________________________________________________________
+
+
+setMethod("add", signature=c("sensitivity_analysis", "sensitivity_analysis_item"), definition=function(object, x) {
+  object@items <- object@items %>% add(x)
+  return(object)
+})

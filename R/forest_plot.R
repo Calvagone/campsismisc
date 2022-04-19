@@ -52,6 +52,27 @@ setMethod("add", signature=c("forest_plot", "forest_plot_item"), definition=func
 })
 
 #_______________________________________________________________________________
+#----                           createScenarios                             ----
+#_______________________________________________________________________________
+
+#' @rdname createScenarios
+setMethod("createScenarios", signature=c("forest_plot"), definition=function(object, dataset) {
+  scenarios <- Scenarios()
+  items <- object@items
+  
+  for (item in items@list) {
+    covariates <-  item %>% getCovariates()
+    dataset_ <- dataset
+    for (covariate in covariates@list) {
+      dataset_ <- dataset_ %>% campsismod::replace(covariate)
+    }
+    scenarios <- scenarios %>%
+      add(Scenario(name=item %>% getLabel(object@labeled_covariates), dataset=dataset_))
+  }
+  return(scenarios)
+})
+
+#_______________________________________________________________________________
 #----                               getPlot                                 ----
 #_______________________________________________________________________________
 

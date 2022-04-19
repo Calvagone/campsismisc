@@ -53,6 +53,25 @@ setMethod("computeBaseline", signature=c("tbl_df", "nca_metric_output"), definit
 })
 
 #_______________________________________________________________________________
+#----                           createScenarios                             ----
+#_______________________________________________________________________________
+
+#' Create scenarios.
+#' 
+#' @param object OAT analysis, type forest plot or sensitivity analysis
+#' @param ... extra arguments
+#' @return a list of CAMPSIS scenarios to be run
+#' @export
+#' @rdname createScenarios
+createScenarios <- function(object, ...) {
+  stop("No default function is provided")
+}
+
+setGeneric("createScenarios", function(object, ...) {
+  standardGeneric("createScenarios")
+})
+
+#_______________________________________________________________________________
 #----                         postProcessScenarios                          ----
 #_______________________________________________________________________________
 
@@ -113,17 +132,8 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   base_scenario <- simulate(model=model %>% disable(c("IIV")), dataset=base_dataset, seed=seed)
   baseline <- base_scenario %>% computeBaseline(output=output)
   
-  # 1 scenario per forest plot item, replicated
-  scenarios <- Scenarios()
-  for (item in items@list) {
-    covariates <-  item %>% getCovariates()
-    dataset_ <- base_dataset
-    for (covariate in covariates@list) {
-      dataset_ <- dataset_ %>% campsismod::replace(covariate)
-    }
-    scenarios <- scenarios %>%
-      add(Scenario(name=item %>% getLabel(object@labeled_covariates), dataset=dataset_))
-  }
+  # Generate scenarios
+  scenarios <- object %>% createScenarios(dataset=base_dataset)
   
   # Simulation all scenarios
   outvars <- output %>% getOutvars()

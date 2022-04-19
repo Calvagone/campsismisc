@@ -9,6 +9,7 @@ Collate:
     'forest_plot_item.R'
     'forest_plot_items.R'
     'forest_plot.R'
+    'sensitivity_analysis.R'
 Title: CAMPSIS Miscellaneous Package
 Version: 0.1.0
 Authors@R: c(

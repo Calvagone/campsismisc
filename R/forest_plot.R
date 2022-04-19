@@ -55,6 +55,76 @@ setMethod("add", signature=c("forest_plot", "forest_plot_item"), definition=func
 })
 
 #_______________________________________________________________________________
+#----                           computeBaseline                             ----
+#_______________________________________________________________________________
+
+#' Compute baseline.
+#' 
+#' @param object simulation results of the baseline, tibble
+#' @param output plot output
+#' @return the baseline, double
+#' @export
+#' @rdname computeBaseline
+computeBaseline <- function(object, output) {
+  stop("No default function is provided")
+}
+
+setGeneric("computeBaseline", function(object, output) {
+  standardGeneric("computeBaseline")
+})
+
+#' @rdname computeBaseline
+setMethod("computeBaseline", signature=c("tbl_df", "model_parameter_output"), definition=function(object, output) {
+  outputName <- output %>% getName()
+  baseline <- object %>% dplyr::pull(outputName)
+  return(baseline)
+})
+
+#' @rdname computeBaseline
+setMethod("computeBaseline", signature=c("tbl_df", "nca_metric_output"), definition=function(object, output) {
+  baseline <- outfunNCA(metric=output@metric, x=object) %>% dplyr::pull(VALUE)
+  return(baseline)
+})
+
+#_______________________________________________________________________________
+#----                         postProcessScenarios                          ----
+#_______________________________________________________________________________
+
+#' postProcessScenarios
+#' 
+#' @param object simulation results, tibble
+#' @param output plot output
+#' @return tibble
+#' @export
+#' @rdname postProcessScenarios
+postProcessScenarios <- function(object, output) {
+  stop("No default function is provided")
+}
+
+setGeneric("postProcessScenarios", function(object, output) {
+  standardGeneric("postProcessScenarios")
+})
+
+#' @rdname postProcessScenarios
+setMethod("postProcessScenarios", signature=c("tbl_df", "model_parameter_output"), definition=function(object, output) {
+  outputName <- output %>% getName()
+  results <- object %>%
+    dplyr::select(c("replicate", "SCENARIO", outputName)) %>%
+    dplyr::rename_at(.vars=outputName, .funs=~"VALUE") %>%
+    dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev()))
+  return(results)
+})
+
+#' @rdname postProcessScenarios
+setMethod("postProcessScenarios", signature=c("tbl_df", "nca_metric_output"), definition=function(object, output) {
+  results <- object %>% 
+    dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev()))
+  return(results)
+})
+
+
+
+#_______________________________________________________________________________
 #----                               prepare                                 ----
 #_______________________________________________________________________________
 
@@ -74,18 +144,9 @@ setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
   dest <- object@dest
   seed <- 1
   
-  # Base scenario, no study replication needed
-  base_scenario <- simulate(model=model %>% disable(c("IIV")),
-                            dataset=base_dataset, seed=seed)
-  
-  if (is(output, "model_parameter_output")) {
-    outputName <- output %>% getName()
-    baseline <- base_scenario %>% dplyr::pull(outputName)
-  } else if (is(output, "nca_metric_output")) {
-    baseline <- outfunNCA(metric=output@metric, x=base_scenario) %>% dplyr::pull(VALUE)
-  } else {
-    stop()
-  }
+  # Compute baseline value
+  base_scenario <- simulate(model=model %>% disable(c("IIV")), dataset=base_dataset, seed=seed)
+  baseline <- base_scenario %>% computeBaseline(output=output)
   
   # 1 scenario per forest plot item, replicated
   scenarios <- Scenarios()
@@ -99,26 +160,15 @@ setMethod("prepare", signature=c("forest_plot"), definition=function(object) {
       add(Scenario(name=item %>% getLabel(object@labeled_covariates), dataset=dataset_))
   }
   
-  # Simulation of model parameter output
-  outvars <- NULL
-  if (is(output, "model_parameter_output")) {
-    outputName <- output %>% getName()
-    results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
-                        dataset=base_dataset, scenarios=scenarios, replicates=replicates,
-                        seed=seed, dest=dest, outvars=outputName) %>%
-      dplyr::select(c("replicate", "SCENARIO", outputName)) %>%
-      dplyr::rename_at(.vars=outputName, .funs=~"VALUE") %>%
-      dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev()))
-    
-  } else if (is(output, "nca_metric_output")) {
+  # Simulation all scenarios
+  outvars <- output %>% getOutvars()
+  outfun <- NULL
+  if (is(output, "nca_metric_output")) {
     outfun <- function(x) {outfunNCA(metric=output@metric, x=x)}
-    results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
-                        dataset=base_dataset, scenarios=scenarios, replicates=replicates,
-                        seed=seed, dest=dest, outvars=output@metric@variable, outfun=outfun) %>% 
-      dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev()))
-  } else {
-    stop()
   }
+  results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
+           dataset=base_dataset, scenarios=scenarios, replicates=replicates,
+           seed=seed, dest=dest, outvars=outvars, outfun=outfun) %>% postProcessScenarios(output=output)
   
   # Compute change from baseline
   # TODO: several formula's should be available

@@ -1,41 +1,41 @@
-"replicate","id","VALUE","SCENARIO","BASELINE","CHANGE"
-1,1,105.79,"Metaboliser: Slow",105.8,1
-1,1,88.1,"Metaboliser: Fast",105.8,0.83
-1,1,110.89,"Weight: 60 kg",105.8,1.05
-1,1,101.14,"Weight: 80 kg",105.8,0.96
-2,1,103.68,"Metaboliser: Slow",105.8,0.98
-2,1,92.82,"Metaboliser: Fast",105.8,0.88
-2,1,108.92,"Weight: 60 kg",105.8,1.03
-2,1,98.91,"Weight: 80 kg",105.8,0.93
-3,1,106.35,"Metaboliser: Slow",105.8,1.01
-3,1,89.91,"Metaboliser: Fast",105.8,0.85
-3,1,111.85,"Weight: 60 kg",105.8,1.06
-3,1,101.37,"Weight: 80 kg",105.8,0.96
-4,1,107.46,"Metaboliser: Slow",105.8,1.02
-4,1,91.53,"Metaboliser: Fast",105.8,0.87
-4,1,113.1,"Weight: 60 kg",105.8,1.07
-4,1,102.35,"Weight: 80 kg",105.8,0.97
-5,1,107.9,"Metaboliser: Slow",105.8,1.02
-5,1,94.73,"Metaboliser: Fast",105.8,0.9
-5,1,113.3,"Weight: 60 kg",105.8,1.07
-5,1,103,"Weight: 80 kg",105.8,0.97
-6,1,105.98,"Metaboliser: Slow",105.8,1
-6,1,100.02,"Metaboliser: Fast",105.8,0.95
-6,1,111.29,"Weight: 60 kg",105.8,1.05
-6,1,101.14,"Weight: 80 kg",105.8,0.96
-7,1,107.83,"Metaboliser: Slow",105.8,1.02
-7,1,100.03,"Metaboliser: Fast",105.8,0.95
-7,1,113.37,"Weight: 60 kg",105.8,1.07
-7,1,102.81,"Weight: 80 kg",105.8,0.97
-8,1,102.81,"Metaboliser: Slow",105.8,0.97
-8,1,91.2,"Metaboliser: Fast",105.8,0.86
-8,1,107.74,"Weight: 60 kg",105.8,1.02
-8,1,98.29,"Weight: 80 kg",105.8,0.93
-9,1,105.98,"Metaboliser: Slow",105.8,1
-9,1,92.92,"Metaboliser: Fast",105.8,0.88
-9,1,110.81,"Weight: 60 kg",105.8,1.05
-9,1,101.55,"Weight: 80 kg",105.8,0.96
-10,1,107.38,"Metaboliser: Slow",105.8,1.01
-10,1,86.91,"Metaboliser: Fast",105.8,0.82
-10,1,112.97,"Weight: 60 kg",105.8,1.07
-10,1,102.31,"Weight: 80 kg",105.8,0.97
+"replicate","id","VALUE","SCENARIO"
+1,1,105.79,"Metaboliser: Slow"
+1,1,88.1,"Metaboliser: Fast"
+1,1,110.89,"Weight: 60 kg"
+1,1,101.14,"Weight: 80 kg"
+2,1,103.68,"Metaboliser: Slow"
+2,1,92.82,"Metaboliser: Fast"
+2,1,108.92,"Weight: 60 kg"
+2,1,98.91,"Weight: 80 kg"
+3,1,106.35,"Metaboliser: Slow"
+3,1,89.91,"Metaboliser: Fast"
+3,1,111.85,"Weight: 60 kg"
+3,1,101.37,"Weight: 80 kg"
+4,1,107.46,"Metaboliser: Slow"
+4,1,91.53,"Metaboliser: Fast"
+4,1,113.1,"Weight: 60 kg"
+4,1,102.35,"Weight: 80 kg"
+5,1,107.9,"Metaboliser: Slow"
+5,1,94.73,"Metaboliser: Fast"
+5,1,113.3,"Weight: 60 kg"
+5,1,103,"Weight: 80 kg"
+6,1,105.98,"Metaboliser: Slow"
+6,1,100.02,"Metaboliser: Fast"
+6,1,111.29,"Weight: 60 kg"
+6,1,101.14,"Weight: 80 kg"
+7,1,107.83,"Metaboliser: Slow"
+7,1,100.03,"Metaboliser: Fast"
+7,1,113.37,"Weight: 60 kg"
+7,1,102.81,"Weight: 80 kg"
+8,1,102.81,"Metaboliser: Slow"
+8,1,91.2,"Metaboliser: Fast"
+8,1,107.74,"Weight: 60 kg"
+8,1,98.29,"Weight: 80 kg"
+9,1,105.98,"Metaboliser: Slow"
+9,1,92.92,"Metaboliser: Fast"
+9,1,110.81,"Weight: 60 kg"
+9,1,101.55,"Weight: 80 kg"
+10,1,107.38,"Metaboliser: Slow"
+10,1,86.91,"Metaboliser: Fast"
+10,1,112.97,"Weight: 60 kg"
+10,1,102.31,"Weight: 80 kg"

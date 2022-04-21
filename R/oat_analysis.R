@@ -13,9 +13,10 @@ setClass(
     dataset="dataset",
     output="oat_analysis_output",
     replicates="integer",
-    results="data.frame",
     dest="character",
-    formula="function" # 2 args: value, baseline
+    formula="function", # 2 args: value, baseline
+    baseline="numeric", # transient
+    results="data.frame" # transient
   ),
   prototype=prototype(model=CampsisModel(), dataset=Dataset())
 )
@@ -128,12 +129,12 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   output <- object@output
   replicates <- object@replicates
   dest <- object@dest
-  formula <- object@formula
   seed <- 1
   
-  # Compute baseline value
+  # Compute and store baseline value
   base_scenario <- simulate(model=model %>% disable(c("IIV")), dataset=base_dataset, seed=seed)
   baseline <- base_scenario %>% computeBaseline(output=output)
+  object@baseline <- baseline
   
   # Generate scenarios
   scenarios <- object %>% createScenarios(dataset=base_dataset, model=model)
@@ -148,10 +149,65 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
                       dataset=base_dataset, scenarios=scenarios, replicates=replicates,
                       seed=seed, dest=dest, outvars=outvars, outfun=outfun) %>% postProcessScenarios(output=output)
   
-  # Apply formula
-  results$BASELINE <- baseline
-  results$CHANGE <- formula(results$VALUE, results$BASELINE)
+  # Store results
   object@results <- results
+  
   return(object)
 })
 
+#_______________________________________________________________________________
+#----                               getForestPlot                           ----
+#_______________________________________________________________________________
+
+#' @rdname getForestPlot
+setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "logical", "logical", "numeric", "numeric", "numeric", "numeric"),
+          definition=function(object, relative, show_labels, show_ref, show_range, range, ci, limits, breaks, ...) {
+            
+  # Note when hjust not set, geom_labels are automatically aligned with data
+  vjust <- 0
+  nudge_x=0.15
+  nudge_y=0
+  size=3
+  
+  alpha <- (1-ci)/2
+  # Recompute VALUE as relative value if relative is TRUE
+  if (relative) {
+    object@results$VALUE <- object@formula(object@results$VALUE, object@baseline)
+  }
+  summary <- object@results %>%
+    dplyr::group_by(dplyr::across("SCENARIO")) %>%
+    dplyr::summarise(LOW=quantile(.data$VALUE, alpha),
+                     MED=median(.data$VALUE),
+                     UP=quantile(.data$VALUE, 1-alpha))
+  
+  plot <- ggplot2::ggplot(summary, ggplot2::aes(x=SCENARIO, y=MED)) + 
+    ggplot2::geom_point() +
+    ggplot2::geom_errorbar(ggplot2::aes(ymin=LOW, ymax=UP), width=0.2)
+  
+  if (show_ref) {
+    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 1,  object@baseline), col="darkblue")
+  }
+  if (show_range) {
+    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 1,  object@baseline)*range, linetype=2)
+  }
+  if (show_labels) {
+    plot <- plot + ggplot2::geom_label(ggplot2::aes(label=paste0(round(MED, 2), ' (', round(LOW, 2), '-', round(UP, 2), ')')),
+                                       vjust=vjust, nudge_x=nudge_x, nudge_y=nudge_y, size=size, label.size=NA)
+  }
+  if (breaks %>% length()==0) {
+    plot <- plot + ggplot2::scale_y_continuous()
+  } else {
+    plot <- plot + ggplot2::scale_y_continuous(breaks=breaks)
+  }
+  
+  if (limits %>% length()==0) {
+    limits <- NULL
+  }
+  
+  plot <- plot +
+    ggplot2::coord_flip(ylim=limits) +
+    ggplot2::ylab(paste0(ifelse(relative, "Relative ", ""), object@output %>% getName())) +
+    ggplot2::xlab(NULL)
+  
+  return(plot)
+})

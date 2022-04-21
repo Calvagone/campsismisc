@@ -73,30 +73,57 @@ setMethod("createScenarios", signature=c("forest_plot"), definition=function(obj
 })
 
 #_______________________________________________________________________________
-#----                               getPlot                                 ----
+#----                               getForestPlot                           ----
 #_______________________________________________________________________________
 
-#' @rdname getPlot
-setMethod("getPlot", signature=c("forest_plot"), definition=function(object, limits=c(0.5,1.5), breaks=c(0.7,0.8,1,1.25,1.4),
-                                                                     vjust=0, nudge_x=0.15, nudge_y=0, size=3) {
+#' @rdname getForestPlot
+setMethod("getForestPlot", signature=c("forest_plot", "logical", "logical", "logical", "logical", "numeric", "numeric", "numeric", "numeric"),
+          definition=function(object, relative, show_labels, show_ref, show_range, range, ci, limits, breaks, ...) {
   
   # Note when hjust not set, geom_labels are automatically aligned with data
+  vjust <- 0
+  nudge_x=0.15
+  nudge_y=0
+  size=3
+  
+  alpha <- (1-ci)/2
+  # Recompute VALUE as relative value if relative is TRUE
+  if (relative) {
+    object@results$VALUE <- object@formula(object@results$VALUE, object@baseline)
+  }
   summary <- object@results %>%
     dplyr::group_by(dplyr::across("SCENARIO")) %>%
-    dplyr::summarise(CHANGE_LOW=quantile(.data$CHANGE, 0.05),
-                     CHANGE_MED=median(.data$CHANGE),
-                     CHANGE_UP=quantile(.data$CHANGE, 0.95))
+    dplyr::summarise(LOW=quantile(.data$VALUE, alpha),
+                     MED=median(.data$VALUE),
+                     UP=quantile(.data$VALUE, 1-alpha))
   
-  plot <- ggplot2::ggplot(summary, ggplot2::aes(x=SCENARIO, y=CHANGE_MED)) + 
+  plot <- ggplot2::ggplot(summary, ggplot2::aes(x=SCENARIO, y=MED)) + 
     ggplot2::geom_point() +
-    ggplot2::geom_errorbar(ggplot2::aes(ymin=CHANGE_LOW, ymax=CHANGE_UP), width=0.2) +
-    ggplot2::geom_hline(yintercept=1, col="darkblue") +
-    ggplot2::geom_hline(yintercept=c(0.8, 1.25), linetype=2) +
-    ggplot2::geom_label(ggplot2::aes(label=paste0(round(CHANGE_MED,2), ' (', round(CHANGE_LOW,2), '-', round(CHANGE_UP,2), ')')),
-                        vjust=vjust, nudge_x=nudge_x, nudge_y=nudge_y, size=size, label.size=NA, ) +
-    ggplot2::scale_y_continuous(breaks=breaks) +
+    ggplot2::geom_errorbar(ggplot2::aes(ymin=LOW, ymax=UP), width=0.2)
+  
+  if (show_ref) {
+    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 1,  object@baseline), col="darkblue")
+  }
+  if (show_range) {
+    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 1,  object@baseline)*range, linetype=2)
+  }
+  if (show_labels) {
+    plot <- plot + ggplot2::geom_label(ggplot2::aes(label=paste0(round(MED, 2), ' (', round(LOW, 2), '-', round(UP, 2), ')')),
+                                       vjust=vjust, nudge_x=nudge_x, nudge_y=nudge_y, size=size, label.size=NA)
+  }
+  if (breaks %>% length()==0) {
+    plot <- plot + ggplot2::scale_y_continuous()
+  } else {
+    plot <- plot + ggplot2::scale_y_continuous(breaks=breaks)
+  }
+  
+  if (limits %>% length()==0) {
+    limits <- NULL
+  }
+  
+  plot <- plot +
     ggplot2::coord_flip(ylim=limits) +
-    ggplot2::ylab(paste("Relative", object@output %>% getName())) +
+    ggplot2::ylab(paste0(ifelse(relative, "Relative ", ""), object@output %>% getName())) +
     ggplot2::xlab(NULL)
   
   return(plot)

@@ -7,6 +7,7 @@ Assume the following estimated 2-compartment model:
 
 ``` r
 library(campsismisc)
+library(campsisnca)
 
 model <- read.campsis("tests/testthat/campsis_models/metaboliser_effect_on_cl/")
 model
@@ -131,7 +132,7 @@ fp <- ForestPlot(model=model, output=ModelParameterOutput("CL"), replicates=100)
     add(ForestPlotItem(Covariate("WT", 80)))
   
 fp <- fp %>% prepare()
-plot <- fp %>% getPlot()
+plot <- fp %>% getForestPlot(limits=c(0.5, 1.5), breaks=c(0.7,0.8,1,1.25,1.4))
 plot
 ```
 
@@ -150,29 +151,32 @@ fp <- ForestPlot(model=model, output=ModelParameterOutput("VC"), replicates=100)
     add(ForestPlotItem(Covariate("WT", 80)))
   
 fp <- fp %>% prepare()
-plot <- fp %>% getPlot()
+plot <- fp %>% getForestPlot(limits=c(0.5, 1.5), breaks=c(0.7,0.8,1,1.25,1.4))
 plot
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_vc -1.png" style="display: block; margin: auto;" />
 
-### Effect of metabolism effect and weight on a PK metric
+### Effect of metabolism and weight on a PK metric
 
 Let’s show how the metabolism effect and the weight influence AUC. For
-that, we need to create first a dataset.
+that, we need to create first a dataset. Assume we are interested to
+compute AUC on day 1 and day 7. We give the drug every day and we
+observe on day 1 and day 7.
 
 ``` r
 dataset <- Dataset(1) %>%
-    add(Infusion(time=0, amount=1000, compartment=1)) %>%
-    add(Observations(times=0:24))
+    add(Infusion(time=0, amount=1000, compartment=1, ii=24, addl=6)) %>%
+    add(Observations(times=c(0:24, 144:168)))
 ```
 
 Instead of creating a `ModelParameterOutput` object, we create a
-`NcaMetricOutput` and we use any metric from `campsisnca`.
+`NcaMetricOutput` and we use any metric from `campsisnca`. To compute
+AUC on day 1, we need to provide the appropriate filter function.
 
 ``` r
 fp <- ForestPlot(model=model, dataset=dataset, 
-                       output=NcaMetricOutput(campsisnca::Auc(variable="CONC")), replicates=100) %>%
+                       output=NcaMetricOutput(Auc(variable="CONC"), filter=~timerange(.x, min=0, max=24)), replicates=100) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
@@ -181,17 +185,25 @@ fp <- ForestPlot(model=model, dataset=dataset,
     add(ForestPlotItem(Covariate("WT", 80)))
   
 fp <- fp %>% prepare()
-plot <- fp %>% getPlot()
-plot
+fp %>% getForestPlot(limits=c(0.5, 1.5), breaks=c(0.7,0.8,1,1.25,1.4))
 ```
 
-<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc -1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d1 -1.png" style="display: block; margin: auto;" />
 
-Let’s produce one more plot with Cmax.
+If we are interested to see the absolute change in AUC, argument
+relative can be set to FALSE as follows.
+
+``` r
+fp %>% getForestPlot(relative=FALSE)
+```
+
+<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d1_absolute -1.png" style="display: block; margin: auto;" />
+
+To look at AUC on day 7, we proceed as follows:
 
 ``` r
 fp <- ForestPlot(model=model, dataset=dataset, 
-                       output=NcaMetricOutput(campsisnca::Cmax(variable="CONC")), replicates=100) %>%
+                       output=NcaMetricOutput(Auc(variable="CONC"), filter=~timerange(.x, min=144, max=168)), replicates=100) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
@@ -200,8 +212,33 @@ fp <- ForestPlot(model=model, dataset=dataset,
     add(ForestPlotItem(Covariate("WT", 80)))
   
 fp <- fp %>% prepare()
-plot <- fp %>% getPlot()
-plot
+fp %>% getForestPlot(limits=c(0.5, 1.5), breaks=c(0.7,0.8,1,1.25,1.4))
+```
+
+<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d7 -1.png" style="display: block; margin: auto;" />
+
+Again, we can look at the absolute values.
+
+``` r
+fp %>% getForestPlot(relative=FALSE)
+```
+
+<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d7_absolute -1.png" style="display: block; margin: auto;" />
+
+Let’s produce one more plot with Cmax on day 1.
+
+``` r
+fp <- ForestPlot(model=model, dataset=dataset, 
+                       output=NcaMetricOutput(campsisnca::Cmax(variable="CONC"), filter=~timerange(.x, min=0, max=24)), replicates=100) %>%
+    add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
+    add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
+    add(ForestPlotItem(Covariate("METAB", 0))) %>%
+    add(ForestPlotItem(Covariate("METAB", 1))) %>%
+    add(ForestPlotItem(Covariate("WT", 60))) %>%
+    add(ForestPlotItem(Covariate("WT", 80)))
+  
+fp <- fp %>% prepare()
+fp %>% getForestPlot(limits=c(0.5, 1.5), breaks=c(0.7,0.8,1,1.25,1.4))
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_cmax -1.png" style="display: block; margin: auto;" />
@@ -215,22 +252,22 @@ influence AUC if they are multiplied by two. This can be achieved with a
 one-at-a-time (OAT)-method-based sensitivity analysis.
 
 ``` r
-  dataset <- Dataset(1) %>%
-    add(Infusion(time=0, amount=1000, compartment=1)) %>%
-    add(Observations(times=0:24)) %>%
-    add(Covariate("METAB", 0)) %>%
-    add(Covariate("WT", 70))
-  
-  object <- SensitivityAnalysis(model=model, dataset=dataset,
-                       output=NcaMetricOutput(campsisnca::Auc(variable="CONC")), replicates=100) %>%
-    add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("CL", 2)))
+dataset <- Dataset(1) %>%
+  add(Infusion(time=0, amount=1000, compartment=1)) %>%
+  add(Observations(times=0:24)) %>%
+  add(Covariate("METAB", 0)) %>%
+  add(Covariate("WT", 70))
 
-  object <- object %>% prepare()
-  object %>% getPlot()
+object <- SensitivityAnalysis(model=model, dataset=dataset,
+                     output=NcaMetricOutput(campsisnca::Auc(variable="CONC")), replicates=100) %>%
+  add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
+  add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
+  add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
+  add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
+  add(SensitivityAnalysisItem(Factor("CL", 2)))
+
+object <- object %>% prepare()
+object %>% getForestPlot()
 ```
 
 <img src="README_files/figure-gfm/sensibility_analysis_auc_example -1.png" style="display: block; margin: auto;" />
@@ -238,22 +275,22 @@ one-at-a-time (OAT)-method-based sensitivity analysis.
 Let’s do the same exercise on Cmax.
 
 ``` r
-  dataset <- Dataset(1) %>%
-    add(Infusion(time=0, amount=1000, compartment=1)) %>%
-    add(Observations(times=0:24)) %>%
-    add(Covariate("METAB", 0)) %>%
-    add(Covariate("WT", 70))
-  
-  object <- SensitivityAnalysis(model=model, dataset=dataset,
-                       output=NcaMetricOutput(campsisnca::Cmax(variable="CONC")), replicates=100) %>%
-    add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("CL", 2)))
+dataset <- Dataset(1) %>%
+  add(Infusion(time=0, amount=1000, compartment=1)) %>%
+  add(Observations(times=0:24)) %>%
+  add(Covariate("METAB", 0)) %>%
+  add(Covariate("WT", 70))
 
-  object <- object %>% prepare()
-  object %>% getPlot()
+object <- SensitivityAnalysis(model=model, dataset=dataset,
+                     output=NcaMetricOutput(campsisnca::Cmax(variable="CONC")), replicates=100) %>%
+  add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
+  add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
+  add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
+  add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
+  add(SensitivityAnalysisItem(Factor("CL", 2)))
+
+object <- object %>% prepare()
+object %>% getForestPlot()
 ```
 
 <img src="README_files/figure-gfm/sensibility_analysis_cmax_example -1.png" style="display: block; margin: auto;" />

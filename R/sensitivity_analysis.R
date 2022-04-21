@@ -77,28 +77,28 @@ setMethod("createScenarios", signature=c("sensitivity_analysis"), definition=fun
 #----                               getPlot                                 ----
 #_______________________________________________________________________________
 
-#' @rdname getPlot
-setMethod("getPlot", signature=c("sensitivity_analysis"), definition=function(object, limits=c(0.5,1.5), breaks=c(0.7,0.8,1,1.25,1.4),
-                                                                     vjust=0, nudge_x=0.15, nudge_y=0, size=3) {
-  
-  # Note when hjust not set, geom_labels are automatically aligned with data
-  summary <- object@results %>%
-    dplyr::group_by(dplyr::across("SCENARIO")) %>%
-    dplyr::summarise(CHANGE_LOW=quantile(.data$CHANGE, 0.05),
-                     CHANGE_MED=median(.data$CHANGE),
-                     CHANGE_UP=quantile(.data$CHANGE, 0.95))
-  
-  plot <- ggplot2::ggplot(summary, ggplot2::aes(x=SCENARIO, y=CHANGE_MED)) + 
-    ggplot2::geom_point() +
-    ggplot2::geom_errorbar(ggplot2::aes(ymin=CHANGE_LOW, ymax=CHANGE_UP), width=0.2) +
-    ggplot2::geom_hline(yintercept=1, col="darkblue") +
-    #ggplot2::geom_hline(yintercept=c(0.8, 1.25), linetype=2) +
-    ggplot2::geom_label(ggplot2::aes(label=paste0(round(CHANGE_MED,2), ' (', round(CHANGE_LOW,2), '-', round(CHANGE_UP,2), ')')),
-                        vjust=vjust, nudge_x=nudge_x, nudge_y=nudge_y, size=size, label.size=NA, ) +
-    #ggplot2::scale_y_continuous(breaks=breaks) +
-    ggplot2::coord_flip() +
-    ggplot2::ylab(paste("Relative", object@output %>% getName())) +
-    ggplot2::xlab(NULL)
-  
-  return(plot)
-})
+#' #' @rdname getPlot
+#' setMethod("getPlot", signature=c("sensitivity_analysis"), definition=function(object, limits=c(0.5,1.5), breaks=c(0.7,0.8,1,1.25,1.4),
+#'                                                                      vjust=0, nudge_x=0.15, nudge_y=0, size=3) {
+#'   
+#'   # Note when hjust not set, geom_labels are automatically aligned with data
+#'   summary <- object@results %>%
+#'     dplyr::group_by(dplyr::across("SCENARIO")) %>%
+#'     dplyr::summarise(CHANGE_LOW=quantile(.data$CHANGE, 0.05),
+#'                      CHANGE_MED=median(.data$CHANGE),
+#'                      CHANGE_UP=quantile(.data$CHANGE, 0.95))
+#'   
+#'   plot <- ggplot2::ggplot(summary, ggplot2::aes(x=SCENARIO, y=CHANGE_MED)) + 
+#'     ggplot2::geom_point() +
+#'     ggplot2::geom_errorbar(ggplot2::aes(ymin=CHANGE_LOW, ymax=CHANGE_UP), width=0.2) +
+#'     ggplot2::geom_hline(yintercept=1, col="darkblue") +
+#'     #ggplot2::geom_hline(yintercept=c(0.8, 1.25), linetype=2) +
+#'     ggplot2::geom_label(ggplot2::aes(label=paste0(round(CHANGE_MED,2), ' (', round(CHANGE_LOW,2), '-', round(CHANGE_UP,2), ')')),
+#'                         vjust=vjust, nudge_x=nudge_x, nudge_y=nudge_y, size=size, label.size=NA, ) +
+#'     #ggplot2::scale_y_continuous(breaks=breaks) +
+#'     ggplot2::coord_flip() +
+#'     ggplot2::ylab(paste("Relative", object@output %>% getName())) +
+#'     ggplot2::xlab(NULL)
+#'   
+#'   return(plot)
+#' })

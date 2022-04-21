@@ -85,7 +85,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (RxODE/mrgsol
   # RxODE
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
-  object %>% getPlot()
+  object %>% getForestPlot()
   
   # Mrgsolve
   object@dest <- "mrgsolve"

@@ -1,9 +1,9 @@
-"replicate","id","VALUE","SCENARIO","BASELINE","CHANGE"
-1,1,179.54,"Metaboliser: Slow",174.5,1.03
-1,1,133.13,"Metaboliser: Fast",174.5,0.76
-1,1,183.72,"Weight: 60 kg",174.5,1.05
-1,1,175.36,"Weight: 80 kg",174.5,1
-2,1,162.75,"Metaboliser: Slow",174.5,0.93
-2,1,130.47,"Metaboliser: Fast",174.5,0.75
-2,1,165.95,"Weight: 60 kg",174.5,0.95
-2,1,159.48,"Weight: 80 kg",174.5,0.91
+"replicate","id","VALUE","SCENARIO"
+1,1,179.54,"Metaboliser: Slow"
+1,1,133.13,"Metaboliser: Fast"
+1,1,183.72,"Weight: 60 kg"
+1,1,175.36,"Weight: 80 kg"
+2,1,162.75,"Metaboliser: Slow"
+2,1,130.47,"Metaboliser: Fast"
+2,1,165.95,"Weight: 60 kg"
+2,1,159.48,"Weight: 80 kg"

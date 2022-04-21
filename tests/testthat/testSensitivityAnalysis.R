@@ -30,7 +30,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC", {
   # RxODE
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
-  object %>% getPlot()
+  object %>% getForestPlot(relative=FALSE)
 })
 
 test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax", {
@@ -59,5 +59,5 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax", {
   # RxODE
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
-  object %>% getPlot()
+  object %>% getForestPlot()
 })

@@ -36,21 +36,53 @@ setGeneric("getLabel", function(object, ...) {
 })
 
 #_______________________________________________________________________________
-#----                              getPlot                                  ----
+#----                             getForestPlot                             ----
 #_______________________________________________________________________________
 
-#' Get plot.
+#' Get forest plot.
 #' 
 #' @param object generic object
+#' @param relative relative change or absolute value, logical
+#' @param show_labels show the numeric labels
+#' @param show_ref show vertical reference (at 1 or at the baseline) 
+#' @param show_range show vertical dashed lines, logical
+#' @param range vertical dashed lines range, default is c(0.8, 1.25)
+#' @param ci confidence interval, default is 0.9, which corresponds to a 90\% CI
+#' @param limits ggplot limits
+#' @param breaks ggplot breaks
 #' @param ... extra arguments
 #' @return ggplot
 #' @export
-#' @rdname getPlot
-getPlot <- function(object, ...) {
+#' @rdname getForestPlot
+getForestPlot <- function(object, relative, show_labels, show_ref, show_range, range, ci, limits, breaks, ...) {
   stop("No default function is provided")
 }
 
-setGeneric("getPlot", function(object, ...) {
-  standardGeneric("getPlot")
+setGeneric("getForestPlot", function(object, relative=NULL, show_labels=NULL, show_ref=NULL, show_range=NULL, range=NULL, ci=NULL, limits=NULL, breaks=NULL, ...) {
+  if (is.null(relative)) {
+    relative <- TRUE
+  }
+  if (is.null(show_labels)) {
+    show_labels <- TRUE
+  }
+  if (is.null(show_ref)) {
+    show_ref <- TRUE
+  }
+  if (is.null(show_range)) {
+    show_range <- TRUE
+  }
+  if (is.null(range)) {
+    range <- c(0.8, 1.25)
+  }
+  if (is.null(ci)) {
+    ci <- 0.9
+  }
+  if (is.null(limits)) {
+    limits <- numeric()
+  }
+  if (is.null(breaks)) {
+    breaks <- numeric()
+  }
+  standardGeneric("getForestPlot")
 })
 

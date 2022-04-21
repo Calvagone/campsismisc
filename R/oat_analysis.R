@@ -48,7 +48,7 @@ setMethod("computeBaseline", signature=c("tbl_df", "model_parameter_output"), de
 
 #' @rdname computeBaseline
 setMethod("computeBaseline", signature=c("tbl_df", "nca_metric_output"), definition=function(object, output) {
-  baseline <- outfunNCA(metric=output@metric, x=object) %>% dplyr::pull(VALUE)
+  baseline <- outfunNCA(metric=output@metric, x=output@filter(object)) %>% dplyr::pull(VALUE)
   return(baseline)
 })
 
@@ -142,7 +142,7 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   outvars <- output %>% getOutvars()
   outfun <- NULL
   if (is(output, "nca_metric_output")) {
-    outfun <- function(x) {outfunNCA(metric=output@metric, x=x)}
+    outfun <- function(x) {outfunNCA(metric=output@metric, x=output@filter(x))}
   }
   results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
                       dataset=base_dataset, scenarios=scenarios, replicates=replicates,

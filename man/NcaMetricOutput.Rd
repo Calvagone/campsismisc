@@ -4,9 +4,12 @@
 \alias{NcaMetricOutput}
 \title{Create a model parameter output.}
 \usage{
-NcaMetricOutput(metric)
+NcaMetricOutput(metric, filter = NULL)
 }
 \arguments{
+\item{filter}{function to be applied on the simulation output before the
+NCA analysis, either a function or a lambda formula}
+
 \item{name}{model parameter name}
 }
 \description{

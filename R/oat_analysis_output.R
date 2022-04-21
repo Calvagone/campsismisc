@@ -47,7 +47,8 @@ ModelParameterOutput <- function(name) {
 setClass(
   "nca_metric_output",
   representation(
-    metric="nca_metric" # E.g. "Auc()"
+    metric="nca_metric", # E.g. "Auc()"
+    filter="function"
   ),
   contains="oat_analysis_output",
   validity=function(object) {
@@ -58,9 +59,12 @@ setClass(
 #' Create a model parameter output.
 #' 
 #' @param name model parameter name
+#' @param filter function to be applied on the simulation output before the
+#'  NCA analysis, either a function or a lambda formula
 #' @export
-NcaMetricOutput <- function(metric) {
-  return(new("nca_metric_output", metric=metric))
+NcaMetricOutput <- function(metric, filter=NULL) {
+  filter <- preprocessFunction(fun=filter, name="filter function")
+  return(new("nca_metric_output", metric=metric, filter=filter))
 }
 
 #_______________________________________________________________________________

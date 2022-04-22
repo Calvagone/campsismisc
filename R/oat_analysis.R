@@ -159,9 +159,9 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
 #_______________________________________________________________________________
 
 #' @rdname getForestPlot
-setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "logical", "logical", "numeric", "numeric", "numeric", "numeric"),
-          definition=function(object, relative, show_labels, show_ref, show_range, range, ci, limits, breaks, 
-                              geom_label_vjust=0, geom_label_nudge_x=0.15, geom_label_nudge_y=0, geom_label_size=3, ...) {
+setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "logical", "logical", "numeric", "numeric"),
+          definition=function(object, relative, show_labels, show_ref, show_range, range, ci, 
+                              geom_label_vjust=0, geom_label_nudge_x=0.15, geom_label_nudge_y=0, geom_label_size=3, label_nsig=3, geom_hline_color="darkblue", ...) {
             
   alpha <- (1-ci)/2
   formula <- preprocessFunction(fun=~.x/.y, name="forest_plot_fct")
@@ -176,33 +176,29 @@ setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "lo
                      MED=median(.data$VALUE),
                      UP=quantile(.data$VALUE, 1-alpha))
   
+  # Add label column
+  summary$LABEL <- paste0(signif(summary$MED, label_nsig), ' (',
+                          signif(summary$LOW, label_nsig), '-',
+                          signif(summary$UP, label_nsig), ')')
+  
   plot <- ggplot2::ggplot(summary, ggplot2::aes(x=SCENARIO, y=MED)) + 
     ggplot2::geom_point() +
     ggplot2::geom_errorbar(ggplot2::aes(ymin=LOW, ymax=UP), width=0.2)
-  
+
   if (show_ref) {
-    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 1,  object@baseline), col="darkblue")
+    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 1,  object@baseline), color=geom_hline_color)
   }
   if (show_range) {
     plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 1,  object@baseline)*range, linetype=2)
   }
   if (show_labels) {
     # Note when hjust not set, geom_labels are automatically aligned with data
-    plot <- plot + ggplot2::geom_label(ggplot2::aes(label=paste0(round(MED, 2), ' (', round(LOW, 2), '-', round(UP, 2), ')')),
+    plot <- plot + ggplot2::geom_label(ggplot2::aes_string(label="LABEL"),
                                        vjust=geom_label_vjust, nudge_x=geom_label_nudge_x, nudge_y=geom_label_nudge_y, size=geom_label_size, label.size=NA)
   }
-  if (breaks %>% length()==0) {
-    plot <- plot + ggplot2::scale_y_continuous()
-  } else {
-    plot <- plot + ggplot2::scale_y_continuous(breaks=breaks)
-  }
-  
-  if (limits %>% length()==0) {
-    limits <- NULL
-  }
-  
+
   plot <- plot +
-    ggplot2::coord_flip(ylim=limits) +
+    ggplot2::coord_flip() +
     ggplot2::ylab(paste0(ifelse(relative, "Relative ", ""), object@output %>% getName())) +
     ggplot2::xlab(NULL)
   
@@ -216,7 +212,7 @@ setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "lo
 #' @rdname getTornadoPlot
 setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "logical"),
           definition=function(object, relative, show_labels, show_ref,
-                              geom_bar_color="#94c0e3", geom_bar_width=0.5, geom_text_nudge_y=1, ...) {
+                              geom_bar_color="#94c0e3", geom_bar_width=0.5, geom_text_nudge_y=1, label_nsig=3, geom_hline_color="grey", ...) {
   results <- object@results
   baseline <- object@baseline
   noOfScenarios <- object@items %>% length()
@@ -238,7 +234,7 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "l
   target <- ifelse(relative, "MED_CHANGE", "MED_VALUE")
   
   # Label
-  summary$LABEL <- paste0(signif(summary %>% dplyr::pull(target), 3))
+  summary$LABEL <- paste0(signif(summary %>% dplyr::pull(target), digits=label_nsig))
   
   shift_trans = function(d=0) {
     scales::trans_new("shift", transform=function(x) x - d, inverse = function(x) x + d)
@@ -251,7 +247,7 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "l
     ggplot2::xlab(NULL)
   
   if (show_ref) {
-    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 0,  baseline), col="grey")
+    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 0,  baseline), color=geom_hline_color)
   }
   
   if (!relative) {

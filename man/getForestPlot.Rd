@@ -2,7 +2,7 @@
 % Please edit documentation in R/generic.R, R/oat_analysis.R
 \name{getForestPlot}
 \alias{getForestPlot}
-\alias{getForestPlot,oat_analysis,logical,logical,logical,logical,numeric,numeric,numeric,numeric-method}
+\alias{getForestPlot,oat_analysis,logical,logical,logical,logical,numeric,numeric-method}
 \title{Get forest plot.}
 \usage{
 getForestPlot(
@@ -13,21 +13,23 @@ getForestPlot(
   show_range = NULL,
   range = NULL,
   ci = NULL,
-  limits = NULL,
-  breaks = NULL,
   ...
 )
 
-\S4method{getForestPlot}{oat_analysis,logical,logical,logical,logical,numeric,numeric,numeric,numeric}(
+\S4method{getForestPlot}{oat_analysis,logical,logical,logical,logical,numeric,numeric}(
   object,
-  relative = NULL,
-  show_labels = NULL,
-  show_ref = NULL,
-  show_range = NULL,
-  range = NULL,
-  ci = NULL,
-  limits = NULL,
-  breaks = NULL,
+  relative,
+  show_labels,
+  show_ref,
+  show_range,
+  range,
+  ci,
+  geom_label_vjust = 0,
+  geom_label_nudge_x = 0.15,
+  geom_label_nudge_y = 0,
+  geom_label_size = 3,
+  label_nsig = 3,
+  geom_hline_color = "darkblue",
   ...
 )
 }
@@ -46,11 +48,7 @@ getForestPlot(
 
 \item{ci}{confidence interval, default is 0.9, which corresponds to a 90\% CI}
 
-\item{limits}{ggplot limits}
-
-\item{breaks}{ggplot breaks}
-
-\item{...}{extra arguments}
+\item{...}{extra arguments like 'geom_label_vjust', 'geom_label_nudge_x', 'geom_label_nudge_y', 'geom_label_size', 'label_nsig', 'geom_hline_color'}
 }
 \value{
 ggplot

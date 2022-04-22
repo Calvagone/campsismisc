@@ -21,13 +21,14 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (RxODE/mrgsolve)", {
   # RxODE
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
-  object %>% getPlot()
+  object %>% getForestPlot() + 
+    ggplot2::scale_y_continuous(breaks=c(0.8,1,1.25), limits=c(0.5, 1.5))
   
   # Mrgsolve
   object@dest <- "mrgsolve"
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
-  object %>% getPlot()
+  object %>% getForestPlot()
 })
 
 test_that("Forest plot: effect of METAB (0/1) and WT on AUC0-24 (RxODE/mrgsolve)", {
@@ -52,13 +53,13 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC0-24 (RxODE/mrgsolve)
   # RxODE
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
-  object %>% getPlot()
+  object %>% getForestPlot()
 
   # Mrgsolve
   object@dest <- "mrgsolve"
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
-  object %>% getPlot()
+  object %>% getForestPlot()
 })
 
 test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (RxODE/mrgsolve)", {
@@ -91,5 +92,5 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (RxODE/mrgsol
   object@dest <- "mrgsolve"
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
-  object %>% getPlot()
+  object %>% getForestPlot()
 })

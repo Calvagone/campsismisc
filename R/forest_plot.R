@@ -31,10 +31,8 @@ ForestPlot <- function(model, output, dataset=NULL, replicates=1L, dest="RxODE")
     dataset <- Dataset(1) %>%
       add(Observations(times=0))
   }
-  formula <- ~.x/.y
-  formula <- preprocessFunction(fun=formula, name="forest_plot_fct")
   return(new("forest_plot", model=model, dataset=dataset, output=output,
-             replicates=as.integer(replicates), dest=dest, formula=formula))
+             replicates=as.integer(replicates), dest=dest))
 }
 
 #_______________________________________________________________________________
@@ -86,10 +84,12 @@ setMethod("getForestPlot", signature=c("forest_plot", "logical", "logical", "log
   nudge_y=0
   size=3
   
+  formula <- preprocessFunction(fun=~.x/.y, name="forest_plot_fct")
+  
   alpha <- (1-ci)/2
   # Recompute VALUE as relative value if relative is TRUE
   if (relative) {
-    object@results$VALUE <- object@formula(object@results$VALUE, object@baseline)
+    object@results$VALUE <- formula(object@results$VALUE, object@baseline)
   }
   summary <- object@results %>%
     dplyr::group_by(dplyr::across("SCENARIO")) %>%

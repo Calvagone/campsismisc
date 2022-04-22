@@ -14,7 +14,6 @@ setClass(
     output="oat_analysis_output",
     replicates="integer",
     dest="character",
-    formula="function", # 2 args: value, baseline
     baseline="numeric", # transient
     results="data.frame" # transient
   ),

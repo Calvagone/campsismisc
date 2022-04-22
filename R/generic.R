@@ -86,3 +86,34 @@ setGeneric("getForestPlot", function(object, relative=NULL, show_labels=NULL, sh
   standardGeneric("getForestPlot")
 })
 
+#_______________________________________________________________________________
+#----                             getTornadoPlot                             ----
+#_______________________________________________________________________________
+
+#' Get tornado plot.
+#' 
+#' @param object generic object
+#' @param relative relative change or absolute value, logical
+#' @param show_labels show the numeric labels
+#' @param show_ref show vertical reference (at 0 or at the baseline) 
+#' @param ... extra arguments like 'geom_bar_color', 'geom_bar_width', 'geom_text_nudge_y'
+#' @return ggplot
+#' @export
+#' @rdname getTornadoPlot
+getTornadoPlot <- function(object, relative, show_labels, show_ref, ...) {
+  stop("No default function is provided")
+}
+
+setGeneric("getTornadoPlot", function(object, relative=NULL, show_labels=NULL, show_ref=NULL, ...) {
+  if (is.null(relative)) {
+    relative <- TRUE
+  }
+  if (is.null(show_labels)) {
+    show_labels <- TRUE
+  }
+  if (is.null(show_ref)) {
+    show_ref <- TRUE
+  }
+  standardGeneric("getTornadoPlot")
+})
+

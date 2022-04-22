@@ -30,10 +30,8 @@ SensitivityAnalysis <- function(model, output, dataset=NULL, replicates=1L, dest
     dataset <- Dataset(1) %>%
       add(Observations(times=0))
   }
-  formula <- ~.x/.y
-  formula <- preprocessFunction(fun=formula, name="sensibility_analysis_fct")
   return(new("sensitivity_analysis", model=model, dataset=dataset, output=output,
-             replicates=as.integer(replicates), dest=dest, formula=formula))
+             replicates=as.integer(replicates), dest=dest))
 }
 
 #_______________________________________________________________________________
@@ -74,31 +72,61 @@ setMethod("createScenarios", signature=c("sensitivity_analysis"), definition=fun
 })
 
 #_______________________________________________________________________________
-#----                               getPlot                                 ----
+#----                             getTornadoPlot                            ----
 #_______________________________________________________________________________
 
-#' #' @rdname getPlot
-#' setMethod("getPlot", signature=c("sensitivity_analysis"), definition=function(object, limits=c(0.5,1.5), breaks=c(0.7,0.8,1,1.25,1.4),
-#'                                                                      vjust=0, nudge_x=0.15, nudge_y=0, size=3) {
-#'   
-#'   # Note when hjust not set, geom_labels are automatically aligned with data
-#'   summary <- object@results %>%
-#'     dplyr::group_by(dplyr::across("SCENARIO")) %>%
-#'     dplyr::summarise(CHANGE_LOW=quantile(.data$CHANGE, 0.05),
-#'                      CHANGE_MED=median(.data$CHANGE),
-#'                      CHANGE_UP=quantile(.data$CHANGE, 0.95))
-#'   
-#'   plot <- ggplot2::ggplot(summary, ggplot2::aes(x=SCENARIO, y=CHANGE_MED)) + 
-#'     ggplot2::geom_point() +
-#'     ggplot2::geom_errorbar(ggplot2::aes(ymin=CHANGE_LOW, ymax=CHANGE_UP), width=0.2) +
-#'     ggplot2::geom_hline(yintercept=1, col="darkblue") +
-#'     #ggplot2::geom_hline(yintercept=c(0.8, 1.25), linetype=2) +
-#'     ggplot2::geom_label(ggplot2::aes(label=paste0(round(CHANGE_MED,2), ' (', round(CHANGE_LOW,2), '-', round(CHANGE_UP,2), ')')),
-#'                         vjust=vjust, nudge_x=nudge_x, nudge_y=nudge_y, size=size, label.size=NA, ) +
-#'     #ggplot2::scale_y_continuous(breaks=breaks) +
-#'     ggplot2::coord_flip() +
-#'     ggplot2::ylab(paste("Relative", object@output %>% getName())) +
-#'     ggplot2::xlab(NULL)
-#'   
-#'   return(plot)
-#' })
+#' @rdname getTornadoPlot
+setMethod("getTornadoPlot", signature=c("sensitivity_analysis", "logical", "logical", "logical"),
+          definition=function(object, relative, show_labels, show_ref,
+                              geom_bar_color="#94c0e3", geom_bar_width=0.5, geom_text_nudge_y=1, ...) {
+  results <- object@results
+  baseline <- object@baseline
+  noOfScenarios <- object@items %>% length()
+  formula <-  preprocessFunction(fun=~(.x - .y)*100/.y, name="tornado_plot_fct")
+  
+  if (results %>% nrow() > noOfScenarios) {
+    warning("Multiple replicates detected, median value will be used in tornado plot")
+  }
+  
+  # Always compute change from baseline because arrange will always called on the absolute change
+  results$CHANGE <- formula(results$VALUE, baseline)
+
+  summary <- results %>%
+    dplyr::group_by(dplyr::across("SCENARIO")) %>%
+    dplyr::summarise(MED_CHANGE=median(.data$CHANGE), MED_VALUE=median(.data$VALUE)) %>%
+    dplyr::arrange(abs(.data$MED_CHANGE)) %>%
+    dplyr::mutate(SCENARIO=factor(SCENARIO, levels=.data$SCENARIO %>% unique()))
+  
+  target <- ifelse(relative, "MED_CHANGE", "MED_VALUE")
+  
+  # Label
+  summary$LABEL <- paste0(signif(summary %>% dplyr::pull(target), 3))
+  
+  shift_trans = function(d=0) {
+    scales::trans_new("shift", transform=function(x) x - d, inverse = function(x) x + d)
+  }
+  
+  plot <- ggplot2::ggplot(summary, ggplot2::aes_string(x="SCENARIO", y=target, label="LABEL")) +
+    ggplot2::coord_flip() +
+    ggplot2::geom_bar(stat="identity", position="identity", width=geom_bar_width, color=geom_bar_color, fill=geom_bar_color) +
+    ggplot2::geom_text(nudge_y=geom_text_nudge_y) +
+    ggplot2::xlab(NULL)
+  
+  if (show_ref) {
+    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 0,  baseline), col="grey")
+  }
+  
+  if (!relative) {
+    plot <- plot 
+  }
+  if (relative) {
+    plot <- plot +
+      ggplot2::ylab(paste0("Change in ", object@output %>% getName(), " (%)"))
+  } else {
+    plot <- plot +
+      ggplot2::scale_y_continuous(trans=shift_trans(baseline)) +
+      ggplot2::ylab(paste0(object@output %>% getName()))
+  }
+    
+  return(plot)
+})

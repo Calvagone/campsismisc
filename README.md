@@ -132,8 +132,8 @@ fp <- ForestPlot(model=model, output=ModelParameterOutput("CL"), replicates=100)
     add(ForestPlotItem(Covariate("WT", 80)))
   
 fp <- fp %>% prepare()
-plot <- fp %>% getForestPlot(limits=c(0.5, 1.5), breaks=c(0.7,0.8,1,1.25,1.4))
-plot
+fp %>% getForestPlot + 
+  ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_cl -1.png" style="display: block; margin: auto;" />
@@ -151,8 +151,8 @@ fp <- ForestPlot(model=model, output=ModelParameterOutput("VC"), replicates=100)
     add(ForestPlotItem(Covariate("WT", 80)))
   
 fp <- fp %>% prepare()
-plot <- fp %>% getForestPlot(limits=c(0.5, 1.5), breaks=c(0.7,0.8,1,1.25,1.4))
-plot
+fp %>% getForestPlot + 
+  ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_vc -1.png" style="display: block; margin: auto;" />
@@ -185,7 +185,8 @@ fp <- ForestPlot(model=model, dataset=dataset,
     add(ForestPlotItem(Covariate("WT", 80)))
   
 fp <- fp %>% prepare()
-fp %>% getForestPlot(limits=c(0.5, 1.5), breaks=c(0.7,0.8,1,1.25,1.4))
+fp %>% getForestPlot() + 
+  ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d1 -1.png" style="display: block; margin: auto;" />
@@ -212,7 +213,8 @@ fp <- ForestPlot(model=model, dataset=dataset,
     add(ForestPlotItem(Covariate("WT", 80)))
   
 fp <- fp %>% prepare()
-fp %>% getForestPlot(limits=c(0.5, 1.5), breaks=c(0.7,0.8,1,1.25,1.4))
+fp %>% getForestPlot() + 
+  ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d7 -1.png" style="display: block; margin: auto;" />
@@ -238,7 +240,8 @@ fp <- ForestPlot(model=model, dataset=dataset,
     add(ForestPlotItem(Covariate("WT", 80)))
   
 fp <- fp %>% prepare()
-fp %>% getForestPlot(limits=c(0.5, 1.5), breaks=c(0.7,0.8,1,1.25,1.4))
+fp %>% getForestPlot() + 
+  ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_cmax -1.png" style="display: block; margin: auto;" />
@@ -249,7 +252,11 @@ fp %>% getForestPlot(limits=c(0.5, 1.5), breaks=c(0.7,0.8,1,1.25,1.4))
 
 Assume the same 2-compartment model. Let’s see how the model parameters
 influence AUC if they are multiplied by two. This can be achieved with a
-one-at-a-time (OAT)-method-based sensitivity analysis.
+one-at-a-time (OAT)-method-based sensitivity analysis. Most of the time,
+these analyses are done without parameter uncertainty (replicates=1, by
+default) and represented with tornado plots, as shown below. However if
+parameter uncertainty is used, you can still call `getForestPlot()` on
+this new type of object.
 
 ``` r
 dataset <- Dataset(1) %>%
@@ -259,7 +266,7 @@ dataset <- Dataset(1) %>%
   add(Covariate("WT", 70))
 
 object <- SensitivityAnalysis(model=model, dataset=dataset,
-                     output=NcaMetricOutput(campsisnca::Auc(variable="CONC")), replicates=100) %>%
+                     output=NcaMetricOutput(campsisnca::Auc(variable="CONC"))) %>%
   add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
   add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
   add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
@@ -267,10 +274,18 @@ object <- SensitivityAnalysis(model=model, dataset=dataset,
   add(SensitivityAnalysisItem(Factor("CL", 2)))
 
 object <- object %>% prepare()
-object %>% getForestPlot()
+object %>% getTornadoPlot()
 ```
 
 <img src="README_files/figure-gfm/sensibility_analysis_auc_example -1.png" style="display: block; margin: auto;" />
+
+Absolute values may also be shown:
+
+``` r
+object %>% getTornadoPlot(relative=FALSE)
+```
+
+<img src="README_files/figure-gfm/sensibility_analysis_auc_example_absolute -1.png" style="display: block; margin: auto;" />
 
 Let’s do the same exercise on Cmax.
 
@@ -282,7 +297,7 @@ dataset <- Dataset(1) %>%
   add(Covariate("WT", 70))
 
 object <- SensitivityAnalysis(model=model, dataset=dataset,
-                     output=NcaMetricOutput(campsisnca::Cmax(variable="CONC")), replicates=100) %>%
+                     output=NcaMetricOutput(campsisnca::Cmax(variable="CONC"))) %>%
   add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
   add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
   add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
@@ -290,7 +305,7 @@ object <- SensitivityAnalysis(model=model, dataset=dataset,
   add(SensitivityAnalysisItem(Factor("CL", 2)))
 
 object <- object %>% prepare()
-object %>% getForestPlot()
+object %>% getTornadoPlot()
 ```
 
 <img src="README_files/figure-gfm/sensibility_analysis_cmax_example -1.png" style="display: block; margin: auto;" />

@@ -160,18 +160,15 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
 
 #' @rdname getForestPlot
 setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "logical", "logical", "numeric", "numeric", "numeric", "numeric"),
-          definition=function(object, relative, show_labels, show_ref, show_range, range, ci, limits, breaks, ...) {
+          definition=function(object, relative, show_labels, show_ref, show_range, range, ci, limits, breaks, 
+                              geom_label_vjust=0, geom_label_nudge_x=0.15, geom_label_nudge_y=0, geom_label_size=3, ...) {
             
-  # Note when hjust not set, geom_labels are automatically aligned with data
-  vjust <- 0
-  nudge_x=0.15
-  nudge_y=0
-  size=3
-  
   alpha <- (1-ci)/2
+  formula <- preprocessFunction(fun=~.x/.y, name="forest_plot_fct")
+  
   # Recompute VALUE as relative value if relative is TRUE
   if (relative) {
-    object@results$VALUE <- object@formula(object@results$VALUE, object@baseline)
+    object@results$VALUE <- formula(object@results$VALUE, object@baseline)
   }
   summary <- object@results %>%
     dplyr::group_by(dplyr::across("SCENARIO")) %>%
@@ -190,8 +187,9 @@ setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "lo
     plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 1,  object@baseline)*range, linetype=2)
   }
   if (show_labels) {
+    # Note when hjust not set, geom_labels are automatically aligned with data
     plot <- plot + ggplot2::geom_label(ggplot2::aes(label=paste0(round(MED, 2), ' (', round(LOW, 2), '-', round(UP, 2), ')')),
-                                       vjust=vjust, nudge_x=nudge_x, nudge_y=nudge_y, size=size, label.size=NA)
+                                       vjust=geom_label_vjust, nudge_x=geom_label_nudge_x, nudge_y=geom_label_nudge_y, size=geom_label_size, label.size=NA)
   }
   if (breaks %>% length()==0) {
     plot <- plot + ggplot2::scale_y_continuous()
@@ -207,6 +205,66 @@ setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "lo
     ggplot2::coord_flip(ylim=limits) +
     ggplot2::ylab(paste0(ifelse(relative, "Relative ", ""), object@output %>% getName())) +
     ggplot2::xlab(NULL)
+  
+  return(plot)
+})
+
+#_______________________________________________________________________________
+#----                             getTornadoPlot                            ----
+#_______________________________________________________________________________
+
+#' @rdname getTornadoPlot
+setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "logical"),
+          definition=function(object, relative, show_labels, show_ref,
+                              geom_bar_color="#94c0e3", geom_bar_width=0.5, geom_text_nudge_y=1, ...) {
+  results <- object@results
+  baseline <- object@baseline
+  noOfScenarios <- object@items %>% length()
+  formula <-  preprocessFunction(fun=~(.x - .y)*100/.y, name="tornado_plot_fct")
+  
+  if (results %>% nrow() > noOfScenarios) {
+    warning("Multiple replicates detected, median value will be used in tornado plot")
+  }
+  
+  # Always compute change from baseline because arrange will always called on the absolute change
+  results$CHANGE <- formula(results$VALUE, baseline)
+  
+  summary <- results %>%
+    dplyr::group_by(dplyr::across("SCENARIO")) %>%
+    dplyr::summarise(MED_CHANGE=median(.data$CHANGE), MED_VALUE=median(.data$VALUE)) %>%
+    dplyr::arrange(abs(.data$MED_CHANGE)) %>%
+    dplyr::mutate(SCENARIO=factor(SCENARIO, levels=.data$SCENARIO %>% unique()))
+  
+  target <- ifelse(relative, "MED_CHANGE", "MED_VALUE")
+  
+  # Label
+  summary$LABEL <- paste0(signif(summary %>% dplyr::pull(target), 3))
+  
+  shift_trans = function(d=0) {
+    scales::trans_new("shift", transform=function(x) x - d, inverse = function(x) x + d)
+  }
+  
+  plot <- ggplot2::ggplot(summary, ggplot2::aes_string(x="SCENARIO", y=target, label="LABEL")) +
+    ggplot2::coord_flip() +
+    ggplot2::geom_bar(stat="identity", position="identity", width=geom_bar_width, color=geom_bar_color, fill=geom_bar_color) +
+    ggplot2::geom_text(nudge_y=geom_text_nudge_y) +
+    ggplot2::xlab(NULL)
+  
+  if (show_ref) {
+    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 0,  baseline), col="grey")
+  }
+  
+  if (!relative) {
+    plot <- plot 
+  }
+  if (relative) {
+    plot <- plot +
+      ggplot2::ylab(paste0("Change in ", object@output %>% getName(), " (%)"))
+  } else {
+    plot <- plot +
+      ggplot2::scale_y_continuous(trans=shift_trans(baseline)) +
+      ggplot2::ylab(paste0(object@output %>% getName()))
+  }
   
   return(plot)
 })

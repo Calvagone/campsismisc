@@ -50,7 +50,7 @@ setGeneric("getLabel", function(object, ...) {
 #' @param ci confidence interval, default is 0.9, which corresponds to a 90\% CI
 #' @param limits ggplot limits
 #' @param breaks ggplot breaks
-#' @param ... extra arguments
+#' @param ... extra arguments like 'geom_label_vjust', 'geom_label_nudge_x', 'geom_label_nudge_y', 'geom_label_size'
 #' @return ggplot
 #' @export
 #' @rdname getForestPlot

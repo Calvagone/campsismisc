@@ -8,7 +8,8 @@
 setClass(
   "sensitivity_analysis_item",
   representation(
-    changes="sensitivity_analysis_changes"
+    changes="sensitivity_analysis_changes",
+    label="character"
   ),
   contains="pmx_element"
 )
@@ -35,3 +36,29 @@ setMethod("getName", signature=c("sensitivity_analysis_item"), definition=functi
   names <- x@changes@list %>% purrr::map_chr(~.x@parameter)
   return(paste0(names, collapse="/"))
 })
+
+#_______________________________________________________________________________
+#----                              getLabel                                 ----
+#_______________________________________________________________________________
+
+#' @rdname getLabel
+setMethod("getLabel", signature=c("sensitivity_analysis_item"), definition=function(object, labeled_parameters) {
+  if (!is(labeled_parameters, "labeled_parameters")) {
+    stop("Please provide the labeled parameters")
+  }
+  individualLabels <- object@changes@list %>% purrr::map_chr(.f=function(change) {
+    parameterName <- change %>% getName()
+    parameterLabel <- labeled_parameters[parameterName]
+    if (is.na(parameterLabel)) {
+      parameterLabel <- parameterName
+    }
+    if (change@up_down_as_factor) {
+      return(paste0(parameterLabel, " (×", change@up, ",", "÷", change@down, ")"))
+    } else {
+      return(paste0(parameterLabel, " (", change@up, ",", change@down, ")"))
+    }
+  })
+  
+  return(paste0(individualLabels, collapse=" / "))
+})
+

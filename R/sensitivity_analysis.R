@@ -9,7 +9,8 @@
 setClass(
   "sensitivity_analysis",
   representation(
-    items="sensitivity_analysis_items"
+    items="sensitivity_analysis_items",
+    labeled_parameters="labeled_parameters"
   ),
   contains="oat_analysis",
   prototype=prototype(model=CampsisModel(), dataset=Dataset())
@@ -41,6 +42,11 @@ SensitivityAnalysis <- function(model, output, dataset=NULL, replicates=1L, dest
 
 setMethod("add", signature=c("sensitivity_analysis", "sensitivity_analysis_item"), definition=function(object, x) {
   object@items <- object@items %>% add(x)
+  return(object)
+})
+
+setMethod("add", signature=c("sensitivity_analysis", "labeled_parameters"), definition=function(object, x) {
+  object@labeled_parameters <- x
   return(object)
 })
 

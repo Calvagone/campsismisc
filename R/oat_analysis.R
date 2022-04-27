@@ -216,7 +216,7 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "l
   # browser()
   results <- object@results
   results <- results %>%
-    tidyr::separate(col="SCENARIO", sep=", ", into=c("PARAMETER", "DIRECTION"))
+    tidyr::separate(col="SCENARIO", sep=", ", into=c("ITEM_NAME", "DIRECTION"))
   
   baseline <- object@baseline
   noOfScenarios <- object@items %>% length()
@@ -230,14 +230,29 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "l
   results$CHANGE <- formula(results$VALUE, baseline)
   
   summary <- results %>%
-    dplyr::group_by(dplyr::across(c("PARAMETER", "DIRECTION"))) %>%
+    dplyr::group_by(dplyr::across(c("ITEM_NAME", "DIRECTION"))) %>%
     dplyr::summarise(MED_CHANGE=median(.data$CHANGE), MED_VALUE=median(.data$VALUE)) %>%
-    dplyr::group_by(dplyr::across("PARAMETER")) %>%
+    dplyr::group_by(dplyr::across("ITEM_NAME")) %>%
     dplyr::mutate(MAX_MED_CHANGE=max(abs(.data$MED_CHANGE))) %>%
     dplyr::arrange(abs(.data$MAX_MED_CHANGE)) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(PARAMETER=factor(.data$PARAMETER, levels=unique(.data$PARAMETER)),
-                  DIRECTION=factor(.data$DIRECTION, levels=c("up", "down"), labels=c("Up", "Down")))
+    dplyr::mutate(DIRECTION=factor(.data$DIRECTION, levels=c("up", "down"), labels=c("Up", "Down")))
+  
+  #ITEM_NAME=factor(.data$ITEM_NAME, levels=unique(.data$ITEM_NAME))
+  
+  # Customise item name if sensitivity analysis object
+  if (is(object, "sensitivity_analysis")) {
+    itemNames <- object@items %>% getNames()
+    itemLabels <- object@items@list %>% purrr::map_chr(~.x %>% getLabel(object@labeled_parameters))
+    order <- order(match(itemNames, unique(summary$ITEM_NAME)))
+    itemNames <- itemNames[order]
+    itemLabels <- itemLabels[order]
+    summary <- summary %>%
+      dplyr::mutate(ITEM_NAME=factor(.data$ITEM_NAME, levels=itemNames, labels=itemLabels))
+  } else {
+    summary <- summary %>%
+      dplyr::mutate(ITEM_NAME=factor(.data$ITEM_NAME, levels=unique(.data$ITEM_NAME)))
+  }
   
   target <- ifelse(relative, "MED_CHANGE", "MED_VALUE")
   
@@ -251,7 +266,7 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "l
     scales::trans_new("shift", transform=function(x) x - d, inverse = function(x) x + d)
   }
   
-  plot <- ggplot2::ggplot(summary, ggplot2::aes_string(x="PARAMETER", y=target, fill="DIRECTION", label="LABEL")) +
+  plot <- ggplot2::ggplot(summary, ggplot2::aes_string(x="ITEM_NAME", y=target, fill="DIRECTION", label="LABEL")) +
     ggplot2::coord_flip() +
     ggplot2::geom_bar(stat="identity", position="identity", width=geom_bar_width) +
     ggrepel::geom_text_repel(nudge_y=summary$NUDGE_Y) +

@@ -7,7 +7,7 @@
 SensitivityAnalysisItem(...)
 }
 \arguments{
-\item{...}{all factors}
+\item{...}{all changes}
 }
 \value{
 a sensitivity analysis item

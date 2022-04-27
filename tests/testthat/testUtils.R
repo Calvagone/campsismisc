@@ -4,7 +4,7 @@
 # setwd("C:/prj/campsismisc/tests/")
 # testFolder <- "C:/prj/campsismisc/tests/testthat/"
 
-testFolder <- ""
+testFolder <- "C:/prj/campsismisc/tests/testthat/"
 overwriteNonRegressionFiles <- FALSE
 
 getModel <- function(name) {

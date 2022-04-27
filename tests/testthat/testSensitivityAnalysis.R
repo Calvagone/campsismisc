@@ -2,7 +2,7 @@ library(testthat)
 
 context("Test the sensitivity analysis feature")
 
-source(paste0("", "testUtils.R"))
+source(paste0("C:/prj/campsismisc/tests/testthat/", "testUtils.R"))
 
 test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several replicates)", {
   model <- getModel("metaboliser_effect_on_cl")
@@ -48,11 +48,11 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
   
   object <- SensitivityAnalysis(model=model, dataset=dataset,
                                 output=NcaMetricOutput(campsisnca::Auc(variable="CONC"))) %>%
-    add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("CL", 2)))
+    add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
+    add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
+    add(SensitivityAnalysisItem(Change("VP", up=2, down=2))) %>%
+    add(SensitivityAnalysisItem(Change("Q", up=2, down=2))) %>%
+    add(SensitivityAnalysisItem(Change("CL", up=2, down=2)))
   
   expect_equal(object@items %>% getNames(), c("DUR", "VC", "VP", "Q", "CL"))
   
@@ -60,6 +60,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
   object %>% getForestPlot(relative=FALSE)
+  object %>% getTornadoPlot(relative=TRUE)
   object %>% getTornadoPlot(relative=FALSE)
 })
 
@@ -78,11 +79,11 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax", {
   
   object <- SensitivityAnalysis(model=model, dataset=dataset,
                                 output=NcaMetricOutput(campsisnca::Cmax(variable="CONC")), replicates=10) %>%
-    add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
-    add(SensitivityAnalysisItem(Factor("CL", 2)))
+    add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
+    add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
+    add(SensitivityAnalysisItem(Change("VP", up=2, down=2))) %>%
+    add(SensitivityAnalysisItem(Change("Q", up=2, down=2))) %>%
+    add(SensitivityAnalysisItem(Change("CL", up=2, down=2)))
   
   expect_equal(object@items %>% getNames(), c("DUR", "VC", "VP", "Q", "CL"))
   
@@ -90,4 +91,5 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax", {
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
   object %>% getForestPlot()
+  object %>% getTornadoPlot()
 })

@@ -11,8 +11,8 @@ Collate:
     'forest_plot_item.R'
     'forest_plot_items.R'
     'forest_plot.R'
-    'sensitivity_analysis_factor.R'
-    'sensitivity_analysis_factors.R'
+    'sensitivity_analysis_change.R'
+    'sensitivity_analysis_changes.R'
     'sensitivity_analysis_item.R'
     'sensitivity_analysis_items.R'
     'sensitivity_analysis.R'
@@ -23,13 +23,13 @@ Authors@R: c(
   )
 Description: Campsis miscellaneous: a bunch of useful wrapper & helper functions.
 Depends: R (>= 4.0.0), campsismod, campsis, campsisnca
-Imports: assertthat, dplyr, ggplot2, purrr, tibble, tidyr
+Imports: assertthat, dplyr, ggrepel, ggplot2, purrr, tibble, tidyr
 License: file LICENSE
 Encoding: UTF-8
 Language: en-US
 LazyData: true
 Suggests: devtools, knitr, pkgdown, rmarkdown, roxygen2, testthat
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 URL: https://github.com/Calvagone/campsismisc
 BugReports: https://github.com/Calvagone/campsismisc/issues

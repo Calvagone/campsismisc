@@ -213,38 +213,50 @@ setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "lo
 setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "logical"),
           definition=function(object, relative, show_labels, show_ref,
                               geom_bar_color="#94c0e3", geom_bar_width=0.5, geom_text_nudge_y=1, label_nsig=3, geom_hline_color="grey", ...) {
+  # browser()
   results <- object@results
+  results <- results %>%
+    tidyr::separate(col="SCENARIO", sep=", ", into=c("PARAMETER", "DIRECTION"))
+  
   baseline <- object@baseline
   noOfScenarios <- object@items %>% length()
   formula <-  preprocessFunction(fun=~(.x - .y)*100/.y, name="tornado_plot_fct")
   
-  if (results %>% nrow() > noOfScenarios) {
-    warning("Multiple replicates detected, median value will be used in tornado plot")
-  }
+  # if (results %>% nrow() > noOfScenarios) {
+  #   warning("Multiple replicates detected, median value will be used in tornado plot")
+  # }
   
   # Always compute change from baseline because arrange will always called on the absolute change
   results$CHANGE <- formula(results$VALUE, baseline)
   
   summary <- results %>%
-    dplyr::group_by(dplyr::across("SCENARIO")) %>%
+    dplyr::group_by(dplyr::across(c("PARAMETER", "DIRECTION"))) %>%
     dplyr::summarise(MED_CHANGE=median(.data$CHANGE), MED_VALUE=median(.data$VALUE)) %>%
-    dplyr::arrange(abs(.data$MED_CHANGE)) %>%
-    dplyr::mutate(SCENARIO=factor(SCENARIO, levels=.data$SCENARIO %>% unique()))
+    dplyr::group_by(dplyr::across("PARAMETER")) %>%
+    dplyr::mutate(MAX_MED_CHANGE=max(abs(.data$MED_CHANGE))) %>%
+    dplyr::arrange(abs(.data$MAX_MED_CHANGE)) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(PARAMETER=factor(.data$PARAMETER, levels=unique(.data$PARAMETER)),
+                  DIRECTION=factor(.data$DIRECTION, levels=c("up", "down"), labels=c("Up", "Down")))
   
   target <- ifelse(relative, "MED_CHANGE", "MED_VALUE")
   
   # Label
   summary$LABEL <- paste0(signif(summary %>% dplyr::pull(target), digits=label_nsig))
   
+  # Nudge y-axis
+  summary$NUDGE_Y <- ifelse(summary$MED_CHANGE > 0, geom_text_nudge_y, -geom_text_nudge_y)
+  
   shift_trans = function(d=0) {
     scales::trans_new("shift", transform=function(x) x - d, inverse = function(x) x + d)
   }
   
-  plot <- ggplot2::ggplot(summary, ggplot2::aes_string(x="SCENARIO", y=target, label="LABEL")) +
+  plot <- ggplot2::ggplot(summary, ggplot2::aes_string(x="PARAMETER", y=target, fill="DIRECTION", label="LABEL")) +
     ggplot2::coord_flip() +
-    ggplot2::geom_bar(stat="identity", position="identity", width=geom_bar_width, color=geom_bar_color, fill=geom_bar_color) +
-    ggplot2::geom_text(nudge_y=geom_text_nudge_y) +
-    ggplot2::xlab(NULL)
+    ggplot2::geom_bar(stat="identity", position="identity", width=geom_bar_width) +
+    ggrepel::geom_text_repel(nudge_y=summary$NUDGE_Y) +
+    ggplot2::xlab(NULL) +
+    ggplot2::labs(fill="Direction")
   
   if (show_ref) {
     plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 0,  baseline), color=geom_hline_color)

@@ -54,19 +54,33 @@ setMethod("createScenarios", signature=c("sensitivity_analysis"), definition=fun
   items <- object@items
   
   for (item in items@list) {
-    factors <-  item@factors
-    model_ <- model
-    for (factor in factors@list) {
-      name <- factor %>% getName()
+    changes <-  item@changes
+    modelUp <- model # First direction of tornado plot (direction up)
+    modelDown <- model # Other direction of tornado plot (direction down)
+    
+    for (change in changes@list) {
+      name <- change %>% getName()
       equation <- model %>% find(Equation(name))
       if (is.null(equation)) {
         stop(paste0("Equation ", name, " cannot be found in model"))
       }
-      equation@rhs <- paste0("(", equation@rhs, ") * ", factor@multiplier)
-      model_ <- model_ %>% campsismod::replace(equation)
+      equationUp <- equation
+      equationDown <- equation
+      if (change@up_down_as_factor) {
+        equationUp@rhs <- paste0("(", equationUp@rhs, ") * ", change@up) # Multiplication
+        equationDown@rhs <- paste0("(", equationDown@rhs, ") / ", change@down) # Division
+      } else {
+        # Use values as is
+        equationUp@rhs <- change@up
+        equationDown@rhs <- change@down
+      }
+
+      modelUp <- modelUp %>% campsismod::replace(equationUp)
+      modelDown <- modelDown %>% campsismod::replace(equationDown)
     }
     scenarios <- scenarios %>%
-      add(Scenario(name=item %>% getName(), model=model_))
+      add(Scenario(name=paste0(item %>% getName(), ", up"), model=modelUp)) %>%
+      add(Scenario(name=paste0(item %>% getName(), ", down"), model=modelDown))
   }
   return(scenarios)
 })

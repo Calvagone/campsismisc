@@ -213,35 +213,40 @@ setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "lo
 setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "logical"),
           definition=function(object, relative, show_labels, show_ref,
                               geom_bar_color="#94c0e3", geom_bar_width=0.5, geom_text_nudge_y=1, label_nsig=3, geom_hline_color="grey", ...) {
-  # browser()
+  isSensitivityAnalysis <- is(object, "sensitivity_analysis")
   results <- object@results
-  results <- results %>%
-    tidyr::separate(col="SCENARIO", sep=", ", into=c("ITEM_NAME", "DIRECTION"))
+  
+  # Tornado plots are bidirectional, forest plots arent't
+  if (isSensitivityAnalysis) {
+    results <- results %>%
+      tidyr::separate(col="SCENARIO", sep=", ", into=c("ITEM_NAME", "DIRECTION"))
+  } else {
+    results <- results %>%
+      dplyr::mutate(ITEM_NAME=.data$SCENARIO, DIRECTION="up")
+  }
   
   baseline <- object@baseline
   noOfScenarios <- object@items %>% length()
   formula <-  preprocessFunction(fun=~(.x - .y)*100/.y, name="tornado_plot_fct")
   
-  # if (results %>% nrow() > noOfScenarios) {
-  #   warning("Multiple replicates detected, median value will be used in tornado plot")
-  # }
+  if ("replicate" %in% colnames(results)) {
+    warning("Multiple replicates detected, median value will be used in tornado plot")
+  }
   
   # Always compute change from baseline because arrange will always called on the absolute change
   results$CHANGE <- formula(results$VALUE, baseline)
   
   summary <- results %>%
     dplyr::group_by(dplyr::across(c("ITEM_NAME", "DIRECTION"))) %>%
-    dplyr::summarise(MED_CHANGE=median(.data$CHANGE), MED_VALUE=median(.data$VALUE)) %>%
+    dplyr::summarise(MED_CHANGE=median(.data$CHANGE), MED_VALUE=median(.data$VALUE)) %>% # If several replicates
     dplyr::group_by(dplyr::across("ITEM_NAME")) %>%
     dplyr::mutate(MAX_MED_CHANGE=max(abs(.data$MED_CHANGE))) %>%
     dplyr::arrange(abs(.data$MAX_MED_CHANGE)) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(DIRECTION=factor(.data$DIRECTION, levels=c("up", "down"), labels=c("Up", "Down")))
   
-  #ITEM_NAME=factor(.data$ITEM_NAME, levels=unique(.data$ITEM_NAME))
-  
-  # Customise item name if sensitivity analysis object
-  if (is(object, "sensitivity_analysis")) {
+  # Customize item name if sensitivity analysis object
+  if (isSensitivityAnalysis) {
     itemNames <- object@items %>% getNames()
     itemLabels <- object@items@list %>% purrr::map_chr(~.x %>% getLabel(object@labeled_parameters))
     order <- order(match(itemNames, unique(summary$ITEM_NAME)))
@@ -263,7 +268,7 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "l
   summary$NUDGE_Y <- ifelse(summary$MED_CHANGE > 0, geom_text_nudge_y, -geom_text_nudge_y)
   
   shift_trans = function(d=0) {
-    scales::trans_new("shift", transform=function(x) x - d, inverse = function(x) x + d)
+    scales::trans_new("shift", transform=function(x) x - d, inverse=function(x) x + d)
   }
   
   plot <- ggplot2::ggplot(summary, ggplot2::aes_string(x="ITEM_NAME", y=target, fill="DIRECTION", label="LABEL")) +

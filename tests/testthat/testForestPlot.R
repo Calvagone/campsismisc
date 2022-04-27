@@ -23,6 +23,8 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (RxODE/mrgsolve)", {
   oatAnalysisRegressionTest(object=object, filename=regFilename)
   object %>% getForestPlot() + 
     ggplot2::scale_y_continuous(breaks=c(0.8,1,1.25), limits=c(0.5, 1.5))
+  # A tornado plot should work as well but a warning is thrown because it has more than 1 replicate
+  expect_warning(object %>% getTornadoPlot(), regexp="Multiple replicates detected") 
   
   # Mrgsolve
   object@dest <- "mrgsolve"

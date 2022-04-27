@@ -77,8 +77,8 @@ setMethod("createScenarios", signature=c("sensitivity_analysis"), definition=fun
         equationDown@rhs <- paste0("(", equationDown@rhs, ") / ", change@down) # Division
       } else {
         # Use values as is
-        equationUp@rhs <- change@up
-        equationDown@rhs <- change@down
+        equationUp@rhs <- change@up %>% as.character()
+        equationDown@rhs <- change@down %>% as.character()
       }
 
       modelUp <- modelUp %>% campsismod::replace(equationUp)

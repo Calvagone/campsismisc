@@ -139,20 +139,20 @@ fp %>% getForestPlot() +
 
 Assume the same 2-compartment model. Let's see how the model parameters influence AUC if they are multiplied by two. This can be achieved with a one-at-a-time (OAT)-method-based sensitivity analysis. Most of the time, these analyses are done without parameter uncertainty (replicates=1, by default) and represented with tornado plots, as shown below. However if parameter uncertainty is used, you can still call `getForestPlot()` on this new type of object.
 
-```{r sensibility_analysis_auc_example , fig.align='center', fig.height=3, fig.width=6, message=F}
+```{r sensibility_analysis_auc_example , fig.align='center', fig.height=3, fig.width=8, message=F}
 dataset <- Dataset(1) %>%
   add(Infusion(time=0, amount=1000, compartment=1)) %>%
-  add(Observations(times=0:24)) %>%
+  add(Observations(times=seq(0, 24, by=0.1))) %>%
   add(Covariate("METAB", 0)) %>%
   add(Covariate("WT", 70))
 
 object <- SensitivityAnalysis(model=model, dataset=dataset,
                      output=NcaMetricOutput(campsisnca::Auc(variable="CONC"))) %>%
-  add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("CL", 2)))
+  add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("VP", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("Q", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("CL", up=2, down=2)))
 
 object <- object %>% prepare()
 object %>% getTornadoPlot()
@@ -160,26 +160,27 @@ object %>% getTornadoPlot()
 
 Absolute values may also be shown:
 
-```{r sensibility_analysis_auc_example_absolute , fig.align='center', fig.height=3, fig.width=6, message=F}
+```{r sensibility_analysis_auc_example_absolute , fig.align='center', fig.height=3, fig.width=8, message=F}
 object %>% getTornadoPlot(relative=FALSE)
 ```
 
-Let's do the same exercise on Cmax.
+Let's do the same exercise on Cmax. Let's also show how parameters can be labelled.
 
-```{r sensibility_analysis_cmax_example , fig.align='center', fig.height=3, fig.width=6, message=F}
+```{r sensibility_analysis_cmax_example , fig.align='center', fig.height=3, fig.width=8, message=F}
 dataset <- Dataset(1) %>%
   add(Infusion(time=0, amount=1000, compartment=1)) %>%
-  add(Observations(times=0:24)) %>%
+  add(Observations(times=seq(0, 24, by=0.1))) %>%
   add(Covariate("METAB", 0)) %>%
   add(Covariate("WT", 70))
 
 object <- SensitivityAnalysis(model=model, dataset=dataset,
                      output=NcaMetricOutput(campsisnca::Cmax(variable="CONC"))) %>%
-  add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("CL", 2)))
+  add(LabeledParameters(c(DUR="Duration", VC="Central volume", VP="Peripheral volume", Q="Inter-compartmental\nclearance", CL="Clearance"))) %>%
+  add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("VP", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("Q", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("CL", up=2.5, down=10, upDownAsFactor=FALSE))) # Test a clearance of 2.5 and 10
 
 object <- object %>% prepare()
 object %>% getTornadoPlot()

@@ -119,7 +119,10 @@ outfunNCA <- function(metric, x) {
 
 #' @rdname prepare
 setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
-  model <- object@model
+  # Fix IIV, VARCOV_OMEGA, VARCOV_SIGMA at the beginning!
+  # This way, calling disable is not needed in the scenarios
+  model <- object@model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA"))
+  
   base_dataset <- object@dataset
   if (is(object, "forest_plot")) {
     base_dataset <- base_dataset %>% add(object@labeled_covariates@list)
@@ -131,7 +134,7 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   seed <- 1
   
   # Compute and store baseline value
-  base_scenario <- simulate(model=model %>% disable(c("IIV")), dataset=base_dataset, seed=seed)
+  base_scenario <- simulate(model=model, dataset=base_dataset, seed=seed)
   baseline <- base_scenario %>% computeBaseline(output=output)
   object@baseline <- baseline
   
@@ -144,8 +147,7 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   if (is(output, "nca_metric_output")) {
     outfun <- function(x) {outfunNCA(metric=output@metric, x=output@filter(x))}
   }
-  results <- simulate(model=model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA")),
-                      dataset=base_dataset, scenarios=scenarios, replicates=replicates,
+  results <- simulate(model=model, dataset=base_dataset, scenarios=scenarios, replicates=replicates,
                       seed=seed, dest=dest, outvars=outvars, outfun=outfun) %>% postProcessScenarios(output=output)
   
   # Store results

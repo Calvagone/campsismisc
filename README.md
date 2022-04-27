@@ -261,17 +261,17 @@ this new type of object.
 ``` r
 dataset <- Dataset(1) %>%
   add(Infusion(time=0, amount=1000, compartment=1)) %>%
-  add(Observations(times=0:24)) %>%
+  add(Observations(times=seq(0, 24, by=0.1))) %>%
   add(Covariate("METAB", 0)) %>%
   add(Covariate("WT", 70))
 
 object <- SensitivityAnalysis(model=model, dataset=dataset,
                      output=NcaMetricOutput(campsisnca::Auc(variable="CONC"))) %>%
-  add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("CL", 2)))
+  add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("VP", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("Q", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("CL", up=2, down=2)))
 
 object <- object %>% prepare()
 object %>% getTornadoPlot()
@@ -287,22 +287,24 @@ object %>% getTornadoPlot(relative=FALSE)
 
 <img src="README_files/figure-gfm/sensibility_analysis_auc_example_absolute -1.png" style="display: block; margin: auto;" />
 
-Let’s do the same exercise on Cmax.
+Let’s do the same exercise on Cmax. Let’s also show how parameters can
+be labelled.
 
 ``` r
 dataset <- Dataset(1) %>%
   add(Infusion(time=0, amount=1000, compartment=1)) %>%
-  add(Observations(times=0:24)) %>%
+  add(Observations(times=seq(0, 24, by=0.1))) %>%
   add(Covariate("METAB", 0)) %>%
   add(Covariate("WT", 70))
 
 object <- SensitivityAnalysis(model=model, dataset=dataset,
                      output=NcaMetricOutput(campsisnca::Cmax(variable="CONC"))) %>%
-  add(SensitivityAnalysisItem(Factor("DUR", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("VC", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("VP", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("Q", 2))) %>%
-  add(SensitivityAnalysisItem(Factor("CL", 2)))
+  add(LabeledParameters(c(DUR="Duration", VC="Central volume", VP="Peripheral volume", Q="Inter-compartmental\nclearance", CL="Clearance"))) %>%
+  add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("VP", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("Q", up=2, down=2))) %>%
+  add(SensitivityAnalysisItem(Change("CL", up=2.5, down=10, upDownAsFactor=FALSE))) # Test a clearance of 2.5 and 10
 
 object <- object %>% prepare()
 object %>% getTornadoPlot()

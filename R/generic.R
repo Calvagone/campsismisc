@@ -88,7 +88,7 @@ setGeneric("getForestPlot", function(object, relative=NULL, show_labels=NULL, sh
 #' @param relative relative change or absolute value, logical
 #' @param show_labels show the numeric labels
 #' @param show_ref show vertical reference (at 0 or at the baseline) 
-#' @param ... extra arguments like 'geom_bar_color', 'geom_bar_width', 'geom_text_nudge_y', 'label_nsig', 'geom_hline_color'
+#' @param ... extra arguments like 'geom_bar_width', 'geom_text_nudge_y', 'label_nsig', 'geom_hline_color', 'geom_text_size'
 #' @return ggplot
 #' @export
 #' @rdname getTornadoPlot

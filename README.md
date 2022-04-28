@@ -231,7 +231,7 @@ Let’s produce one more plot with Cmax on day 1.
 
 ``` r
 fp <- ForestPlot(model=model, dataset=dataset, 
-                       output=NcaMetricOutput(campsisnca::Cmax(variable="CONC"), filter=~timerange(.x, min=0, max=24)), replicates=100) %>%
+                       output=NcaMetricOutput(Cmax(variable="CONC"), filter=~timerange(.x, min=0, max=24)), replicates=100) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
@@ -266,7 +266,7 @@ dataset <- Dataset(1) %>%
   add(Covariate("WT", 70))
 
 object <- SensitivityAnalysis(model=model, dataset=dataset,
-                     output=NcaMetricOutput(campsisnca::Auc(variable="CONC"))) %>%
+                     output=NcaMetricOutput(Auc(variable="CONC"))) %>%
   add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
   add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
   add(SensitivityAnalysisItem(Change("VP", up=2, down=2))) %>%
@@ -298,7 +298,7 @@ dataset <- Dataset(1) %>%
   add(Covariate("WT", 70))
 
 object <- SensitivityAnalysis(model=model, dataset=dataset,
-                     output=NcaMetricOutput(campsisnca::Cmax(variable="CONC"))) %>%
+                     output=NcaMetricOutput(Cmax(variable="CONC"))) %>%
   add(LabeledParameters(c(DUR="Duration", VC="Central volume", VP="Peripheral volume", Q="Inter-compartmental\nclearance", CL="Clearance"))) %>%
   add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
   add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%

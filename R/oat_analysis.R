@@ -214,11 +214,11 @@ setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "lo
 #' @rdname getTornadoPlot
 setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "logical"),
           definition=function(object, relative, show_labels, show_ref,
-                              geom_bar_color="#94c0e3", geom_bar_width=0.5, geom_text_nudge_y=1, label_nsig=3, geom_hline_color="grey", ...) {
+                              geom_bar_width=0.5, geom_text_nudge_y=1, label_nsig=3, geom_hline_color="grey", geom_text_size=3, ...) {
   isSensitivityAnalysis <- is(object, "sensitivity_analysis")
   results <- object@results
   
-  # Tornado plots are bidirectional, forest plots arent't
+  # Tornado plots are bidirectional, forest plots aren't
   if (isSensitivityAnalysis) {
     results <- results %>%
       tidyr::separate(col="SCENARIO", sep=", ", into=c("ITEM_NAME", "DIRECTION"))
@@ -276,7 +276,7 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "l
   plot <- ggplot2::ggplot(summary, ggplot2::aes_string(x="ITEM_NAME", y=target, fill="DIRECTION", label="LABEL")) +
     ggplot2::coord_flip() +
     ggplot2::geom_bar(stat="identity", position="identity", width=geom_bar_width) +
-    ggrepel::geom_text_repel(nudge_y=summary$NUDGE_Y) +
+    ggrepel::geom_text_repel(nudge_y=summary$NUDGE_Y, size=geom_text_size) +
     ggplot2::xlab(NULL) +
     ggplot2::labs(fill="Direction")
   

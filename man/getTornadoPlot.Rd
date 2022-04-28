@@ -18,11 +18,11 @@ getTornadoPlot(
   relative,
   show_labels,
   show_ref,
-  geom_bar_color = "#94c0e3",
   geom_bar_width = 0.5,
   geom_text_nudge_y = 1,
   label_nsig = 3,
   geom_hline_color = "grey",
+  geom_text_size = 3,
   ...
 )
 }
@@ -35,7 +35,7 @@ getTornadoPlot(
 
 \item{show_ref}{show vertical reference (at 0 or at the baseline)}
 
-\item{...}{extra arguments like 'geom_bar_color', 'geom_bar_width', 'geom_text_nudge_y', 'label_nsig', 'geom_hline_color'}
+\item{...}{extra arguments like 'geom_bar_width', 'geom_text_nudge_y', 'label_nsig', 'geom_hline_color', 'geom_text_size'}
 }
 \value{
 ggplot

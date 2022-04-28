@@ -56,6 +56,9 @@ setMethod("add", signature=c("sensitivity_analysis", "labeled_parameters"), defi
 
 #' @rdname createScenarios
 setMethod("createScenarios", signature=c("sensitivity_analysis"), definition=function(object, model, ...) {
+  # Note, IIV, VARCOV_OMEGA, VARCOV_SIGMA was already disabled in the given model, see oat_analysis.R, prepare()
+  # Because simulations are not replicated, variance-covariance matrix is not used by default in CAMPSIS
+  # If sensitivity analysis is replicated, then theta uncertainty is taken into account.
   scenarios <- Scenarios()
   items <- object@items
   

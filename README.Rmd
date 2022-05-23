@@ -180,7 +180,7 @@ object <- SensitivityAnalysis(model=model, dataset=dataset,
   add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
   add(SensitivityAnalysisItem(Change("VP", up=2, down=2))) %>%
   add(SensitivityAnalysisItem(Change("Q", up=2, down=2))) %>%
-  add(SensitivityAnalysisItem(Change("CL", up=2.5, down=10, upDownAsFactor=FALSE))) # Test a clearance of 2.5 and 10
+  add(SensitivityAnalysisItem(Change("CL", up=10, down=2.5, upDownAsFactor=FALSE))) # Test a clearance of 2.5 and 10
 
 object <- object %>% prepare()
 object %>% getTornadoPlot()

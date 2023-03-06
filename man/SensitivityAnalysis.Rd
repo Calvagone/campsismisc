@@ -9,7 +9,8 @@ SensitivityAnalysis(
   output,
   dataset = NULL,
   replicates = 1L,
-  dest = "RxODE"
+  dest = "mrgsolve",
+  settings
 )
 }
 \arguments{
@@ -22,7 +23,9 @@ and single observation at time 0 is created}
 
 \item{replicates}{number of replicates}
 
-\item{dest}{destination engine: 'RxODE' or 'mrgsolve'}
+\item{dest}{destination engine: rxode2, RxODE or mrgsolve (default)}
+
+\item{settings}{simulation settings}
 }
 \value{
 an empty OAT-based sensibility analysis object

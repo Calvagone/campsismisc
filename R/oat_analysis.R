@@ -14,6 +14,7 @@ setClass(
     output="oat_analysis_output",
     replicates="integer",
     dest="character",
+    settings="simulation_settings",
     baseline="numeric", # transient
     results="data.frame" # transient
   ),
@@ -148,7 +149,7 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
     outfun <- function(x) {outfunNCA(metric=output@metric, x=output@filter(x))}
   }
   results <- simulate(model=model, dataset=base_dataset, scenarios=scenarios, replicates=replicates,
-                      seed=seed, dest=dest, outvars=outvars, outfun=outfun) %>% postProcessScenarios(output=output)
+                      seed=seed, dest=dest, outvars=outvars, outfun=outfun, settings=object@settings) %>% postProcessScenarios(output=output)
   
   # Store results
   object@results <- results

@@ -23,16 +23,17 @@ setClass(
 #' @param dataset CAMPSIS dataset, if NULL, minimalist dataset with 1 subject 
 #' and single observation at time 0 is created
 #' @param replicates number of replicates
-#' @param dest destination engine: 'RxODE' or 'mrgsolve'
+#' @param dest destination engine: rxode2, RxODE or mrgsolve (default)
+#' @param settings simulation settings
 #' @return an empty OAT-based sensibility analysis object
 #' @export
-SensitivityAnalysis <- function(model, output, dataset=NULL, replicates=1L, dest="RxODE") {
+SensitivityAnalysis <- function(model, output, dataset=NULL, replicates=1L, dest="mrgsolve", settings=Settings()) {
   if (is.null(dataset)) {
     dataset <- Dataset(1) %>%
       add(Observations(times=0))
   }
   return(new("sensitivity_analysis", model=model, dataset=dataset, output=output,
-             replicates=as.integer(replicates), dest=dest))
+             replicates=as.integer(replicates), dest=dest, settings=settings))
 }
 
 #_______________________________________________________________________________

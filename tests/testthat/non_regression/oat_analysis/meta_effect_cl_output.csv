@@ -1,41 +1,41 @@
-"replicate","SCENARIO","VALUE"
-1,"Metaboliser: Slow",5.3
-1,"Metaboliser: Fast",7.52
-1,"Weight: 60 kg",5.3
-1,"Weight: 80 kg",5.3
-2,"Metaboliser: Slow",5.36
-2,"Metaboliser: Fast",6.71
-2,"Weight: 60 kg",5.36
-2,"Weight: 80 kg",5.36
-3,"Metaboliser: Slow",5.11
-3,"Metaboliser: Fast",7.16
-3,"Weight: 60 kg",5.11
-3,"Weight: 80 kg",5.11
-4,"Metaboliser: Slow",5
-4,"Metaboliser: Fast",6.93
-4,"Weight: 60 kg",5
-4,"Weight: 80 kg",5
-5,"Metaboliser: Slow",5.07
-5,"Metaboliser: Fast",6.61
-5,"Weight: 60 kg",5.07
-5,"Weight: 80 kg",5.07
-6,"Metaboliser: Slow",5.21
-6,"Metaboliser: Fast",5.89
-6,"Weight: 60 kg",5.21
-6,"Weight: 80 kg",5.21
-7,"Metaboliser: Slow",5.02
-7,"Metaboliser: Fast",5.9
-7,"Weight: 60 kg",5.02
-7,"Weight: 80 kg",5.02
-8,"Metaboliser: Slow",5.54
-8,"Metaboliser: Fast",7
-8,"Weight: 60 kg",5.54
-8,"Weight: 80 kg",5.54
-9,"Metaboliser: Slow",5.4
-9,"Metaboliser: Fast",6.95
-9,"Weight: 60 kg",5.4
-9,"Weight: 80 kg",5.4
-10,"Metaboliser: Slow",5.02
-10,"Metaboliser: Fast",7.61
-10,"Weight: 60 kg",5.02
-10,"Weight: 80 kg",5.02
+"replicate","VALUE","SCENARIO"
+1,5.3,"Metaboliser: Slow"
+1,7.52,"Metaboliser: Fast"
+1,5.3,"Weight: 60 kg"
+1,5.3,"Weight: 80 kg"
+2,5.36,"Metaboliser: Slow"
+2,6.71,"Metaboliser: Fast"
+2,5.36,"Weight: 60 kg"
+2,5.36,"Weight: 80 kg"
+3,5.11,"Metaboliser: Slow"
+3,7.16,"Metaboliser: Fast"
+3,5.11,"Weight: 60 kg"
+3,5.11,"Weight: 80 kg"
+4,5,"Metaboliser: Slow"
+4,6.93,"Metaboliser: Fast"
+4,5,"Weight: 60 kg"
+4,5,"Weight: 80 kg"
+5,5.07,"Metaboliser: Slow"
+5,6.61,"Metaboliser: Fast"
+5,5.07,"Weight: 60 kg"
+5,5.07,"Weight: 80 kg"
+6,5.21,"Metaboliser: Slow"
+6,5.89,"Metaboliser: Fast"
+6,5.21,"Weight: 60 kg"
+6,5.21,"Weight: 80 kg"
+7,5.02,"Metaboliser: Slow"
+7,5.9,"Metaboliser: Fast"
+7,5.02,"Weight: 60 kg"
+7,5.02,"Weight: 80 kg"
+8,5.54,"Metaboliser: Slow"
+8,7,"Metaboliser: Fast"
+8,5.54,"Weight: 60 kg"
+8,5.54,"Weight: 80 kg"
+9,5.4,"Metaboliser: Slow"
+9,6.95,"Metaboliser: Fast"
+9,5.4,"Weight: 60 kg"
+9,5.4,"Weight: 80 kg"
+10,5.02,"Metaboliser: Slow"
+10,7.61,"Metaboliser: Fast"
+10,5.02,"Weight: 60 kg"
+10,5.02,"Weight: 80 kg"

@@ -102,9 +102,10 @@ setGeneric("postProcessScenarios", function(object, output) {
 setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), definition=function(object, output) {
   outputName <- output %>% getName()
   results <- object %>%
-    dplyr::select(dplyr::all_of(c("replicate", "SCENARIO", outputName))) %>%
+    dplyr::select(dplyr::any_of("replicate"), dplyr::all_of(c("SCENARIO", outputName))) %>%
     tidyr::unnest(cols=outputName) %>%
-    dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev()))
+    dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev())) %>%
+    dplyr::relocate(dplyr::any_of(c("replicate", "id", "VALUE", "SCENARIO")))
   return(results)
 })
 

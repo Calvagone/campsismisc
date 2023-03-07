@@ -18,7 +18,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
   spaghettiPlot(results, "CONC")
   
   object <- SensitivityAnalysis(model=model, dataset=dataset,
-                       output=NcaMetricOutput(campsisnca::Auc(variable="CONC")), replicates=10) %>%
+                       outputs=NcaMetricOutput(campsisnca::Auc(variable="CONC")), replicates=10) %>%
     add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
     add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
     add(SensitivityAnalysisItem(Change("VP", up=2, down=2))) %>%
@@ -27,7 +27,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
     
   expect_equal(object@items %>% getNames(), c("DUR", "VC", "VP", "Q", "CL"))
   
-  # RxODE
+  # Mrgsolve only
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
   object %>% getForestPlot(relative=FALSE)
@@ -48,7 +48,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
   spaghettiPlot(results, "CONC")
   
   object <- SensitivityAnalysis(model=model, dataset=dataset,
-                                output=NcaMetricOutput(campsisnca::Auc(variable="CONC"))) %>%
+                                outputs=NcaMetricOutput(campsisnca::Auc(variable="CONC"))) %>%
     add(LabeledParameters(c(DUR="Duration", VC="Central volume", VP="Peripheral volume", Q="Inter-compartmental clearance", CL="Clearance"))) %>%
     add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
     add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
@@ -58,7 +58,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
   
   expect_equal(object@items %>% getNames(), c("DUR", "VC", "VP", "Q", "CL"))
   
-  # RxODE
+  # Mrgsolve only
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
   object %>% getForestPlot(relative=FALSE)
@@ -80,7 +80,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax", {
   spaghettiPlot(results, "CONC")
   
   object <- SensitivityAnalysis(model=model, dataset=dataset,
-                                output=NcaMetricOutput(campsisnca::Cmax(variable="CONC")), replicates=10) %>%
+                                outputs=NcaMetricOutput(campsisnca::Cmax(variable="CONC")), replicates=10) %>%
     add(LabeledParameters(c(DUR="Duration", VC="Central volume", VP="Peripheral volume", Q="Inter-compartmental clearance", CL="Clearance"))) %>%
     add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
     add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
@@ -90,7 +90,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax", {
   
   expect_equal(object@items %>% getNames(), c("DUR", "VC", "VP", "Q", "CL"))
   
-  # RxODE
+  # Mrgsolve only
   object <- object %>% prepare()
   oatAnalysisRegressionTest(object=object, filename=regFilename)
   object %>% getForestPlot()

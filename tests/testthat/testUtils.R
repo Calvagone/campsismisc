@@ -15,9 +15,11 @@ getModel <- function(name) {
 #' 
 #' @param object OAT analysis object
 #' @param filename filename of expected results
+#' @param index output index to be checked
 #'
-oatAnalysisRegressionTest <- function(object, filename) {
-  results <- object@results %>%
+oatAnalysisRegressionTest <- function(object, filename, index=1) {
+  iResults <- object@results@list[[index]]
+  results <- iResults@results %>%
     dplyr::mutate_if(is.factor, as.character) %>%
     dplyr::mutate_if(is.numeric, round, digits=2)
   

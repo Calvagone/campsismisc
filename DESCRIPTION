@@ -1,5 +1,40 @@
-Package: campsismisc
 Type: Package
+Package: campsismisc
+Title: CAMPSIS Miscellaneous Package
+Version: 0.2.0
+Authors@R: 
+    person("Nicolas", "Luyckx", , "nicolas.luyckx@calvagone.com", role = c("aut", "cre"))
+Description: Campsis miscellaneous: a bunch of useful wrapper & helper
+    functions.
+License: file LICENSE
+URL: https://github.com/Calvagone/campsismisc
+BugReports: https://github.com/Calvagone/campsismisc/issues
+Depends: 
+    campsis (>= 1.4.0),
+    campsismod (>= 1.0.0),
+    campsisnca,
+    R (>= 4.0.0)
+Imports: 
+    assertthat,
+    dplyr,
+    ggplot2,
+    ggrepel,
+    purrr,
+    tibble,
+    tidyr
+Suggests: 
+    devtools,
+    knitr,
+    pkgdown,
+    rmarkdown,
+    roxygen2,
+    testthat
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+Language: en-US
+LazyData: true
+RoxygenNote: 7.1.2
 Collate:
     'check.R'
     'utilities.R'
@@ -17,20 +52,3 @@ Collate:
     'sensitivity_analysis_item.R'
     'sensitivity_analysis_items.R'
     'sensitivity_analysis.R'
-Title: CAMPSIS Miscellaneous Package
-Version: 0.1.0
-Authors@R: c(
-  person("Nicolas", "Luyckx", role = c("aut", "cre"), email = "nicolas.luyckx@calvagone.com")
-  )
-Description: Campsis miscellaneous: a bunch of useful wrapper & helper functions.
-Depends: R (>= 4.0.0), campsismod, campsis, campsisnca
-Imports: assertthat, dplyr, ggrepel, ggplot2, purrr, tibble, tidyr
-License: file LICENSE
-Encoding: UTF-8
-Language: en-US
-LazyData: true
-Suggests: devtools, knitr, pkgdown, rmarkdown, roxygen2, testthat
-RoxygenNote: 7.1.2
-VignetteBuilder: knitr
-URL: https://github.com/Calvagone/campsismisc
-BugReports: https://github.com/Calvagone/campsismisc/issues

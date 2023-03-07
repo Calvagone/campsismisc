@@ -11,12 +11,11 @@ setClass(
   representation(
     model="campsis_model",
     dataset="dataset",
-    output="oat_analysis_output",
+    outputs="oat_analysis_outputs",
     replicates="integer",
     dest="character",
     settings="simulation_settings",
-    baseline="numeric", # transient
-    results="data.frame" # transient
+    results="oat_analysis_results"
   ),
   prototype=prototype(model=CampsisModel(), dataset=Dataset())
 )
@@ -28,8 +27,8 @@ setClass(
 #' Compute baseline.
 #' 
 #' @param object simulation results of the baseline, tibble
-#' @param output plot output
-#' @return the baseline, double
+#' @param output OAT output, one or several
+#' @return the baseline, double or list of double
 #' @export
 #' @rdname computeBaseline
 computeBaseline <- function(object, output) {
@@ -43,7 +42,9 @@ setGeneric("computeBaseline", function(object, output) {
 #' @rdname computeBaseline
 setMethod("computeBaseline", signature=c("tbl_df", "model_parameter_output"), definition=function(object, output) {
   outputName <- output %>% getName()
-  baseline <- object %>% dplyr::pull(outputName)
+  baseline <- object %>% dplyr::pull(outputName) %>% unique()
+  assertthat::assert_that(length(baseline)==1,
+                          msg=paste0("Baseline should be unique for parameter ", outputName))
   return(baseline)
 })
 
@@ -51,6 +52,12 @@ setMethod("computeBaseline", signature=c("tbl_df", "model_parameter_output"), de
 setMethod("computeBaseline", signature=c("tbl_df", "nca_metric_output"), definition=function(object, output) {
   baseline <- outfunNCA(metric=output@metric, x=output@filter(object)) %>% dplyr::pull(VALUE)
   return(baseline)
+})
+
+#' @rdname computeBaseline
+setMethod("computeBaseline", signature=c("tbl_df", "oat_analysis_outputs"), definition=function(object, output) {
+  baselines <- output@list %>% purrr::map(~computeBaseline(object=object, output=.x))
+  return(baselines)
 })
 
 #_______________________________________________________________________________
@@ -92,18 +99,11 @@ setGeneric("postProcessScenarios", function(object, output) {
 })
 
 #' @rdname postProcessScenarios
-setMethod("postProcessScenarios", signature=c("tbl_df", "model_parameter_output"), definition=function(object, output) {
+setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), definition=function(object, output) {
   outputName <- output %>% getName()
   results <- object %>%
-    dplyr::select(c("replicate", "SCENARIO", outputName)) %>%
-    dplyr::rename_at(.vars=outputName, .funs=~"VALUE") %>%
-    dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev()))
-  return(results)
-})
-
-#' @rdname postProcessScenarios
-setMethod("postProcessScenarios", signature=c("tbl_df", "nca_metric_output"), definition=function(object, output) {
-  results <- object %>% 
+    dplyr::select(dplyr::all_of(c("replicate", "SCENARIO", outputName))) %>%
+    tidyr::unnest(cols=outputName) %>%
     dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev()))
   return(results)
 })
@@ -129,30 +129,56 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
     base_dataset <- base_dataset %>% add(object@labeled_covariates@list)
   }
   items <- object@items
-  output <- object@output
+  outputs <- object@outputs
   replicates <- object@replicates
   dest <- object@dest
   seed <- 1
   
-  # Compute and store baseline value
+  # Compute and store baseline value of each output
   base_scenario <- simulate(model=model, dataset=base_dataset, seed=seed)
-  baseline <- base_scenario %>% computeBaseline(output=output)
-  object@baseline <- baseline
+  baselines <- base_scenario %>% computeBaseline(output=outputs)
   
   # Generate scenarios
   scenarios <- object %>% createScenarios(dataset=base_dataset, model=model)
   
-  # Simulation all scenarios
-  outvars <- output %>% getOutvars()
-  outfun <- NULL
-  if (is(output, "nca_metric_output")) {
-    outfun <- function(x) {outfunNCA(metric=output@metric, x=output@filter(x))}
-  }
-  results <- simulate(model=model, dataset=base_dataset, scenarios=scenarios, replicates=replicates,
-                      seed=seed, dest=dest, outvars=outvars, outfun=outfun, settings=object@settings) %>% postProcessScenarios(output=output)
+  # Getting all necessary 'outvars' across all outputs
+  # This in order to make 1 call to the simulate method
+  outvars <- outputs@list %>% purrr::map_chr(~getOutvars(.x)) %>% unique()
   
-  # Store results
-  object@results <- results
+  # Preparing outfun function
+  outfun <- function(x) {
+    retValue <- outputs@list %>% purrr::map_dfc(.f=function(output) {
+      outputName <- output %>% getName()
+      if (is(output, "nca_metric_output")) {
+        myFun <- function(x) {outfunNCA(metric=output@metric, x=output@filter(x))}
+        innerRetValue <- myFun(x)
+      } else if (is(output, "model_parameter_output")) {
+        innerRetValue <- x[, outputName] %>% dplyr::distinct() %>%
+          dplyr::rename(VALUE=!!outputName)
+        assertthat::assert_that(nrow(innerRetValue)==1,
+                                msg=paste0("Parameter ", outputName, " must not change over time"))
+      } else {
+        stop("Only NCA output or model parameter output")
+      }
+      return(tibble::tibble(!!outputName:=list(innerRetValue)))
+    })
+    return(retValue)
+  }
+
+  # Simulate
+  allResults <- simulate(model=model, dataset=base_dataset, scenarios=scenarios, replicates=replicates,
+                      seed=seed, dest=dest, outvars=outvars, outfun=outfun, settings=object@settings)
+  
+  # Post-processing
+  tmpResults <- purrr::map2(.x=outputs@list, .y=baselines, .f=function(output, baseline) {
+    res <- OATResult(output=output, baseline=baseline,
+                     results=postProcessScenarios(object=allResults, output=output))
+    return(res)
+  })
+  
+  # Save
+  object@results <- OATResults() %>%
+    add(tmpResults)
   
   return(object)
 })
@@ -162,18 +188,22 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
 #_______________________________________________________________________________
 
 #' @rdname getForestPlot
-setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "logical", "logical", "numeric", "numeric"),
-          definition=function(object, relative, show_labels, show_ref, show_range, range, ci, 
+setMethod("getForestPlot", signature=c("oat_analysis", "integer", "logical", "logical", "logical", "logical", "numeric", "numeric"),
+          definition=function(object, index, relative, show_labels, show_ref, show_range, range, ci, 
                               geom_label_vjust=0, geom_label_nudge_x=0.15, geom_label_nudge_y=0, geom_label_size=3, label_nsig=3, geom_hline_color="darkblue", ...) {
             
   alpha <- (1-ci)/2
   formula <- preprocessFunction(fun=~.x/.y, name="forest_plot_fct")
+  iResults <- object@results@list[[index]]
+  output <- iResults@output
+  results <- iResults@results
+  baseline <- iResults@baseline
   
   # Recompute VALUE as relative value if relative is TRUE
   if (relative) {
-    object@results$VALUE <- formula(object@results$VALUE, object@baseline)
+    results$VALUE <- formula(results$VALUE, baseline)
   }
-  summary <- object@results %>%
+  summary <- results %>%
     dplyr::group_by(dplyr::across("SCENARIO")) %>%
     dplyr::summarise(LOW=quantile(.data$VALUE, alpha),
                      MED=median(.data$VALUE),
@@ -189,10 +219,10 @@ setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "lo
     ggplot2::geom_errorbar(ggplot2::aes(ymin=LOW, ymax=UP), width=0.2)
 
   if (show_ref) {
-    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 1,  object@baseline), color=geom_hline_color)
+    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 1,  baseline), color=geom_hline_color)
   }
   if (show_range) {
-    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 1,  object@baseline)*range, linetype=2)
+    plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 1,  baseline)*range, linetype=2)
   }
   if (show_labels) {
     # Note when hjust not set, geom_labels are automatically aligned with data
@@ -202,7 +232,7 @@ setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "lo
 
   plot <- plot +
     ggplot2::coord_flip() +
-    ggplot2::ylab(paste0(ifelse(relative, "Relative ", ""), object@output %>% getName())) +
+    ggplot2::ylab(paste0(ifelse(relative, "Relative ", ""), output %>% getName())) +
     ggplot2::xlab(NULL)
   
   return(plot)
@@ -213,11 +243,14 @@ setMethod("getForestPlot", signature=c("oat_analysis", "logical", "logical", "lo
 #_______________________________________________________________________________
 
 #' @rdname getTornadoPlot
-setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "logical"),
-          definition=function(object, relative, show_labels, show_ref,
+setMethod("getTornadoPlot", signature=c("oat_analysis", "integer", "logical", "logical", "logical"),
+          definition=function(object, index, relative, show_labels, show_ref,
                               geom_bar_width=0.5, geom_text_nudge_y=1, label_nsig=3, geom_hline_color="grey", geom_text_size=3, ...) {
   isSensitivityAnalysis <- is(object, "sensitivity_analysis")
-  results <- object@results
+  iResults <- object@results@list[[index]]
+  output <- iResults@output
+  results <- iResults@results
+  baseline <- iResults@baseline
   
   # Tornado plots are bidirectional, forest plots aren't
   if (isSensitivityAnalysis) {
@@ -228,7 +261,6 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "l
       dplyr::mutate(ITEM_NAME=.data$SCENARIO, DIRECTION="up")
   }
   
-  baseline <- object@baseline
   noOfScenarios <- object@items %>% length()
   formula <-  preprocessFunction(fun=~(.x - .y)*100/.y, name="tornado_plot_fct")
   
@@ -290,11 +322,11 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "logical", "logical", "l
   }
   if (relative) {
     plot <- plot +
-      ggplot2::ylab(paste0("Change in ", object@output %>% getName(), " (%)"))
+      ggplot2::ylab(paste0("Change in ", output %>% getName(), " (%)"))
   } else {
     plot <- plot +
       ggplot2::scale_y_continuous(trans=shift_trans(baseline)) +
-      ggplot2::ylab(paste0(object@output %>% getName()))
+      ggplot2::ylab(paste0(output %>% getName()))
   }
   
   return(plot)

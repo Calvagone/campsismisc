@@ -2,19 +2,21 @@
 % Please edit documentation in R/generic.R, R/oat_analysis.R
 \name{getTornadoPlot}
 \alias{getTornadoPlot}
-\alias{getTornadoPlot,oat_analysis,logical,logical,logical-method}
+\alias{getTornadoPlot,oat_analysis,integer,logical,logical,logical-method}
 \title{Get tornado plot.}
 \usage{
 getTornadoPlot(
   object,
+  index = NULL,
   relative = NULL,
   show_labels = NULL,
   show_ref = NULL,
   ...
 )
 
-\S4method{getTornadoPlot}{oat_analysis,logical,logical,logical}(
+\S4method{getTornadoPlot}{oat_analysis,integer,logical,logical,logical}(
   object,
+  index,
   relative,
   show_labels,
   show_ref,
@@ -28,6 +30,8 @@ getTornadoPlot(
 }
 \arguments{
 \item{object}{generic object}
+
+\item{index}{output number, 1 by default}
 
 \item{relative}{relative change or absolute value, logical}
 

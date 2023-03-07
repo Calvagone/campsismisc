@@ -8,7 +8,8 @@
 setClass(
   "oat_analysis_output",
   representation(
-  )
+  ),
+  contains="pmx_element"
 )
 
 #_______________________________________________________________________________

@@ -6,7 +6,7 @@
 \usage{
 ForestPlot(
   model,
-  output,
+  outputs,
   dataset = NULL,
   replicates = 1L,
   dest = "mrgsolve",
@@ -16,7 +16,7 @@ ForestPlot(
 \arguments{
 \item{model}{CAMPSIS model}
 
-\item{output}{output of interest, e.g. 'CL' or a PK metric from campsisnca}
+\item{outputs}{output(s) of interest, e.g. 'CL' or a PK metric from campsisnca or a list of them}
 
 \item{dataset}{CAMPSIS dataset, if NULL, minimalist dataset with 1 subject 
 and single observation at time 0 is created}

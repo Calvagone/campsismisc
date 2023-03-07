@@ -4,6 +4,7 @@
 \alias{computeBaseline}
 \alias{computeBaseline,tbl_df,model_parameter_output-method}
 \alias{computeBaseline,tbl_df,nca_metric_output-method}
+\alias{computeBaseline,tbl_df,oat_analysis_outputs-method}
 \title{Compute baseline.}
 \usage{
 computeBaseline(object, output)
@@ -11,14 +12,16 @@ computeBaseline(object, output)
 \S4method{computeBaseline}{tbl_df,model_parameter_output}(object, output)
 
 \S4method{computeBaseline}{tbl_df,nca_metric_output}(object, output)
+
+\S4method{computeBaseline}{tbl_df,oat_analysis_outputs}(object, output)
 }
 \arguments{
 \item{object}{simulation results of the baseline, tibble}
 
-\item{output}{plot output}
+\item{output}{OAT output, one or several}
 }
 \value{
-the baseline, double
+the baseline, double or list of double
 }
 \description{
 Compute baseline.

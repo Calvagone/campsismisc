@@ -42,6 +42,7 @@ setGeneric("getLabel", function(object, ...) {
 #' Get forest plot.
 #' 
 #' @param object generic object
+#' @param index output number, 1 by default
 #' @param relative relative change or absolute value, logical
 #' @param show_labels show the numeric labels
 #' @param show_ref show vertical reference (at 1 or at the baseline) 
@@ -52,11 +53,16 @@ setGeneric("getLabel", function(object, ...) {
 #' @return ggplot
 #' @export
 #' @rdname getForestPlot
-getForestPlot <- function(object, relative, show_labels, show_ref, show_range, range, ci, ...) {
+getForestPlot <- function(object, index, relative, show_labels, show_ref, show_range, range, ci, ...) {
   stop("No default function is provided")
 }
 
-setGeneric("getForestPlot", function(object, relative=NULL, show_labels=NULL, show_ref=NULL, show_range=NULL, range=NULL, ci=NULL, ...) {
+setGeneric("getForestPlot", function(object, index=NULL, relative=NULL, show_labels=NULL, show_ref=NULL, show_range=NULL, range=NULL, ci=NULL, ...) {
+  if (is.null(index)) {
+    index <- 1L
+  } else {
+    index <- as.integer(index)
+  }
   if (is.null(relative)) {
     relative <- TRUE
   }
@@ -85,6 +91,7 @@ setGeneric("getForestPlot", function(object, relative=NULL, show_labels=NULL, sh
 #' Get tornado plot.
 #' 
 #' @param object generic object
+#' @param index output number, 1 by default
 #' @param relative relative change or absolute value, logical
 #' @param show_labels show the numeric labels
 #' @param show_ref show vertical reference (at 0 or at the baseline) 
@@ -92,11 +99,16 @@ setGeneric("getForestPlot", function(object, relative=NULL, show_labels=NULL, sh
 #' @return ggplot
 #' @export
 #' @rdname getTornadoPlot
-getTornadoPlot <- function(object, relative, show_labels, show_ref, ...) {
+getTornadoPlot <- function(object, index, relative, show_labels, show_ref, ...) {
   stop("No default function is provided")
 }
 
-setGeneric("getTornadoPlot", function(object, relative=NULL, show_labels=NULL, show_ref=NULL, ...) {
+setGeneric("getTornadoPlot", function(object, index=NULL, relative=NULL, show_labels=NULL, show_ref=NULL, ...) {
+  if (is.null(index)) {
+    index <- 1L
+  } else {
+    index <- as.integer(index)
+  }
   if (is.null(relative)) {
     relative <- TRUE
   }

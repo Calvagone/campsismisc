@@ -19,7 +19,7 @@ setClass(
 #' Create a forest plot.
 #'
 #' @param model CAMPSIS model
-#' @param output output of interest, e.g. 'CL' or a PK metric from campsisnca
+#' @param outputs output(s) of interest, e.g. 'CL' or a PK metric from campsisnca or a list of them
 #' @param dataset CAMPSIS dataset, if NULL, minimalist dataset with 1 subject 
 #' and single observation at time 0 is created
 #' @param replicates number of replicates
@@ -27,12 +27,17 @@ setClass(
 #' @param settings simulation settings
 #' @return an empty forest plot
 #' @export
-ForestPlot <- function(model, output, dataset=NULL, replicates=1L, dest="mrgsolve", settings=Settings()) {
+ForestPlot <- function(model, outputs, dataset=NULL, replicates=1L, dest="mrgsolve", settings=Settings()) {
   if (is.null(dataset)) {
     dataset <- Dataset(1) %>%
       add(Observations(times=0))
   }
-  return(new("forest_plot", model=model, dataset=dataset, output=output,
+  if (is(outputs, "oat_analysis_output")) {
+    # Add single output into multiple outputs object
+    outputs <- OATOutputs() %>%
+      add(outputs)
+  }
+  return(new("forest_plot", model=model, dataset=dataset, outputs=outputs,
              replicates=as.integer(replicates), dest=dest, settings=settings))
 }
 

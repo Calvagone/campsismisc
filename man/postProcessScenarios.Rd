@@ -2,15 +2,12 @@
 % Please edit documentation in R/oat_analysis.R
 \name{postProcessScenarios}
 \alias{postProcessScenarios}
-\alias{postProcessScenarios,tbl_df,model_parameter_output-method}
-\alias{postProcessScenarios,tbl_df,nca_metric_output-method}
+\alias{postProcessScenarios,tbl_df,oat_analysis_output-method}
 \title{postProcessScenarios}
 \usage{
 postProcessScenarios(object, output)
 
-\S4method{postProcessScenarios}{tbl_df,model_parameter_output}(object, output)
-
-\S4method{postProcessScenarios}{tbl_df,nca_metric_output}(object, output)
+\S4method{postProcessScenarios}{tbl_df,oat_analysis_output}(object, output)
 }
 \arguments{
 \item{object}{simulation results, tibble}

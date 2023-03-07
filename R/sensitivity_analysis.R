@@ -19,7 +19,7 @@ setClass(
 #' Create an OAT-based sensitivity analysis object.
 #'
 #' @param model CAMPSIS model
-#' @param output output of interest, e.g. 'CL' or a PK metric from campsisnca
+#' @param outputs outputs of interest, e.g. 'CL' or a PK metric from campsisnca or a list of them
 #' @param dataset CAMPSIS dataset, if NULL, minimalist dataset with 1 subject 
 #' and single observation at time 0 is created
 #' @param replicates number of replicates
@@ -27,12 +27,17 @@ setClass(
 #' @param settings simulation settings
 #' @return an empty OAT-based sensibility analysis object
 #' @export
-SensitivityAnalysis <- function(model, output, dataset=NULL, replicates=1L, dest="mrgsolve", settings=Settings()) {
+SensitivityAnalysis <- function(model, outputs, dataset=NULL, replicates=1L, dest="mrgsolve", settings=Settings()) {
   if (is.null(dataset)) {
     dataset <- Dataset(1) %>%
       add(Observations(times=0))
   }
-  return(new("sensitivity_analysis", model=model, dataset=dataset, output=output,
+  if (is(outputs, "oat_analysis_output")) {
+    # Add single output into multiple outputs object
+    outputs <- OATOutputs() %>%
+      add(outputs)
+  }
+  return(new("sensitivity_analysis", model=model, dataset=dataset, outputs=outputs,
              replicates=as.integer(replicates), dest=dest, settings=settings))
 }
 

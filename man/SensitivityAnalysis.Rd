@@ -10,7 +10,7 @@ SensitivityAnalysis(
   dataset = NULL,
   replicates = 1L,
   dest = "mrgsolve",
-  settings
+  settings = Settings()
 )
 }
 \arguments{

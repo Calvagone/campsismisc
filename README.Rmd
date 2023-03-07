@@ -15,6 +15,7 @@ Assume the following estimated 2-compartment model:
 ```{r, message=FALSE}
 library(campsismisc)
 library(campsisnca)
+library(progressr)
 
 model <- read.campsis("tests/testthat/campsis_models/metaboliser_effect_on_cl/")
 model
@@ -26,37 +27,50 @@ This model contains:
 - allometric scaling on central and peripheral volumes with a fixed exponent of 1
 - a variance-covariance matrix
 
+### Configure your simulation settings
+
+```{r}
+# Configure harware
+settings <- Settings(Hardware(cpu=8, replicate_parallel=TRUE))
+dest <- "mrgsolve" # Much faster than RxODE
+
+# Progress bar
+options(progressr.enable=TRUE)
+handlers(campsis::campsis_handler())
+```
+
+
 ### Effect of metabolism effect and weight on a model parameter
 
 Let's show how the metabolism effect and the weight influence the clearance. This can be achieved as follows:
 
 ```{r fp_metabolism_effect_on_cl , fig.align='center', fig.height=4, fig.width=8, message=F}
-fp <- ForestPlot(model=model, output=ModelParameterOutput("CL"), replicates=100) %>%
+fp <- ForestPlot(model=model, output=ModelParameterOutput("CL"), replicates=100, dest=dest, settings=settings) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
     add(ForestPlotItem(Covariate("METAB", 1))) %>%
     add(ForestPlotItem(Covariate("WT", 60))) %>%
     add(ForestPlotItem(Covariate("WT", 80)))
-  
-fp <- fp %>% prepare()
-fp %>% getForestPlot + 
+
+fp <- with_progress({fp %>% prepare()})
+fp %>% getForestPlot +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
 Now, let's see what happens with the central volume. The configuration is identical.
 
 ```{r fp_metabolism_effect_on_vc , fig.align='center', fig.height=4, fig.width=8, message=F}
-fp <- ForestPlot(model=model, output=ModelParameterOutput("VC"), replicates=100) %>%
+fp <- ForestPlot(model=model, output=ModelParameterOutput("VC"), replicates=100, dest=dest, settings=settings) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
     add(ForestPlotItem(Covariate("METAB", 1))) %>%
     add(ForestPlotItem(Covariate("WT", 60))) %>%
     add(ForestPlotItem(Covariate("WT", 80)))
-  
-fp <- fp %>% prepare()
-fp %>% getForestPlot + 
+
+fp <- with_progress({fp %>% prepare()})
+fp %>% getForestPlot +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
@@ -73,17 +87,17 @@ dataset <- Dataset(1) %>%
 Instead of creating a `ModelParameterOutput` object, we create a `NcaMetricOutput` and we use any metric from `campsisnca`. To compute AUC on day 1, we need to provide the appropriate filter function.
 
 ```{r fp_metabolism_effect_on_auc_d1 , fig.align='center', fig.height=4, fig.width=8, message=F}
-fp <- ForestPlot(model=model, dataset=dataset, 
-                       output=NcaMetricOutput(Auc(variable="CONC"), filter=~timerange(.x, min=0, max=24)), replicates=100) %>%
+fp <- ForestPlot(model=model, dataset=dataset, output=NcaMetricOutput(Auc(variable="CONC"), filter=~timerange(.x, min=0, max=24)),
+                 replicates=100, dest=dest, settings=settings) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
     add(ForestPlotItem(Covariate("METAB", 1))) %>%
     add(ForestPlotItem(Covariate("WT", 60))) %>%
     add(ForestPlotItem(Covariate("WT", 80)))
-  
-fp <- fp %>% prepare()
-fp %>% getForestPlot() + 
+
+fp <- with_progress({fp %>% prepare()})
+fp %>% getForestPlot() +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
@@ -96,17 +110,18 @@ fp %>% getForestPlot(relative=FALSE)
 To look at AUC on day 7, we proceed as follows:
 
 ```{r fp_metabolism_effect_on_auc_d7 , fig.align='center', fig.height=4, fig.width=8, message=F}
-fp <- ForestPlot(model=model, dataset=dataset, 
-                       output=NcaMetricOutput(Auc(variable="CONC"), filter=~timerange(.x, min=144, max=168)), replicates=100) %>%
+fp <- ForestPlot(model=model, dataset=dataset,
+                       output=NcaMetricOutput(Auc(variable="CONC"), filter=~timerange(.x, min=144, max=168)),
+                 replicates=100, dest=dest, settings=settings) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
     add(ForestPlotItem(Covariate("METAB", 1))) %>%
     add(ForestPlotItem(Covariate("WT", 60))) %>%
     add(ForestPlotItem(Covariate("WT", 80)))
-  
-fp <- fp %>% prepare()
-fp %>% getForestPlot() + 
+
+fp <- with_progress({fp %>% prepare()})
+fp %>% getForestPlot() +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
@@ -119,17 +134,18 @@ fp %>% getForestPlot(relative=FALSE)
 Let's produce one more plot with Cmax on day 1.
 
 ```{r fp_metabolism_effect_on_cmax , fig.align='center', fig.height=4, fig.width=8, message=F}
-fp <- ForestPlot(model=model, dataset=dataset, 
-                       output=NcaMetricOutput(Cmax(variable="CONC"), filter=~timerange(.x, min=0, max=24)), replicates=100) %>%
+fp <- ForestPlot(model=model, dataset=dataset,
+                       output=NcaMetricOutput(Cmax(variable="CONC"), filter=~timerange(.x, min=0, max=24)),
+                 replicates=100, dest=dest, settings=settings) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
     add(ForestPlotItem(Covariate("METAB", 1))) %>%
     add(ForestPlotItem(Covariate("WT", 60))) %>%
     add(ForestPlotItem(Covariate("WT", 80)))
-  
-fp <- fp %>% prepare()
-fp %>% getForestPlot() + 
+
+fp <- with_progress({fp %>% prepare()})
+fp %>% getForestPlot() +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 

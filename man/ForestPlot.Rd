@@ -8,7 +8,8 @@ ForestPlot(
   model,
   outputs,
   dataset = NULL,
-  replicates = 1L,
+  replicates = 100L,
+  seed = 1L,
   dest = "mrgsolve",
   settings = Settings()
 )
@@ -21,7 +22,9 @@ ForestPlot(
 \item{dataset}{CAMPSIS dataset, if NULL, minimalist dataset with 1 subject 
 and single observation at time 0 is created}
 
-\item{replicates}{number of replicates}
+\item{replicates}{number of replicates, default is 100}
+
+\item{seed}{simulation seed, default is 1}
 
 \item{dest}{destination engine: rxode2, RxODE or mrgsolve (default)}
 

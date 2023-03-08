@@ -13,11 +13,12 @@ setClass(
     dataset="dataset",
     outputs="oat_analysis_outputs",
     replicates="integer",
+    seed="integer",
     dest="character",
     settings="simulation_settings",
     results="oat_analysis_results"
   ),
-  prototype=prototype(model=CampsisModel(), dataset=Dataset())
+  prototype=prototype(model=CampsisModel(), dataset=Dataset(), seed=1L)
 )
 
 #_______________________________________________________________________________
@@ -133,7 +134,7 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   outputs <- object@outputs
   replicates <- object@replicates
   dest <- object@dest
-  seed <- 1
+  seed <- object@seed
   
   # Compute and store baseline value of each output
   base_scenario <- simulate(model=model, dataset=base_dataset, seed=seed)

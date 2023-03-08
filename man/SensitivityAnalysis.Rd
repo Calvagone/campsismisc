@@ -9,6 +9,7 @@ SensitivityAnalysis(
   outputs,
   dataset = NULL,
   replicates = 1L,
+  seed = 1L,
   dest = "mrgsolve",
   settings = Settings()
 )
@@ -21,7 +22,9 @@ SensitivityAnalysis(
 \item{dataset}{CAMPSIS dataset, if NULL, minimalist dataset with 1 subject 
 and single observation at time 0 is created}
 
-\item{replicates}{number of replicates}
+\item{replicates}{number of replicates, default is 1}
+
+\item{seed}{simulation seed, default is 1}
 
 \item{dest}{destination engine: rxode2, RxODE or mrgsolve (default)}
 

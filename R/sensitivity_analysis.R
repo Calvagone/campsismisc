@@ -22,12 +22,13 @@ setClass(
 #' @param outputs outputs of interest, e.g. 'CL' or a PK metric from campsisnca or a list of them
 #' @param dataset CAMPSIS dataset, if NULL, minimalist dataset with 1 subject 
 #' and single observation at time 0 is created
-#' @param replicates number of replicates
+#' @param replicates number of replicates, default is 1
+#' @param seed simulation seed, default is 1
 #' @param dest destination engine: rxode2, RxODE or mrgsolve (default)
 #' @param settings simulation settings
 #' @return an empty OAT-based sensibility analysis object
 #' @export
-SensitivityAnalysis <- function(model, outputs, dataset=NULL, replicates=1L, dest="mrgsolve", settings=Settings()) {
+SensitivityAnalysis <- function(model, outputs, dataset=NULL, replicates=1L, seed=1L, dest="mrgsolve", settings=Settings()) {
   if (is.null(dataset)) {
     dataset <- Dataset(1) %>%
       add(Observations(times=0))
@@ -38,7 +39,7 @@ SensitivityAnalysis <- function(model, outputs, dataset=NULL, replicates=1L, des
       add(outputs)
   }
   return(new("sensitivity_analysis", model=model, dataset=dataset, outputs=outputs,
-             replicates=as.integer(replicates), dest=dest, settings=settings))
+             replicates=as.integer(replicates), seed=as.integer(seed), dest=dest, settings=settings))
 }
 
 #_______________________________________________________________________________

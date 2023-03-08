@@ -60,7 +60,7 @@ setClass(
 
 #' Create a model parameter output.
 #' 
-#' @param name model parameter name
+#' @param metric NCA metric coming from campsisnca
 #' @param filter function to be applied on the simulation output before the
 #'  NCA analysis, either a function or a lambda formula
 #' @param suffix a possible suffix that will be added to the NCA metric name

@@ -17,6 +17,10 @@ createScenarios(object, ...)
 \item{object}{OAT analysis, type forest plot or sensitivity analysis}
 
 \item{...}{extra arguments}
+
+\item{dataset}{Campsis dataset}
+
+\item{model}{Campsis model}
 }
 \value{
 a list of CAMPSIS scenarios to be run

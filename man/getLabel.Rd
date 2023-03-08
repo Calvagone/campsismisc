@@ -17,6 +17,10 @@ getLabel(object, ...)
 \item{object}{generic object}
 
 \item{...}{extra arguments}
+
+\item{labeled_covariates}{labeled covariates object}
+
+\item{labeled_parameters}{labeled parameters object}
 }
 \value{
 a label

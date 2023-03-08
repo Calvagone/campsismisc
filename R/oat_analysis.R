@@ -189,6 +189,12 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
 #_______________________________________________________________________________
 
 #' @rdname getForestPlot
+#' @param geom_label_vjust vjust argument of method geom_label
+#' @param geom_label_nudge_x nudge_x argument of method geom_label
+#' @param geom_label_nudge_y nudge_y argument of method geom_label
+#' @param geom_label_size size argument of method geom_label
+#' @param label_nsig number of significant digits in label
+#' @param geom_hline_color color argument of method geom_hline
 setMethod("getForestPlot", signature=c("oat_analysis", "integer", "logical", "logical", "logical", "logical", "numeric", "numeric"),
           definition=function(object, index, relative, show_labels, show_ref, show_range, range, ci, 
                               geom_label_vjust=0, geom_label_nudge_x=0.15, geom_label_nudge_y=0, geom_label_size=3, label_nsig=3, geom_hline_color="darkblue", ...) {
@@ -244,6 +250,11 @@ setMethod("getForestPlot", signature=c("oat_analysis", "integer", "logical", "lo
 #_______________________________________________________________________________
 
 #' @rdname getTornadoPlot
+#' @param geom_bar_width width argument of method geom_bar
+#' @param geom_text_nudge_y nudge_y argument of method geom_text
+#' @param label_nsig number of significant digits in label
+#' @param geom_hline_color color argument of method geom_hline
+#' @param geom_text_size size argument of method geom_text
 setMethod("getTornadoPlot", signature=c("oat_analysis", "integer", "logical", "logical", "logical"),
           definition=function(object, index, relative, show_labels, show_ref,
                               geom_bar_width=0.5, geom_text_nudge_y=1, label_nsig=3, geom_hline_color="grey", geom_text_size=3, ...) {

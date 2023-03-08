@@ -40,6 +40,16 @@ getTornadoPlot(
 \item{show_ref}{show vertical reference (at 0 or at the baseline)}
 
 \item{...}{extra arguments like 'geom_bar_width', 'geom_text_nudge_y', 'label_nsig', 'geom_hline_color', 'geom_text_size'}
+
+\item{geom_bar_width}{width argument of method geom_bar}
+
+\item{geom_text_nudge_y}{nudge_y argument of method geom_text}
+
+\item{label_nsig}{number of significant digits in label}
+
+\item{geom_hline_color}{color argument of method geom_hline}
+
+\item{geom_text_size}{size argument of method geom_text}
 }
 \value{
 ggplot

@@ -61,6 +61,7 @@ setMethod("add", signature=c("forest_plot", "forest_plot_item"), definition=func
 #_______________________________________________________________________________
 
 #' @rdname createScenarios
+#' @param dataset Campsis dataset
 setMethod("createScenarios", signature=c("forest_plot"), definition=function(object, dataset, ...) {
   scenarios <- Scenarios()
   items <- object@items

@@ -4,11 +4,14 @@
 \alias{NcaMetricOutput}
 \title{Create a model parameter output.}
 \usage{
-NcaMetricOutput(metric, filter = NULL)
+NcaMetricOutput(metric, filter = NULL, suffix = NULL)
 }
 \arguments{
 \item{filter}{function to be applied on the simulation output before the
 NCA analysis, either a function or a lambda formula}
+
+\item{suffix}{a possible suffix that will be added to the NCA metric name
+(e.g. useful when the same metric appears more than once in the outputs list), default is NULL}
 
 \item{name}{model parameter name}
 }

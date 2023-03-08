@@ -125,7 +125,6 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   # Fix IIV, VARCOV_OMEGA, VARCOV_SIGMA at the beginning!
   # This way, calling disable is not needed in the scenarios
   model <- object@model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA"))
-  
   base_dataset <- object@dataset
   if (is(object, "forest_plot")) {
     base_dataset <- base_dataset %>% add(object@labeled_covariates@list)
@@ -136,17 +135,17 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   dest <- object@dest
   seed <- object@seed
   
-  # Compute and store baseline value of each output
-  base_scenario <- simulate(model=model, dataset=base_dataset, seed=seed)
-  baselines <- base_scenario %>% computeBaseline(output=outputs)
-  
-  # Generate scenarios
-  scenarios <- object %>% createScenarios(dataset=base_dataset, model=model)
-  
   # Getting all necessary 'outvars' across all outputs
   # This in order to make 1 call to the simulate method
   outvars <- outputs@list %>% purrr::map_chr(~getOutvars(.x)) %>% unique()
   
+  # Compute and store baseline value of each output
+  base_scenario <- simulate(model=model, dataset=base_dataset, outvars=outvars, seed=seed, dest=dest)
+  baselines <- base_scenario %>% computeBaseline(output=outputs)
+  
+  # Generate scenarios
+  scenarios <- object %>% createScenarios(dataset=base_dataset, model=model)
+
   # Preparing outfun function
   outfun <- function(x) {
     retValue <- outputs@list %>% purrr::map_dfc(.f=function(output) {

@@ -19,7 +19,9 @@ Imports:
     dplyr,
     ggplot2,
     ggrepel,
+    plyr,
     purrr,
+    rlang,
     tibble,
     tidyr
 Suggests: 
@@ -28,7 +30,9 @@ Suggests:
     pkgdown,
     rmarkdown,
     roxygen2,
-    testthat
+    testthat,
+    rxode2,
+    mrgsolve
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

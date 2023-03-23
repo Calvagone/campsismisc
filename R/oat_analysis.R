@@ -233,7 +233,7 @@ setMethod("getForestPlot", signature=c("oat_analysis", "integer", "logical", "lo
   }
   if (show_labels) {
     # Note when hjust not set, geom_labels are automatically aligned with data
-    plot <- plot + ggplot2::geom_label(ggplot2::aes_string(label="LABEL"),
+    plot <- plot + ggplot2::geom_label(ggplot2::aes(label=LABEL),
                                        vjust=geom_label_vjust, nudge_x=geom_label_nudge_x, nudge_y=geom_label_nudge_y, size=geom_label_size, label.size=NA)
   }
 
@@ -317,8 +317,8 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "integer", "logical", "l
   shift_trans = function(d=0) {
     scales::trans_new("shift", transform=function(x) x - d, inverse=function(x) x + d)
   }
-  
-  plot <- ggplot2::ggplot(summary, ggplot2::aes_string(x="ITEM_NAME", y=target, fill="DIRECTION", label="LABEL")) +
+  target_var <- rlang::enquo(target)
+  plot <- ggplot2::ggplot(summary, ggplot2::aes(x=ITEM_NAME, y=!!target_var, fill=DIRECTION, label=LABEL)) +
     ggplot2::coord_flip() +
     ggplot2::geom_bar(stat="identity", position="identity", width=geom_bar_width) +
     ggrepel::geom_text_repel(nudge_y=summary$NUDGE_Y, size=geom_text_size) +

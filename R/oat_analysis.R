@@ -306,19 +306,21 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "integer", "logical", "l
       dplyr::mutate(ITEM_NAME=factor(.data$ITEM_NAME, levels=unique(.data$ITEM_NAME)))
   }
   
-  target <- ifelse(relative, "MED_CHANGE", "MED_VALUE")
-  
-  # Label
-  summary$LABEL <- paste0(signif(summary %>% dplyr::pull(target), digits=label_nsig))
-  
   # Nudge y-axis
   summary$NUDGE_Y <- ifelse(summary$MED_CHANGE > 0, geom_text_nudge_y, -geom_text_nudge_y)
   
   shift_trans = function(d=0) {
     scales::trans_new("shift", transform=function(x) x - d, inverse=function(x) x + d)
   }
-  target_var <- rlang::enquo(target)
-  plot <- ggplot2::ggplot(summary, ggplot2::aes(x=ITEM_NAME, y=!!target_var, fill=DIRECTION, label=LABEL)) +
+  
+  # Relative or absolute
+  summary <- summary %>%
+    dplyr::mutate(TORNADO_VALUE=if(relative) {.data$MED_CHANGE} else {.data$MED_VALUE})
+  
+  # Label
+  summary$LABEL <- paste0(signif(summary %>% dplyr::pull(TORNADO_VALUE), digits=label_nsig))
+  
+  plot <- ggplot2::ggplot(data=summary, mapping=ggplot2::aes(x=ITEM_NAME, y=TORNADO_VALUE, fill=DIRECTION, label=LABEL)) +
     ggplot2::coord_flip() +
     ggplot2::geom_bar(stat="identity", position="identity", width=geom_bar_width) +
     ggrepel::geom_text_repel(nudge_y=summary$NUDGE_Y, size=geom_text_size) +

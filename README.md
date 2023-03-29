@@ -74,10 +74,10 @@ model
 
 This model contains:
 
--   a metabolism effect on the clearance: `THETA_METAB_CL`
--   allometric scaling on central and peripheral volumes with a fixed
-    exponent of 1
--   a variance-covariance matrix
+- a metabolism effect on the clearance: `THETA_METAB_CL`
+- allometric scaling on central and peripheral volumes with a fixed
+  exponent of 1
+- a variance-covariance matrix
 
 ### Configure your simulation settings
 

@@ -54,7 +54,7 @@ setMethod("getLabel", signature=c("sensitivity_analysis_item"), definition=funct
       parameterLabel <- parameterName
     }
     if (change@up_down_as_factor) {
-      return(paste0(parameterLabel, " (×", change@up, ",", "\U00F7", change@down, ")"))
+      return(paste0(parameterLabel, " (\U00D7", change@up, ",", "\U00F7", change@down, ")"))
     } else {
       return(paste0(parameterLabel, " (", change@up, ",", change@down, ")"))
     }

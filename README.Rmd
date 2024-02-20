@@ -62,14 +62,14 @@ fp <- with_progress({fp %>% prepare()})
 
 The forest plot for clearance can be otained as follows (use `index=1`):
 
-```{r fp_metabolism_effect_on_cl , fig.align='center', fig.height=4, fig.width=8, message=F}
+```{r fp_metabolism_effect_on_cl, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>% getForestPlot(index=1) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
 Similarly, the forest plot for volume can be obtained as follows (use `index=2`):
 
-```{r fp_metabolism_effect_on_vc , fig.align='center', fig.height=4, fig.width=8, message=F}
+```{r fp_metabolism_effect_on_vc, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>% getForestPlot(index=2) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
@@ -111,40 +111,40 @@ fp <- with_progress({fp %>% prepare()})
 
 We can look at AUC day 1 by doing:
 
-```{r fp_metabolism_effect_on_auc_d1 , fig.align='center', fig.height=4, fig.width=8, message=F}
+```{r fp_metabolism_effect_on_auc_d1, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>% getForestPlot(index=1) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
 If we are interested to see the absolute change in AUC, argument relative can be set to FALSE as follows.
 
-```{r fp_metabolism_effect_on_auc_d1_absolute , fig.align='center', fig.height=4, fig.width=8, message=F}
+```{r fp_metabolism_effect_on_auc_d1_absolute, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>% getForestPlot(index=1, relative=FALSE)
 ```
 
 To look at AUC on day 7, we proceed as follows:
 
-```{r fp_metabolism_effect_on_auc_d7 , fig.align='center', fig.height=4, fig.width=8, message=F}
+```{r fp_metabolism_effect_on_auc_d7, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>% getForestPlot(index=2) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
 Again, we can look at the absolute values.
 
-```{r fp_metabolism_effect_on_auc_d7_absolute , fig.align='center', fig.height=4, fig.width=8, message=F}
+```{r fp_metabolism_effect_on_auc_d7_absolute, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>% getForestPlot(index=2, relative=FALSE)
 ```
 
 Let's produce one more plot with Cmax on day 1.
 
-```{r fp_metabolism_effect_on_cmax_d1 , fig.align='center', fig.height=4, fig.width=8, message=F}
+```{r fp_metabolism_effect_on_cmax_d1, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>% getForestPlot(index=3) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
 And a final one with Cmax on day 7.
 
-```{r fp_metabolism_effect_on_cmax_d7 , fig.align='center', fig.height=4, fig.width=8, message=F}
+```{r fp_metabolism_effect_on_cmax_d7, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>% getForestPlot(index=4) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
@@ -157,7 +157,7 @@ Finally, you need to know that you can combine model parameter ouputs together w
 
 Assume the same 2-compartment model. Let's see how the model parameters influence AUC or Cmax if they are multiplied by two. This can be achieved with a one-at-a-time (OAT)-method-based sensitivity analysis. Most of the time, these analyses are done without parameter uncertainty (replicates=1, by default) and represented with tornado plots, as shown below. However if parameter uncertainty is used, you can still call `getForestPlot()` on this new type of object.
 
-```{r sensibility_analysis_auc_example , fig.align='center', fig.height=3, fig.width=8, message=F}
+```{r sensibility_analysis_auc_example, fig.align='center', fig.height=3, fig.width=8, message=F}
 outputs <- OATOutputs() %>%
   add(NcaMetricOutput(Auc(variable="CONC"))) %>%
   add(NcaMetricOutput(Cmax(variable="CONC")))
@@ -182,13 +182,13 @@ object %>% getTornadoPlot(index=1)
 
 Absolute values may also be shown:
 
-```{r sensibility_analysis_auc_example_absolute , fig.align='center', fig.height=3, fig.width=8, message=F}
+```{r sensibility_analysis_auc_example_absolute, fig.align='center', fig.height=3, fig.width=8, message=F}
 object %>% getTornadoPlot(index=1, relative=FALSE)
 ```
 
 Cmax can also be shown using `index=2`.
 
-```{r sensibility_analysis_cmax_example , fig.align='center', fig.height=3, fig.width=8, message=F}
+```{r sensibility_analysis_cmax_example, fig.align='center', fig.height=3, fig.width=8, message=F}
 object %>% getTornadoPlot(index=2)
 ```
 

@@ -8,7 +8,12 @@ testFolder <- ""
 overwriteNonRegressionFiles <- FALSE
 
 getModel <- function(name) {
-  return(read.campsis(paste0(testFolder, "campsis_models", "/", name)))
+  model <- read.campsis(paste0(testFolder, "campsis_models", "/", name))
+  
+  # See strange regression in R base: #21
+  model@parameters@varcov <- signif(model@parameters@varcov, 5)
+  
+  return(model)
 }
 
 #' Test there is no regression on the results of the OAT analysis.

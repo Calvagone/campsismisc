@@ -18,7 +18,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
   spaghettiPlot(results, "CONC")
   
   object <- SensitivityAnalysis(model=model, dataset=dataset,
-                       outputs=NcaMetricOutput(campsisnca::Auc(variable="CONC")), replicates=10) %>%
+                       outputs=NcaMetricOutput(campsisnca::AUC(variable="CONC")), replicates=10) %>%
     add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
     add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
     add(SensitivityAnalysisItem(Change("VP", up=2, down=2))) %>%
@@ -48,7 +48,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
   spaghettiPlot(results, "CONC")
   
   object <- SensitivityAnalysis(model=model, dataset=dataset,
-                                outputs=NcaMetricOutput(campsisnca::Auc(variable="CONC"))) %>%
+                                outputs=NcaMetricOutput(campsisnca::AUC(variable="CONC"))) %>%
     add(LabeledParameters(c(DUR="Duration", VC="Central volume", VP="Peripheral volume", Q="Inter-compartmental clearance", CL="Clearance"))) %>%
     add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
     add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%

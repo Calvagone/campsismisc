@@ -7,7 +7,6 @@ Assume the following estimated 2-compartment model:
 
 ``` r
 library(campsismisc)
-library(campsisnca)
 library(progressr)
 
 model <- read.campsis("tests/testthat/campsis_models/metaboliser_effect_on_cl/")
@@ -151,10 +150,10 @@ outputs as follows:
 
 ``` r
 outputs <- OATOutputs() %>%
-  add(NcaMetricOutput(Auc(variable="CONC"), filter=~timerange(.x, min=0, max=24))) %>%
-  add(NcaMetricOutput(Auc(variable="CONC"), filter=~timerange(.x, min=144, max=168), suffix="Day 7")) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~timerange(.x, min=0, max=24))) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~timerange(.x, min=144, max=168), suffix="Day 7"))
+  add(NcaMetricOutput(AUC(variable="CONC"), filter=~campsisnca::timerange(.x, min=0, max=24))) %>%
+  add(NcaMetricOutput(AUC(variable="CONC"), filter=~campsisnca::timerange(.x, min=144, max=168), suffix="Day 7")) %>%
+  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~campsisnca::timerange(.x, min=0, max=24))) %>%
+  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~campsisnca::timerange(.x, min=144, max=168), suffix="Day 7"))
 ```
 
 A forest plot object can be instantiated and run as follows:
@@ -245,7 +244,7 @@ below. However if parameter uncertainty is used, you can still call
 
 ``` r
 outputs <- OATOutputs() %>%
-  add(NcaMetricOutput(Auc(variable="CONC"))) %>%
+  add(NcaMetricOutput(AUC(variable="CONC"))) %>%
   add(NcaMetricOutput(Cmax(variable="CONC")))
 
 dataset <- Dataset(1) %>%

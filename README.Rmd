@@ -14,7 +14,6 @@ Assume the following estimated 2-compartment model:
 
 ```{r, message=FALSE, warning=FALSE}
 library(campsismisc)
-library(campsisnca)
 library(progressr)
 
 model <- read.campsis("tests/testthat/campsis_models/metaboliser_effect_on_cl/")
@@ -88,10 +87,10 @@ Instead of creating a `ModelParameterOutput` object, we create a `NcaMetricOutpu
 
 ```{r}
 outputs <- OATOutputs() %>%
-  add(NcaMetricOutput(Auc(variable="CONC"), filter=~timerange(.x, min=0, max=24))) %>%
-  add(NcaMetricOutput(Auc(variable="CONC"), filter=~timerange(.x, min=144, max=168), suffix="Day 7")) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~timerange(.x, min=0, max=24))) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~timerange(.x, min=144, max=168), suffix="Day 7"))
+  add(NcaMetricOutput(AUC(variable="CONC"), filter=~campsisnca::timerange(.x, min=0, max=24))) %>%
+  add(NcaMetricOutput(AUC(variable="CONC"), filter=~campsisnca::timerange(.x, min=144, max=168), suffix="Day 7")) %>%
+  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~campsisnca::timerange(.x, min=0, max=24))) %>%
+  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~campsisnca::timerange(.x, min=144, max=168), suffix="Day 7"))
 ```
 
 A forest plot object can be instantiated and run as follows:
@@ -159,7 +158,7 @@ Assume the same 2-compartment model. Let's see how the model parameters influenc
 
 ```{r sensibility_analysis_auc_example, fig.align='center', fig.height=3, fig.width=8, message=F}
 outputs <- OATOutputs() %>%
-  add(NcaMetricOutput(Auc(variable="CONC"))) %>%
+  add(NcaMetricOutput(AUC(variable="CONC"))) %>%
   add(NcaMetricOutput(Cmax(variable="CONC")))
 
 dataset <- Dataset(1) %>%

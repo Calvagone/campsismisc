@@ -116,7 +116,7 @@ setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), 
 
 outfunNCA <- function(metric, x) {
   metric@x <- x
-  metric <- metric %>% calculate(level=0.9) # Level does not matter as we collect only individuals
+  metric <- metric %>% campsisnca::calculate(level=0.9) # Level does not matter as we collect only individuals
   return(metric@individual %>% dplyr::rename_at(.vars="value", .funs=~"VALUE"))
 }
 

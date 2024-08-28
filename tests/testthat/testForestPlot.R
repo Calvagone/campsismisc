@@ -99,3 +99,25 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (rxode2/mrgso
   oatAnalysisRegressionTest(object=object, filename=regFilename)
   object %>% getForestPlot()
 })
+
+test_that("Forest plots must work when only 1 item is simulated", {
+  model <- getModel("metaboliser_effect_on_cl")
+
+  object <- ForestPlot(model=model, outputs=ModelParameterOutput("CL"), replicates=2) %>%
+    add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
+    add(LabeledCovariate(name="WT", default_value=70, label="Weight")) %>% # Units have been removed
+    add(ForestPlotItem(Covariate("WT", 60)))
+  
+  expect_equal(object@items %>% getNames(), c("WT:60"))
+
+  # Requires campsis v1.5.4 since only 1 scenario is used
+  # See https://github.com/Calvagone/campsis/issues/152
+  object@dest <- "rxode2"
+  object <- object %>% prepare() #
+  results1 <- object@results@list[[1]]@results
+  
+  expect_equal(object@results %>% length(), 1)
+  expect_equal(results1$replicate, c(1, 2))
+  expect_true(is.numeric(results1$VALUE))
+  expect_equal(as.character(results1$SCENARIO), rep("Weight: 60", 2))
+})

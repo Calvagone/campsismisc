@@ -17,3 +17,12 @@ test_that("Method getLabel is working as expected with categorical labeled covar
   
   expect_equal(item %>% getLabel(labeled_covariates=labeledCovariates), "Food: Fasted")
 })
+
+test_that("Unit is optional in the continuous labeled covariate", {
+  labeledCovariates <- LabeledCovariates() %>%
+    add(LabeledCovariate(name="WT", default_value=70, label="Weight"))
+  
+  item <- ForestPlotItem(Covariate("WT", 65))
+  
+  expect_equal(item %>% getLabel(labeled_covariates=labeledCovariates), "Weight: 65")
+})

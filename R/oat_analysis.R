@@ -104,7 +104,7 @@ setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), 
   outputName <- output %>% getName()
   results <- object %>%
     dplyr::select(dplyr::any_of("replicate"), dplyr::all_of(c("SCENARIO", outputName))) %>%
-    tidyr::unnest(cols=outputName) %>%
+    tidyr::unnest(cols=dplyr::all_of(outputName)) %>%
     dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev())) %>%
     dplyr::relocate(dplyr::any_of(c("replicate", "id", "VALUE", "SCENARIO")))
   return(results)
@@ -116,7 +116,7 @@ setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), 
 
 outfunNCA <- function(metric, x) {
   metric@x <- x
-  metric <- metric %>% campsisnca::calculate(level=0.9) # Level does not matter as we collect only individuals
+  metric <- metric %>% campsisnca::calculate()
   return(metric@individual %>% dplyr::rename_at(.vars="value", .funs=~"VALUE"))
 }
 

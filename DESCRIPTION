@@ -59,4 +59,4 @@ Collate:
     'sensitivity_analysis_item.R'
     'sensitivity_analysis_items.R'
     'sensitivity_analysis.R'
-Remotes: Calvagone/campsisnca
+Remotes: Calvagone/campsisnca@develop, Calvagone/campsis@develop

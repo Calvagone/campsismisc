@@ -1,18 +1,18 @@
 Type: Package
 Package: campsismisc
-Title: CAMPSIS Miscellaneous Package
-Version: 0.3.0
+Title: Campsis Miscellaneous Package
+Version: 0.4.0
 Authors@R: 
     person("Nicolas", "Luyckx", , "nicolas.luyckx@calvagone.com", role = c("aut", "cre"))
 Description: Campsis miscellaneous: a bunch of useful wrapper & helper
     functions.
-License: file LICENSE
+License: GPL (>= 3)
 URL: https://github.com/Calvagone/campsismisc
 BugReports: https://github.com/Calvagone/campsismisc/issues
 Depends: 
-    campsis (>= 1.4.0),
-    campsismod (>= 1.0.0),
-    campsisnca,
+    campsis (>= 1.5.4),
+    campsismod (>= 1.1.1),
+    campsisnca (>= 1.4.0),
     R (>= 4.0.0)
 Imports: 
     assertthat,
@@ -38,7 +38,7 @@ VignetteBuilder:
 Encoding: UTF-8
 Language: en-US
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Collate:
     'check.R'
     'utilities.R'
@@ -59,4 +59,4 @@ Collate:
     'sensitivity_analysis_item.R'
     'sensitivity_analysis_items.R'
     'sensitivity_analysis.R'
-Remotes: Calvagone/campsisnca
+Remotes: Calvagone/campsisnca, Calvagone/campsis

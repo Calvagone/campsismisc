@@ -52,7 +52,11 @@ setMethod("getLabel", signature=c("forest_plot_item"), definition=function(objec
       return(paste0(labeledCovariate@label, ": ",
                     names(which(labeledCovariate@categories==covariate@distribution@value))))
     } else {
-      return(paste0(labeledCovariate@label, ": ", covariate@distribution@value, " ", labeledCovariate@unit))
+      if (!is.na(labeledCovariate@unit) && labeledCovariate@unit != "") {
+        return(paste0(labeledCovariate@label, ": ", covariate@distribution@value, " ", labeledCovariate@unit))
+      } else {
+        return(paste0(labeledCovariate@label, ": ", covariate@distribution@value))
+      }
     }
   })
   

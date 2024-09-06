@@ -26,7 +26,6 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
     add(SensitivityAnalysisItem(Change("CL", up=2, down=2))) %>%
     add(SensitivityAnalysisItem(Change("VC", up=2, down=2)))
   
-  
   simulation <- expression(
     sens@dest <- destEngine,
     sens <- progressr::with_progress(sens %>% prepare())

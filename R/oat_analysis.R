@@ -322,8 +322,14 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "integer", "logical", "l
   
   plot <- ggplot2::ggplot(data=summary, mapping=ggplot2::aes(x=ITEM_NAME, y=TORNADO_VALUE, fill=DIRECTION, label=LABEL)) +
     ggplot2::coord_flip() +
-    ggplot2::geom_bar(stat="identity", position="identity", width=geom_bar_width) +
-    ggrepel::geom_text_repel(nudge_y=summary$NUDGE_Y, size=geom_text_size) +
+    ggplot2::geom_bar(stat="identity", position="identity", width=geom_bar_width)
+  
+  if (show_labels) {
+    plot <- plot +
+      ggrepel::geom_text_repel(nudge_y=summary$NUDGE_Y, size=geom_text_size)
+  }
+  
+  plot <- plot +
     ggplot2::xlab(NULL) +
     ggplot2::labs(fill="Direction")
   
@@ -331,9 +337,6 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "integer", "logical", "l
     plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 0,  baseline), color=geom_hline_color)
   }
   
-  if (!relative) {
-    plot <- plot 
-  }
   if (relative) {
     plot <- plot +
       ggplot2::ylab(paste0("Change in ", output %>% getName(), " (%)"))

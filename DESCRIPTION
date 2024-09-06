@@ -1,7 +1,7 @@
 Type: Package
 Package: campsismisc
 Title: Campsis Miscellaneous Package
-Version: 0.4.0
+Version: 0.4.1
 Authors@R: 
     person("Nicolas", "Luyckx", , "nicolas.luyckx@calvagone.com", role = c("aut", "cre"))
 Description: Campsis miscellaneous: a bunch of useful wrapper & helper
@@ -28,6 +28,7 @@ Suggests:
     devtools,
     knitr,
     pkgdown,
+    progressr,
     rmarkdown,
     roxygen2,
     testthat,

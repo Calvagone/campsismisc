@@ -14,6 +14,7 @@ getForestPlot(
   show_range = NULL,
   range = NULL,
   ci = NULL,
+  limits = NULL,
   ...
 )
 
@@ -51,6 +52,8 @@ getForestPlot(
 \item{range}{vertical dashed lines range, default is c(0.8, 1.25)}
 
 \item{ci}{confidence interval, default is 0.9, which corresponds to a 90\% CI}
+
+\item{limits}{limits of the forest plot, numeric vector (2 values)}
 
 \item{...}{extra arguments like 'geom_label_vjust', 'geom_label_nudge_x', 'geom_label_nudge_y', 'geom_label_size', 'label_nsig', 'geom_hline_color'}
 

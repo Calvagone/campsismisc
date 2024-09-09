@@ -2,7 +2,7 @@
 % Please edit documentation in R/generic.R, R/oat_analysis.R
 \name{getTornadoPlot}
 \alias{getTornadoPlot}
-\alias{getTornadoPlot,oat_analysis,integer,logical,logical,logical-method}
+\alias{getTornadoPlot,oat_analysis,integer,logical,logical,logical,numeric-method}
 \title{Get tornado plot.}
 \usage{
 getTornadoPlot(
@@ -11,15 +11,17 @@ getTornadoPlot(
   relative = NULL,
   show_labels = NULL,
   show_ref = NULL,
+  limits = NULL,
   ...
 )
 
-\S4method{getTornadoPlot}{oat_analysis,integer,logical,logical,logical}(
+\S4method{getTornadoPlot}{oat_analysis,integer,logical,logical,logical,numeric}(
   object,
   index,
   relative,
   show_labels,
   show_ref,
+  limits,
   geom_bar_width = 0.5,
   geom_text_nudge_y = 1,
   label_nsig = 3,
@@ -38,6 +40,8 @@ getTornadoPlot(
 \item{show_labels}{show the numeric labels}
 
 \item{show_ref}{show vertical reference (at 0 or at the baseline)}
+
+\item{limits}{limits of the tornado plot, numeric vector (2 values)}
 
 \item{...}{extra arguments like 'geom_bar_width', 'geom_text_nudge_y', 'label_nsig', 'geom_hline_color', 'geom_text_size'}
 

@@ -33,7 +33,7 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
   
   test <- expression(
     oatAnalysisRegressionTest(object=sens, filename=regFilename),
-    sens %>% getTornadoPlot()
+    sens %>% getTornadoPlot(limits=c(-5, 100))
   )
   campsismiscTest(simulation, test, env=environment())
 })

@@ -2,7 +2,7 @@
 % Please edit documentation in R/generic.R, R/oat_analysis.R
 \name{getForestPlot}
 \alias{getForestPlot}
-\alias{getForestPlot,oat_analysis,integer,logical,logical,logical,logical,numeric,numeric-method}
+\alias{getForestPlot,oat_analysis,integer,logical,logical,logical,logical,numeric,numeric,numeric-method}
 \title{Get forest plot.}
 \usage{
 getForestPlot(
@@ -18,7 +18,7 @@ getForestPlot(
   ...
 )
 
-\S4method{getForestPlot}{oat_analysis,integer,logical,logical,logical,logical,numeric,numeric}(
+\S4method{getForestPlot}{oat_analysis,integer,logical,logical,logical,logical,numeric,numeric,numeric}(
   object,
   index,
   relative,
@@ -27,6 +27,7 @@ getForestPlot(
   show_range,
   range,
   ci,
+  limits,
   geom_label_vjust = 0,
   geom_label_nudge_x = 0.15,
   geom_label_nudge_y = 0,

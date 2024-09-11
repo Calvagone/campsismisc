@@ -2,7 +2,7 @@
 % Please edit documentation in R/generic.R, R/oat_analysis.R
 \name{getForestPlot}
 \alias{getForestPlot}
-\alias{getForestPlot,oat_analysis,integer,logical,logical,logical,logical,numeric,numeric-method}
+\alias{getForestPlot,oat_analysis,integer,logical,logical,logical,logical,numeric,numeric,numeric-method}
 \title{Get forest plot.}
 \usage{
 getForestPlot(
@@ -14,10 +14,11 @@ getForestPlot(
   show_range = NULL,
   range = NULL,
   ci = NULL,
+  limits = NULL,
   ...
 )
 
-\S4method{getForestPlot}{oat_analysis,integer,logical,logical,logical,logical,numeric,numeric}(
+\S4method{getForestPlot}{oat_analysis,integer,logical,logical,logical,logical,numeric,numeric,numeric}(
   object,
   index,
   relative,
@@ -26,6 +27,7 @@ getForestPlot(
   show_range,
   range,
   ci,
+  limits,
   geom_label_vjust = 0,
   geom_label_nudge_x = 0.15,
   geom_label_nudge_y = 0,
@@ -51,6 +53,8 @@ getForestPlot(
 \item{range}{vertical dashed lines range, default is c(0.8, 1.25)}
 
 \item{ci}{confidence interval, default is 0.9, which corresponds to a 90\% CI}
+
+\item{limits}{limits of the forest plot, numeric vector (2 values)}
 
 \item{...}{extra arguments like 'geom_label_vjust', 'geom_label_nudge_x', 'geom_label_nudge_y', 'geom_label_size', 'label_nsig', 'geom_hline_color'}
 

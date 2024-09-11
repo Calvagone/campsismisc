@@ -121,6 +121,7 @@ outfunNCA <- function(metric, x) {
 }
 
 #' @rdname prepare
+#' @importFrom progressr with_progress without_progress
 setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   # Fix IIV, VARCOV_OMEGA, VARCOV_SIGMA at the beginning!
   # This way, calling disable is not needed in the scenarios
@@ -140,7 +141,10 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   outvars <- outputs@list %>% purrr::map_chr(~getOutvars(.x)) %>% unique()
   
   # Compute and store baseline value of each output
-  base_scenario <- simulate(model=model, dataset=base_dataset, outvars=outvars, seed=seed, dest=dest)
+  # Progress from campsis is deactivated for the base scenario
+  base_scenario <- progressr::without_progress(
+    simulate(model=model, dataset=base_dataset, outvars=outvars, seed=seed, dest=dest)
+  )
   baselines <- base_scenario %>% computeBaseline(output=outputs)
   
   # Generate scenarios
@@ -195,8 +199,8 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
 #' @param geom_label_size size argument of method geom_label
 #' @param label_nsig number of significant digits in label
 #' @param geom_hline_color color argument of method geom_hline
-setMethod("getForestPlot", signature=c("oat_analysis", "integer", "logical", "logical", "logical", "logical", "numeric", "numeric"),
-          definition=function(object, index, relative, show_labels, show_ref, show_range, range, ci, 
+setMethod("getForestPlot", signature=c("oat_analysis", "integer", "logical", "logical", "logical", "logical", "numeric", "numeric", "numeric"),
+          definition=function(object, index, relative, show_labels, show_ref, show_range, range, ci, limits, 
                               geom_label_vjust=0, geom_label_nudge_x=0.15, geom_label_nudge_y=0, geom_label_size=3, label_nsig=3, geom_hline_color="darkblue", ...) {
             
   alpha <- (1-ci)/2
@@ -205,6 +209,11 @@ setMethod("getForestPlot", signature=c("oat_analysis", "integer", "logical", "lo
   output <- iResults@output
   results <- iResults@results
   baseline <- iResults@baseline
+  
+  # Check limits argument
+  if (any(is.na(limits))) {
+    limits <- NULL
+  }
   
   # Recompute VALUE as relative value if relative is TRUE
   if (relative) {
@@ -238,7 +247,7 @@ setMethod("getForestPlot", signature=c("oat_analysis", "integer", "logical", "lo
   }
 
   plot <- plot +
-    ggplot2::coord_flip() +
+    ggplot2::coord_flip(ylim=limits) +
     ggplot2::ylab(paste0(ifelse(relative, "Relative ", ""), output %>% getName())) +
     ggplot2::xlab(NULL)
   
@@ -255,14 +264,19 @@ setMethod("getForestPlot", signature=c("oat_analysis", "integer", "logical", "lo
 #' @param label_nsig number of significant digits in label
 #' @param geom_hline_color color argument of method geom_hline
 #' @param geom_text_size size argument of method geom_text
-setMethod("getTornadoPlot", signature=c("oat_analysis", "integer", "logical", "logical", "logical"),
-          definition=function(object, index, relative, show_labels, show_ref,
+setMethod("getTornadoPlot", signature=c("oat_analysis", "integer", "logical", "logical", "logical", "numeric"),
+          definition=function(object, index, relative, show_labels, show_ref, limits,
                               geom_bar_width=0.5, geom_text_nudge_y=1, label_nsig=3, geom_hline_color="grey", geom_text_size=3, ...) {
   isSensitivityAnalysis <- is(object, "sensitivity_analysis")
   iResults <- object@results@list[[index]]
   output <- iResults@output
   results <- iResults@results
   baseline <- iResults@baseline
+  
+  # Check limits argument
+  if (any(is.na(limits))) {
+    limits <- NULL
+  }
   
   # Tornado plots are bidirectional, forest plots aren't
   if (isSensitivityAnalysis) {
@@ -321,9 +335,15 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "integer", "logical", "l
   summary$LABEL <- paste0(signif(summary %>% dplyr::pull(TORNADO_VALUE), digits=label_nsig))
   
   plot <- ggplot2::ggplot(data=summary, mapping=ggplot2::aes(x=ITEM_NAME, y=TORNADO_VALUE, fill=DIRECTION, label=LABEL)) +
-    ggplot2::coord_flip() +
-    ggplot2::geom_bar(stat="identity", position="identity", width=geom_bar_width) +
-    ggrepel::geom_text_repel(nudge_y=summary$NUDGE_Y, size=geom_text_size) +
+    ggplot2::coord_flip(ylim=limits) +
+    ggplot2::geom_bar(stat="identity", position="identity", width=geom_bar_width)
+  
+  if (show_labels) {
+    plot <- plot +
+      ggrepel::geom_text_repel(nudge_y=summary$NUDGE_Y, size=geom_text_size)
+  }
+  
+  plot <- plot +
     ggplot2::xlab(NULL) +
     ggplot2::labs(fill="Direction")
   
@@ -331,9 +351,6 @@ setMethod("getTornadoPlot", signature=c("oat_analysis", "integer", "logical", "l
     plot <- plot + ggplot2::geom_hline(yintercept=ifelse(relative, 0,  baseline), color=geom_hline_color)
   }
   
-  if (!relative) {
-    plot <- plot 
-  }
   if (relative) {
     plot <- plot +
       ggplot2::ylab(paste0("Change in ", output %>% getName(), " (%)"))

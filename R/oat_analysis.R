@@ -140,7 +140,10 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   outvars <- outputs@list %>% purrr::map_chr(~getOutvars(.x)) %>% unique()
   
   # Compute and store baseline value of each output
-  base_scenario <- simulate(model=model, dataset=base_dataset, outvars=outvars, seed=seed, dest=dest)
+  # Progress from campsis is deactivated for the base scenario
+  base_scenario <- progressr::without_progress(
+    simulate(model=model, dataset=base_dataset, outvars=outvars, seed=seed, dest=dest)
+  )
   baselines <- base_scenario %>% computeBaseline(output=outputs)
   
   # Generate scenarios

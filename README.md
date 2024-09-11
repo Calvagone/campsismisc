@@ -84,10 +84,6 @@ This model contains:
 # Configure hardware
 settings <- Settings(Hardware(cpu=8, replicate_parallel=TRUE))
 dest <- "mrgsolve" # Much faster than RxODE
-
-# Progress bar
-options(progressr.enable=TRUE)
-handlers(campsis::campsis_handler())
 ```
 
 ### Effect of metabolism effect and weight on model parameters

@@ -121,6 +121,7 @@ outfunNCA <- function(metric, x) {
 }
 
 #' @rdname prepare
+#' @importFrom progressr with_progress without_progress
 setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   # Fix IIV, VARCOV_OMEGA, VARCOV_SIGMA at the beginning!
   # This way, calling disable is not needed in the scenarios

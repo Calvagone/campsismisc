@@ -114,10 +114,46 @@ setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), 
 #----                               prepare                                 ----
 #_______________________________________________________________________________
 
+#' Outfun NCA
+#' 
+#' @param metric NCA metric
+#' @param x tibble
+#' @return tibble
+#' @importFrom campsisnca calculate
+#' @importFrom dplyr rename_at
+#' @export
 outfunNCA <- function(metric, x) {
   metric@x <- x
   metric <- metric %>% campsisnca::calculate()
   return(metric@individual %>% dplyr::rename_at(.vars="value", .funs=~"VALUE"))
+}
+
+#' Campsismisc output function.
+#' 
+#' @param x tibble
+#' @param outputs oat_analysis_outputs
+#' @return tibble
+#' @importFrom purrr map_dfc
+#' @importFrom dplyr distinct rename
+#' @importFrom assertthat assert_that
+#' @importFrom tibble tibble
+campsismiscOutfun <- function(x, outputs) {
+  retValue <- outputs@list %>% purrr::map_dfc(.f=function(output) {
+    outputName <- output %>% getName()
+    if (is(output, "nca_metric_output")) {
+      myFun <- function(x) {campsismisc::outfunNCA(metric=output@metric, x=output@filter(x))}
+      innerRetValue <- myFun(x)
+    } else if (is(output, "model_parameter_output")) {
+      innerRetValue <- x[, outputName] %>% dplyr::distinct() %>%
+        dplyr::rename(VALUE=!!outputName)
+      assertthat::assert_that(nrow(innerRetValue)==1,
+                              msg=paste0("Parameter ", outputName, " must not change over time"))
+    } else {
+      stop("Only NCA output or model parameter output")
+    }
+    return(tibble::tibble(!!outputName:=list(innerRetValue)))
+  })
+  return(retValue)
 }
 
 #' @rdname prepare
@@ -150,25 +186,8 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   # Generate scenarios
   scenarios <- object %>% createScenarios(dataset=base_dataset, model=model)
 
-  # Preparing outfun function
-  outfun <- function(x) {
-    retValue <- outputs@list %>% purrr::map_dfc(.f=function(output) {
-      outputName <- output %>% getName()
-      if (is(output, "nca_metric_output")) {
-        myFun <- function(x) {outfunNCA(metric=output@metric, x=output@filter(x))}
-        innerRetValue <- myFun(x)
-      } else if (is(output, "model_parameter_output")) {
-        innerRetValue <- x[, outputName] %>% dplyr::distinct() %>%
-          dplyr::rename(VALUE=!!outputName)
-        assertthat::assert_that(nrow(innerRetValue)==1,
-                                msg=paste0("Parameter ", outputName, " must not change over time"))
-      } else {
-        stop("Only NCA output or model parameter output")
-      }
-      return(tibble::tibble(!!outputName:=list(innerRetValue)))
-    })
-    return(retValue)
-  }
+  # Prepare outfun function
+  outfun <- Outfun(fun=campsismiscOutfun, args=list(outputs=outputs), level="scenario")
 
   # Simulate
   allResults <- simulate(model=model, dataset=base_dataset, scenarios=scenarios, replicates=replicates,

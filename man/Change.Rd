@@ -4,10 +4,11 @@
 \alias{Change}
 \title{Create a sensibility analysis change.}
 \usage{
-Change(parameter, up, down, upDownAsFactor = TRUE)
+Change(parameter, up, down, upDownAsFactor = TRUE, where = "theta")
 }
 \arguments{
-\item{parameter}{parameter name, like "CL", must be part of the model}
+\item{parameter}{theta name (e.g. "CL") or parameter/equation name (e.g. "CL") in the model code,
+see also argument `where`.}
 
 \item{up}{model parameter will be multiplied by this value if upDownAsFactor is TRUE,
 otherwise the model parameter will take this value as is}
@@ -17,6 +18,9 @@ otherwise the model parameter will take this value as is}
 
 \item{upDownAsFactor}{if TRUE, up and down are respectively used as multiplier and divider,
 if FALSE, their value is used as is}
+
+\item{where}{where to apply the change, either "theta" (the corresponding theta is changed in the model parameters) 
+or "equation" (the corresponding equation is changed in the model code)}
 }
 \description{
 Create a sensibility analysis change.

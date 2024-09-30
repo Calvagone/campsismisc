@@ -78,7 +78,7 @@ setMethod("createScenarios", signature=c("sensitivity_analysis"), definition=fun
     for (change in changes@list) {
       name <- change %>% getName()
       where <- change@where
-      
+
       if (where == "equation") {
         equation <- model %>% find(Equation(name))
         if (is.null(equation)) {
@@ -106,12 +106,23 @@ setMethod("createScenarios", signature=c("sensitivity_analysis"), definition=fun
         thetaUp <- theta
         thetaDown <- theta
         if (change@up_down_as_factor) {
-          thetaUp@value <- thetaUp@value * change@up # Multiplication
-          thetaDown@value <- thetaDown@value / change@down # Division
+          if (change@log) {
+            thetaUp@value <- log(exp(theta@value) * change@up) # Multiplication
+            thetaDown@value <- log(exp(theta@value) / change@down) # Division
+          } else {
+            thetaUp@value <- theta@value * change@up # Multiplication
+            thetaDown@value <- theta@value / change@down # Division
+          }
         } else {
           # Use values as is
-          thetaUp@value <- change@up
-          thetaDown@value <- change@down
+          if (change@log) {
+            # Arbitrary but more convenient for the user to provide boundaries in the linear scale
+            thetaUp@value <- log(change@up)
+            thetaDown@value <- log(change@down)
+          } else {
+            thetaUp@value <- change@up
+            thetaDown@value <- change@down
+          }
         }
         
         modelUp <- modelUp %>% campsismod::replace(thetaUp)

@@ -9,6 +9,7 @@ test_that("Initialise a few sensitivity analysis changes", {
   expect_equal(change1@where, "theta")
   expect_equal(change1@down, 2)
   expect_equal(change1@up, 2)
+  expect_equal(change1@log, FALSE)
   
   # Testing default 'where' argument
   change1b <- Change("VC", down=2, up=2)

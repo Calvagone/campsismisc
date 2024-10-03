@@ -251,11 +251,11 @@ dataset <- Dataset(1) %>%
 
 object <- SensitivityAnalysis(model=model, dataset=dataset, outputs=outputs) %>%
   add(LabeledParameters(c(DUR="Duration", VC="Central volume", VP="Peripheral volume", Q="Inter-compartmental\nclearance", CL="Clearance"))) %>%
-  add(SensitivityAnalysisItem(Change("DUR", up=2, down=2))) %>%
-  add(SensitivityAnalysisItem(Change("VC", up=2, down=2))) %>%
-  add(SensitivityAnalysisItem(Change("VP", up=2, down=2))) %>%
-  add(SensitivityAnalysisItem(Change("Q", up=2, down=2))) %>%
-  add(SensitivityAnalysisItem(Change("CL", up=2, down=2)))
+  add(SensitivityAnalysisItem(Change("DUR", up=2, down=2, log=TRUE))) %>%
+  add(SensitivityAnalysisItem(Change("VC", up=2, down=2, log=TRUE))) %>%
+  add(SensitivityAnalysisItem(Change("VP", up=2, down=2, log=TRUE))) %>%
+  add(SensitivityAnalysisItem(Change("Q", up=2, down=2, log=TRUE))) %>%
+  add(SensitivityAnalysisItem(Change("CL", up=2, down=2, log=TRUE)))
 
 object <- object %>% prepare()
 object %>% getTornadoPlot(index=1)

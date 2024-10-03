@@ -4,10 +4,18 @@
 \alias{Change}
 \title{Create a sensibility analysis change.}
 \usage{
-Change(parameter, up, down, upDownAsFactor = TRUE)
+Change(
+  parameter,
+  up,
+  down,
+  upDownAsFactor = TRUE,
+  where = "theta",
+  log = FALSE
+)
 }
 \arguments{
-\item{parameter}{parameter name, like "CL", must be part of the model}
+\item{parameter}{theta name (e.g. "CL") or parameter/equation name (e.g. "CL") in the model code,
+see also argument `where`.}
 
 \item{up}{model parameter will be multiplied by this value if upDownAsFactor is TRUE,
 otherwise the model parameter will take this value as is}
@@ -16,7 +24,15 @@ otherwise the model parameter will take this value as is}
 otherwise the model parameter will take this value as is}
 
 \item{upDownAsFactor}{if TRUE, up and down are respectively used as multiplier and divider,
-if FALSE, their value is used as is}
+if FALSE, their value is used as is.}
+
+\item{where}{where to apply the change, either "theta" (the corresponding theta is changed in the model parameters) 
+or "equation" (the corresponding equation is changed in the model code)}
+
+\item{log}{logical value, applies only when `where`="theta". In that case, it specifies if the theta parameter is in log scale. 
+If TRUE, the theta value will be first transformed to linear scale, then the change will be applied,
+and finally the result will be transformed back to log scale. If FALSE, the change will be applied directly.
+Default is FALSE.}
 }
 \description{
 Create a sensibility analysis change.

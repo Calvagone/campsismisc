@@ -77,23 +77,60 @@ setMethod("createScenarios", signature=c("sensitivity_analysis"), definition=fun
     
     for (change in changes@list) {
       name <- change %>% getName()
-      equation <- model %>% find(Equation(name))
-      if (is.null(equation)) {
-        stop(paste0("Equation ", name, " cannot be found in model"))
-      }
-      equationUp <- equation
-      equationDown <- equation
-      if (change@up_down_as_factor) {
-        equationUp@rhs <- paste0("(", equationUp@rhs, ") * ", change@up) # Multiplication
-        equationDown@rhs <- paste0("(", equationDown@rhs, ") / ", change@down) # Division
-      } else {
-        # Use values as is
-        equationUp@rhs <- change@up %>% as.character()
-        equationDown@rhs <- change@down %>% as.character()
-      }
+      where <- change@where
 
-      modelUp <- modelUp %>% campsismod::replace(equationUp)
-      modelDown <- modelDown %>% campsismod::replace(equationDown)
+      if (where == "equation") {
+        equation <- model %>% find(Equation(name))
+        if (is.null(equation)) {
+          stop(paste0("Equation ", name, " cannot be found in model"))
+        }
+        equationUp <- equation
+        equationDown <- equation
+        if (change@up_down_as_factor) {
+          equationUp@rhs <- paste0("(", equationUp@rhs, ") * ", change@up) # Multiplication
+          equationDown@rhs <- paste0("(", equationDown@rhs, ") / ", change@down) # Division
+        } else {
+          # Use values as is
+          equationUp@rhs <- change@up %>% as.character()
+          equationDown@rhs <- change@down %>% as.character()
+        }
+        
+        modelUp <- modelUp %>% campsismod::replace(equationUp)
+        modelDown <- modelDown %>% campsismod::replace(equationDown)
+        
+      } else if (where == "theta") {
+        theta <- model %>% find(Theta(name))
+        if (is.null(theta)) {
+          stop(paste0("Theta ", name, " cannot be found in model"))
+        }
+        thetaUp <- theta
+        thetaDown <- theta
+        if (change@up_down_as_factor) {
+          if (change@log) {
+            thetaUp@value <- log(exp(theta@value) * change@up) # Multiplication
+            thetaDown@value <- log(exp(theta@value) / change@down) # Division
+          } else {
+            thetaUp@value <- theta@value * change@up # Multiplication
+            thetaDown@value <- theta@value / change@down # Division
+          }
+        } else {
+          # Use values as is
+          if (change@log) {
+            # Arbitrary but more convenient for the user to provide boundaries in the linear scale
+            thetaUp@value <- log(change@up)
+            thetaDown@value <- log(change@down)
+          } else {
+            thetaUp@value <- change@up
+            thetaDown@value <- change@down
+          }
+        }
+        
+        modelUp <- modelUp %>% campsismod::replace(thetaUp)
+        modelDown <- modelDown %>% campsismod::replace(thetaDown)
+      } else {
+        # Should not happen
+        stop(paste0("Unknown where argument: ", where))
+      }
     }
     scenarios <- scenarios %>%
       add(Scenario(name=paste0(item %>% getName(), ", up"), model=modelUp)) %>%

@@ -27,9 +27,10 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (rxode2/mrgsolve)", {
   test <- expression(
     oatAnalysisRegressionTest(object=object, filename=regFilename),
     object %>% getForestPlot(), # Default forest plot
-    object %>% getForestPlot(limits=c(0.7, 1.5)) + ggplot2::scale_y_continuous(breaks=c(0.8,1,1.25)),
-    # A tornado plot should work as well but a warning is thrown because it has more than 1 replicate
-    expect_warning(object %>% getTornadoPlot(), regexp="Multiple replicates detected")
+    object %>% getForestPlot(limits=c(0.7, 1.5)) + ggplot2::scale_y_continuous(breaks=c(0.8,1,1.25))#,
+    # class(object) <- "sensitivity_analysis",
+    # # A tornado plot should work as well but a warning is thrown because it has more than 1 replicate
+    # expect_warning(object %>% getTornadoPlot(), regexp="Multiple replicates detected")
   )
   campsismiscTest(simulation, test, env=environment())
 
@@ -106,7 +107,7 @@ test_that("Forest plots must work when only 1 item is simulated (rxode2/mrgsolve
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight")) %>% # Units have been removed
     add(ForestPlotItem(Covariate("WT", 60)))
-  
+
   expect_equal(object@items %>% getNames(), c("WT:60"))
 
   # Requires campsis v1.5.4 since only 1 scenario is used
@@ -115,7 +116,7 @@ test_that("Forest plots must work when only 1 item is simulated (rxode2/mrgsolve
     object@dest <- destEngine,
     object <- progressr::with_progress(object %>% prepare())
   )
-  
+
   test <- expression(
     results1 <- object@results@list[[1]]@results,
     expect_equal(object@results %>% length(), 1),

@@ -1,5 +1,12 @@
 
-# campsismisc
+# campsismisc <img src='man/figures/r_package_campsismisc.png' align="right" width="120"/>
+
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/Calvagone/campsismisc/workflows/R-CMD-check/badge.svg)](https://github.com/Calvagone/campsismisc/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/Calvagone/campsismisc/graph/badge.svg)](https://app.codecov.io/gh/Calvagone/campsismisc)
+<!-- badges: end -->
 
 ## Forest plots
 

@@ -132,7 +132,7 @@ setMethod("getForestPlot", signature=c("forest_plot", "integer", "logical", "log
   if (show_labels) {
     # Note when hjust not set, geom_labels are automatically aligned with data
     plot <- plot + ggplot2::geom_label(ggplot2::aes(label=LABEL),
-                                       vjust=geom_label_vjust, nudge_x=geom_label_nudge_x, nudge_y=geom_label_nudge_y, size=geom_label_size, label.size=NA)
+                                       vjust=geom_label_vjust, nudge_x=geom_label_nudge_x, nudge_y=geom_label_nudge_y, size=geom_label_size, linewidth=0)
   }
   
   plot <- plot +

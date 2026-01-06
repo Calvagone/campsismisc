@@ -1,3 +1,7 @@
+# campsismisc 0.5.3
+
+* The label.size argument of geom_label() is deprecated #58
+
 # campsismisc 0.5.2
 
 * Set up code coverage report with codecov.io #53

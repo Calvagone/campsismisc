@@ -121,7 +121,7 @@ fp %>% getForestPlot(index=1) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
-<img src="README_files/figure-gfm/fp_metabolism_effect_on_cl-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/fp_metabolism_effect_on_cl-1.png" alt="" style="display: block; margin: auto;" />
 
 Similarly, the forest plot for volume can be obtained as follows (use
 `index=2`):
@@ -131,7 +131,7 @@ fp %>% getForestPlot(index=2) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
-<img src="README_files/figure-gfm/fp_metabolism_effect_on_vc-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/fp_metabolism_effect_on_vc-1.png" alt="" style="display: block; margin: auto;" />
 
 ### Effect of metabolism and weight on PK metrics
 
@@ -181,7 +181,7 @@ fp %>% getForestPlot(index=1) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
-<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d1-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d1-1.png" alt="" style="display: block; margin: auto;" />
 
 If we are interested to see the absolute change in AUC, argument
 relative can be set to FALSE as follows.
@@ -190,7 +190,7 @@ relative can be set to FALSE as follows.
 fp %>% getForestPlot(index=1, relative=FALSE)
 ```
 
-<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d1_absolute-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d1_absolute-1.png" alt="" style="display: block; margin: auto;" />
 
 To look at AUC on day 7, we proceed as follows:
 
@@ -199,7 +199,7 @@ fp %>% getForestPlot(index=2) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
-<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d7-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d7-1.png" alt="" style="display: block; margin: auto;" />
 
 Again, we can look at the absolute values.
 
@@ -207,7 +207,7 @@ Again, we can look at the absolute values.
 fp %>% getForestPlot(index=2, relative=FALSE)
 ```
 
-<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d7_absolute-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d7_absolute-1.png" alt="" style="display: block; margin: auto;" />
 
 Let’s produce one more plot with Cmax on day 1.
 
@@ -216,7 +216,7 @@ fp %>% getForestPlot(index=3) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
-<img src="README_files/figure-gfm/fp_metabolism_effect_on_cmax_d1-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/fp_metabolism_effect_on_cmax_d1-1.png" alt="" style="display: block; margin: auto;" />
 
 And a final one with Cmax on day 7.
 
@@ -225,7 +225,7 @@ fp %>% getForestPlot(index=4) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
-<img src="README_files/figure-gfm/fp_metabolism_effect_on_cmax_d7-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/fp_metabolism_effect_on_cmax_d7-1.png" alt="" style="display: block; margin: auto;" />
 
 Finally, you need to know that you can combine model parameter ouputs
 together with NCA metric outputs, if you want! This will make your
@@ -268,7 +268,7 @@ object <- object %>% prepare()
 object %>% getTornadoPlot(index=1)
 ```
 
-<img src="README_files/figure-gfm/sensibility_analysis_auc_example-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/sensibility_analysis_auc_example-1.png" alt="" style="display: block; margin: auto;" />
 
 Absolute values may also be shown:
 
@@ -276,7 +276,7 @@ Absolute values may also be shown:
 object %>% getTornadoPlot(index=1, relative=FALSE)
 ```
 
-<img src="README_files/figure-gfm/sensibility_analysis_auc_example_absolute-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/sensibility_analysis_auc_example_absolute-1.png" alt="" style="display: block; margin: auto;" />
 
 Cmax can also be shown using `index=2`.
 
@@ -284,4 +284,4 @@ Cmax can also be shown using `index=2`.
 object %>% getTornadoPlot(index=2)
 ```
 
-<img src="README_files/figure-gfm/sensibility_analysis_cmax_example-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/sensibility_analysis_cmax_example-1.png" alt="" style="display: block; margin: auto;" />

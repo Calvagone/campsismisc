@@ -123,8 +123,7 @@ setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), 
 #' @importFrom dplyr rename_at
 #' @export
 outfunNCA <- function(metric, x) {
-  metric@x <- x
-  metric <- metric %>% campsisnca::calculate()
+  metric <- metric %>% campsisnca::calculate(x)
   return(metric@individual %>% dplyr::rename_at(.vars="value", .funs=~"VALUE"))
 }
 

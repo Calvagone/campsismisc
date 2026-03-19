@@ -1,3 +1,7 @@
+# campsismisc 0.6.0
+
+* Update package due to campsisnca rework #62
+
 # campsismisc 0.5.3
 
 * The label.size argument of geom_label() is deprecated #58

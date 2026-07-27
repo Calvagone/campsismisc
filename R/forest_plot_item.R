@@ -62,11 +62,3 @@ setMethod("getLabel", signature=c("forest_plot_item"), definition=function(objec
   
   return(paste0(individualLabels, collapse=" / "))
 })
-
-#_______________________________________________________________________________
-#----                           getCovariates                               ----
-#_______________________________________________________________________________
-
-setMethod("getCovariates", signature=c("forest_plot_item"), definition=function(object) {
-  return(object@covariates)
-})

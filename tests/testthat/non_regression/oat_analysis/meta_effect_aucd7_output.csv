@@ -1,4 +1,4 @@
-"replicate","id","VALUE","SCENARIO"
+"replicate","id","value","SCENARIO"
 1,1,179.54,"Metaboliser: Slow"
 1,1,133.13,"Metaboliser: Fast"
 1,1,183.72,"Weight: 60 kg"

@@ -67,7 +67,7 @@ setMethod("createScenarios", signature=c("forest_plot"), definition=function(obj
   items <- object@items
   
   for (item in items@list) {
-    covariates <-  item %>% getCovariates()
+    covariates <-  item@covariates
     dataset_ <- dataset
     for (covariate in covariates@list) {
       dataset_ <- dataset_ %>% campsismod::replace(covariate)

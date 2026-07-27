@@ -180,11 +180,11 @@ setMethod("getTornadoPlot", signature=c("sensitivity_analysis", "integer", "logi
   }
   
   # Always compute change from baseline because arrange will always called on the absolute change
-  results$CHANGE <- formula(results$VALUE, baseline)
+  results$CHANGE <- formula(results$value, baseline)
   
   summary <- results %>%
     dplyr::group_by(dplyr::across(c("ITEM_NAME", "DIRECTION"))) %>%
-    dplyr::summarise(MED_CHANGE=median(.data$CHANGE), MED_VALUE=median(.data$VALUE)) %>% # If several replicates
+    dplyr::summarise(MED_CHANGE=median(.data$CHANGE), MED_VALUE=median(.data$value)) %>% # If several replicates
     dplyr::group_by(dplyr::across("ITEM_NAME")) %>%
     dplyr::mutate(MAX_MED_CHANGE=max(abs(.data$MED_CHANGE))) %>%
     dplyr::arrange(abs(.data$MAX_MED_CHANGE)) %>%

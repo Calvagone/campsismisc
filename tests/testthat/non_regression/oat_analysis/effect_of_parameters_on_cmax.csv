@@ -1,4 +1,4 @@
-"replicate","id","VALUE","SCENARIO"
+"replicate","id","value","SCENARIO"
 1,1,10.04,"DUR, up"
 1,1,11.1,"DUR, down"
 1,1,5.55,"VC, up"

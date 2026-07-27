@@ -5,6 +5,7 @@
 
 #' One-at-a-time analysis structure.
 #' 
+#' @importFrom campsis Dataset
 #' @export
 setClass(
   "oat_analysis",
@@ -18,7 +19,7 @@ setClass(
     settings="simulation_settings",
     results="oat_analysis_results"
   ),
-  prototype=prototype(model=CampsisModel(), dataset=Dataset(), seed=1L)
+  prototype=prototype(model=CampsisModel(), dataset=campsis::Dataset(), seed=1L)
 )
 
 #_______________________________________________________________________________
@@ -51,8 +52,14 @@ setMethod("computeBaseline", signature=c("tbl_df", "model_parameter_output"), de
 
 #' @rdname computeBaseline
 setMethod("computeBaseline", signature=c("tbl_df", "nca_metric_output"), definition=function(object, output) {
-  baseline <- outfunNCA(metric=output@metric, x=output@filter(object)) %>% dplyr::pull(VALUE)
-  return(baseline)
+  nca <- campsisnca::NCAAnalysis() %>%
+    add(output@metric)
+  table <- campsisnca::NCATable() %>%
+    add(nca)
+  baseline <- table %>%
+    campsisnca::calculate(x=object) %>%
+    campsismod::export(dest="dataframe", type="individual")
+  return(baseline %>% dplyr::pull(value))
 })
 
 #' @rdname computeBaseline
@@ -103,10 +110,10 @@ setGeneric("postProcessScenarios", function(object, output) {
 setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), definition=function(object, output) {
   outputName <- output %>% getName()
   results <- object %>%
-    dplyr::select(dplyr::any_of("replicate"), dplyr::all_of(c("SCENARIO", outputName))) %>%
-    tidyr::unnest(cols=dplyr::all_of(outputName)) %>%
+    dplyr::filter(.data$metric==outputName) %>%
+    dplyr::select(-dplyr::all_of(c("discrete_value", "metric"))) %>% # TODO
     dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev())) %>%
-    dplyr::relocate(dplyr::any_of(c("replicate", "id", "VALUE", "SCENARIO")))
+    dplyr::relocate(dplyr::any_of(c("replicate", "id", "value", "SCENARIO")))
   return(results)
 })
 
@@ -114,48 +121,10 @@ setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), 
 #----                               prepare                                 ----
 #_______________________________________________________________________________
 
-#' Outfun NCA
-#' 
-#' @param metric NCA metric
-#' @param x tibble
-#' @return tibble
-#' @importFrom campsisnca calculate
-#' @importFrom dplyr rename_at
-#' @export
-outfunNCA <- function(metric, x) {
-  metric <- metric %>% campsisnca::calculate(x)
-  return(metric@individual %>% dplyr::rename_at(.vars="value", .funs=~"VALUE"))
-}
-
-#' Campsismisc output function.
-#' 
-#' @param x tibble
-#' @param outputs oat_analysis_outputs
-#' @return tibble
-#' @importFrom purrr map_dfc
-#' @importFrom dplyr distinct rename
-#' @importFrom assertthat assert_that
-#' @importFrom tibble tibble
-campsismiscOutfun <- function(x, outputs) {
-  retValue <- outputs@list %>% purrr::map_dfc(.f=function(output) {
-    outputName <- output %>% getName()
-    if (is(output, "nca_metric_output")) {
-      myFun <- function(x) {campsismisc::outfunNCA(metric=output@metric, x=output@filter(x))}
-      innerRetValue <- myFun(x)
-    } else if (is(output, "model_parameter_output")) {
-      innerRetValue <- x[, outputName] %>% dplyr::distinct() %>%
-        dplyr::rename(VALUE=!!outputName)
-      assertthat::assert_that(nrow(innerRetValue)==1,
-                              msg=paste0("Parameter ", outputName, " must not change over time"))
-    } else {
-      stop("Only NCA output or model parameter output")
-    }
-    return(tibble::tibble(!!outputName:=list(innerRetValue)))
-  })
-  return(retValue)
-}
 
 #' @rdname prepare
+#' @importFrom campsis Outfun Outfuns NCATableOutfun
+#' @importFrom campsisnca NCAAnalysis NCATable
 #' @importFrom progressr with_progress without_progress
 setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   # Fix IIV, VARCOV_OMEGA, VARCOV_SIGMA at the beginning!
@@ -186,22 +155,29 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   scenarios <- object %>% createScenarios(dataset=base_dataset, model=model)
 
   # Prepare outfun function
-  outfun <- Outfun(fun=campsismiscOutfun, args=list(outputs=outputs), level="scenario")
+
+  nca <- campsisnca::NCAAnalysis()
+  for (output in outputs@list) {
+    nca <- nca %>%
+      add(output@metric)
+  }
+  outfuns <- campsis::Outfuns() %>%
+    add(campsis::NCATableOutfun(table = campsisnca::NCATable() %>% add(nca), export_type = "individual"))
 
   # Simulate
-  allResults <- simulate(model=model, dataset=base_dataset, scenarios=scenarios, replicates=replicates,
-                      seed=seed, dest=dest, outvars=outvars, outfun=outfun, settings=object@settings)
-  
+  all_results <- simulate(model=model, dataset=base_dataset, scenarios=scenarios, replicates=replicates,
+                      seed=seed, dest=dest, outvars=outvars, outfun=outfuns, settings=object@settings)
+
   # Post-processing
-  tmpResults <- purrr::map2(.x=outputs@list, .y=baselines, .f=function(output, baseline) {
+  tmp_results <- purrr::map2(.x=outputs@list, .y=baselines, .f=function(output, baseline) {
     res <- OATResult(output=output, baseline=baseline,
-                     results=postProcessScenarios(object=allResults, output=output))
+                     results=postProcessScenarios(object=all_results, output=output))
     return(res)
   })
   
   # Save
   object@results <- OATResults() %>%
-    add(tmpResults)
+    add(tmp_results)
 
   return(object)
 })

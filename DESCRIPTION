@@ -28,7 +28,6 @@ Imports:
     dplyr,
     ggplot2,
     ggrepel,
-    plyr,
     progressr,
     purrr,
     rlang,

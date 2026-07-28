@@ -28,11 +28,12 @@ setClass(
 #' @param dest destination engine: rxode2, RxODE or mrgsolve (default)
 #' @param settings simulation settings
 #' @return an empty forest plot
+#' @importFrom campsis Dataset Observations Settings
 #' @export
-ForestPlot <- function(model, outputs, dataset=NULL, replicates=100L, seed=1L, dest="mrgsolve", settings=Settings()) {
+ForestPlot <- function(model, outputs, dataset=NULL, replicates=100L, seed=1L, dest="mrgsolve", settings=campsis::Settings()) {
   if (is.null(dataset)) {
-    dataset <- Dataset(1) %>%
-      add(Observations(times=0))
+    dataset <- campsis::Dataset(1) %>%
+      add(campsis::Observations(times=0))
   }
   if (is(outputs, "oat_analysis_output")) {
     # Add single output into multiple outputs object
@@ -105,15 +106,15 @@ setMethod("getForestPlot", signature=c("forest_plot", "integer", "logical", "log
     limits <- NULL
   }
   
-  # Recompute VALUE as relative value if relative is TRUE
+  # Recompute value as relative value if relative is TRUE
   if (relative) {
-    results$VALUE <- formula(results$VALUE, baseline)
+    results$value <- formula(results$value, baseline)
   }
   summary <- results %>%
     dplyr::group_by(dplyr::across("SCENARIO")) %>%
-    dplyr::summarise(LOW=quantile(.data$VALUE, alpha),
-                     MED=median(.data$VALUE),
-                     UP=quantile(.data$VALUE, 1-alpha))
+    dplyr::summarise(LOW=quantile(.data$value, alpha),
+                     MED=median(.data$value),
+                     UP=quantile(.data$value, 1-alpha))
   
   # Add label column
   summary$LABEL <- paste0(signif(summary$MED, label_nsig), ' (',

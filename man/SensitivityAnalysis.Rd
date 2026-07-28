@@ -11,7 +11,7 @@ SensitivityAnalysis(
   replicates = 1L,
   seed = 1L,
   dest = "mrgsolve",
-  settings = Settings()
+  settings = campsis::Settings()
 )
 }
 \arguments{

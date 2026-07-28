@@ -11,7 +11,7 @@ ForestPlot(
   replicates = 100L,
   seed = 1L,
   dest = "mrgsolve",
-  settings = Settings()
+  settings = campsis::Settings()
 )
 }
 \arguments{

@@ -1,8 +1,10 @@
 library(testthat)
+library(campsis)
+library(campsisnca)
 
 context("Test the forest plot feature")
 
-source(paste0("", "testUtils.R"))
+source(file.path(getwd(), test_path(), "testUtils.R"))
 
 test_that("Forest plot: effect of METAB (0/1) and WT on CL (rxode2/mrgsolve)", {
   model <- getModel("metaboliser_effect_on_cl")
@@ -18,6 +20,8 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (rxode2/mrgsolve)", {
 
   expect_equal(object@items %>% get_names(), c("METAB:0", "METAB:1", "WT:60", "WT:80"))
 
+  object@dest <- "mrgsolve"
+  object <- object %>% prepare()
 
   simulation <- expression(
     object@dest <- destEngine,
@@ -45,7 +49,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC0-24 (rxode2/mrgsolve
     add(Observations(times=0:24))
 
   object <- ForestPlot(model=model, dataset=dataset,
-                       outputs=NcaMetricOutput(campsisnca::AUC(variable="CONC")), replicates=10) %>%
+                       outputs=NcaMetricOutput(AUC(variable="CONC")), replicates=10) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
@@ -76,8 +80,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (rxode2/mrgso
     add(Observations(times=0:168))
 
   object <- ForestPlot(model=model, dataset=dataset,
-                       outputs=NcaMetricOutput(campsisnca::AUC(variable="CONC"),
-                                              filter=~campsisnca::timerange(.x, min=144, max=168)),
+                       outputs=NcaMetricOutput(AUC(variable="CONC", window=TimeWindow(144,168))),
                        replicates=2) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
     add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%

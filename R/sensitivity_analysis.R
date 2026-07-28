@@ -28,11 +28,12 @@ setClass(
 #' @param dest destination engine: rxode2, RxODE or mrgsolve (default)
 #' @param settings simulation settings
 #' @return an empty OAT-based sensibility analysis object
+#' @importFrom campsis Dataset Observations Settings
 #' @export
-SensitivityAnalysis <- function(model, outputs, dataset=NULL, replicates=1L, seed=1L, dest="mrgsolve", settings=Settings()) {
+SensitivityAnalysis <- function(model, outputs, dataset=NULL, replicates=1L, seed=1L, dest="mrgsolve", settings=campsis::Settings()) {
   if (is.null(dataset)) {
-    dataset <- Dataset(1) %>%
-      add(Observations(times=0))
+    dataset <- campsis::Dataset(1) %>%
+      add(campsis::Observations(times=0))
   }
   if (is(outputs, "oat_analysis_output")) {
     # Add single output into multiple outputs object

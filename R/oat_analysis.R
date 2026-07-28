@@ -162,8 +162,13 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
 
   nca <- campsisnca::NCAAnalysis()
   for (output in outputs@list) {
-    nca <- nca %>%
-      add(output@metric)
+    if (is(output, "model_parameter_output")) {
+      nca <- nca %>%
+        add(campsisnca::Last(variable=output@name, name=output@name))
+    } else {
+      nca <- nca %>%
+        add(output@metric)
+    }
   }
   outfun <- campsis::NCATableOutfun(table = campsisnca::NCATable() %>% add(nca), export_type = "individual")
   outfuns <- campsis::Outfuns() %>%

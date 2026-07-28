@@ -26,6 +26,7 @@ setClass(
 #' @param label covariate label, e.g. 'Weight'
 #' @param unit value unit, e.g. 'kg'
 #' @return a labeled covariate
+#' @importFrom campsis ConstantDistribution
 #' @export
 LabeledCovariate <- function(name, default_value, label=NULL, unit=NULL) {
   if (is.null(label)) {
@@ -34,7 +35,7 @@ LabeledCovariate <- function(name, default_value, label=NULL, unit=NULL) {
   if (is.null(unit)) {
     unit <- as.character(NA)
   }
-  return(new("labeled_covariate", name=name, distribution=ConstantDistribution(default_value),
+  return(new("labeled_covariate", name=name, distribution=campsis::ConstantDistribution(default_value),
              label=label, unit=unit))
 }
 
@@ -70,6 +71,7 @@ setClass(
 #' @param unit value unit, e.g. 'kg'
 #' @param categories named vector describing the categories, e.g. c(FED=0, FASTED=1)
 #' @return a labeled covariate
+#' @importFrom campsis ConstantDistribution
 #' @export
 CategoricalLabeledCovariate <- function(name, default_value, label=NULL, unit=NULL, categories) {
   if (is.null(label)) {
@@ -78,7 +80,7 @@ CategoricalLabeledCovariate <- function(name, default_value, label=NULL, unit=NU
   if (is.null(unit)) {
     unit <- as.character(NA)
   }
-  return(new("categorical_labeled_covariate", name=name, distribution=ConstantDistribution(default_value),
+  return(new("categorical_labeled_covariate", name=name, distribution=campsis::ConstantDistribution(default_value),
              label=label, unit=unit, categories=categories))
 }
 

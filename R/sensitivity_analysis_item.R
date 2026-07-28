@@ -47,19 +47,19 @@ setMethod("get_label", signature=c("sensitivity_analysis_item"), definition=func
   if (!is(labeled_parameters, "labeled_parameters")) {
     stop("Please provide the labeled parameters")
   }
-  individualLabels <- object@changes@list %>% purrr::map_chr(.f=function(change) {
-    parameterName <- change %>% get_name()
-    parameterLabel <- labeled_parameters[parameterName]
-    if (is.na(parameterLabel)) {
-      parameterLabel <- parameterName
+  individual_labels <- object@changes@list %>% purrr::map_chr(.f=function(change) {
+    parameter_name <- change %>% get_name()
+    parameter_label <- labeled_parameters[parameter_name]
+    if (is.na(parameter_label)) {
+      parameter_label <- parameter_name
     }
     if (change@up_down_as_factor) {
-      return(paste0(parameterLabel, " (\U00F7", change@down, ", ", "\U00D7", change@up, ")"))
+      return(paste0(parameter_label, " (\U00F7", change@down, ", ", "\U00D7", change@up, ")"))
     } else {
-      return(paste0(parameterLabel, " (", change@down, ", ", change@up, ")"))
+      return(paste0(parameter_label, " (", change@down, ", ", change@up, ")"))
     }
   })
   
-  return(paste0(individualLabels, collapse=" / "))
+  return(paste0(individual_labels, collapse=" / "))
 })
 

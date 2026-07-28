@@ -175,7 +175,7 @@ setMethod("get_tornado_plot", signature=c("sensitivity_analysis", "integer", "lo
   }
   
   noOfScenarios <- object@items %>% length()
-  formula <-  preprocessFunction(fun=~(.x - .y)*100/.y, name="tornado_plot_fct")
+  formula <-  preprocess_function(fun=~(.x - .y)*100/.y, name="tornado_plot_fct")
   
   if ("replicate" %in% colnames(results)) {
     warning("Multiple replicates detected, median value will be used in tornado plot")

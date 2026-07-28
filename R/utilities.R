@@ -8,7 +8,7 @@
 #' @importFrom rlang as_function
 #' @keywords internal
 #' 
-preprocessFunction <- function(fun, name) {
+preprocess_function <- function(fun, name) {
   if (is.null(fun)) {
     fun <- function(x){x}
     return(fun)

@@ -13,8 +13,8 @@ setClass(
   ),
   contains="fixed_covariate",
   validity=function(object) {
-    return(c(expectOne(object, "label"),
-             expectOne(object, "unit")))
+    return(c(expect_one(object, "label"),
+             expect_one(object, "unit")))
   }
 )
 
@@ -58,7 +58,7 @@ setClass(
     if (isUnnamed) {
       checkNames <- "Categories must be a named vector"
     }
-    return(c(checkNames, expectOneOrMore(object, "categories")))
+    return(c(checkNames, expect_one_or_more(object, "categories")))
   }
 )
 

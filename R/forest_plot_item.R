@@ -21,8 +21,8 @@ setClass(
 #' @export
 ForestPlotItem <- function(...) {
   args <- list(...)
-  areConstantCovariates <- args %>% purrr::map_lgl(~is(.x, "fixed_covariate"))
-  assertthat::assert_that(all(areConstantCovariates), msg="Forest plot item can only accept fixed covariates")
+  are_constant_covariates <- args %>% purrr::map_lgl(~is(.x, "fixed_covariate"))
+  assertthat::assert_that(all(are_constant_covariates), msg="Forest plot item can only accept fixed covariates")
   covariates <- new("covariates") %>% add(args)
   return(new("forest_plot_item", covariates=covariates))
 }
@@ -46,19 +46,19 @@ setMethod("get_label", signature=c("forest_plot_item"), definition=function(obje
   if (!is(labeled_covariates, "labeled_covariates")) {
     stop("Please provide all labeled covariates")
   }
-  individualLabels <- object@covariates@list %>% purrr::map_chr(.f=function(covariate) {
-    labeledCovariate <- labeled_covariates %>% find(covariate)
-    if (is(labeledCovariate, "categorical_labeled_covariate")) {
-      return(paste0(labeledCovariate@label, ": ",
-                    names(which(labeledCovariate@categories==covariate@distribution@value))))
+  individual_labels <- object@covariates@list %>% purrr::map_chr(.f=function(covariate) {
+    labeled_covariate <- labeled_covariates %>% find(covariate)
+    if (is(labeled_covariate, "categorical_labeled_covariate")) {
+      return(paste0(labeled_covariate@label, ": ",
+                    names(which(labeled_covariate@categories==covariate@distribution@value))))
     } else {
-      if (!is.na(labeledCovariate@unit) && labeledCovariate@unit != "") {
-        return(paste0(labeledCovariate@label, ": ", covariate@distribution@value, " ", labeledCovariate@unit))
+      if (!is.na(labeled_covariate@unit) && labeled_covariate@unit != "") {
+        return(paste0(labeled_covariate@label, ": ", covariate@distribution@value, " ", labeled_covariate@unit))
       } else {
-        return(paste0(labeledCovariate@label, ": ", covariate@distribution@value))
+        return(paste0(labeled_covariate@label, ": ", covariate@distribution@value))
       }
     }
   })
   
-  return(paste0(individualLabels, collapse=" / "))
+  return(paste0(individual_labels, collapse=" / "))
 })

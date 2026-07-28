@@ -26,7 +26,7 @@ setClass(
   ),
   contains="oat_analysis_output",
   validity=function(object) {
-    return(c(expectOne(object, "name")))
+    return(c(expect_one(object, "name")))
   }
 )
 
@@ -53,7 +53,7 @@ setClass(
   ),
   contains="oat_analysis_output",
   validity=function(object) {
-    return(expectOneForAll(object, c("suffix")))
+    return(expect_one_for_all(object, c("suffix")))
   }
 )
 

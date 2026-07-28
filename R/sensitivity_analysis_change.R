@@ -17,13 +17,13 @@ setClass(
   ),
   contains="pmx_element",
   validity=function(object) {
-    return(c(expectOne(object, "parameter"),
-             expectOne(object, "up"),
-             expectOne(object, "down"),
-             expectOne(object, "up_down_as_factor"),
-             expectOne(object, "where"),
+    return(c(expect_one(object, "parameter"),
+             expect_one(object, "up"),
+             expect_one(object, "down"),
+             expect_one(object, "up_down_as_factor"),
+             expect_one(object, "where"),
              checkWhereArgument(object@where),
-             expectOne(object, "log")))
+             expect_one(object, "log")))
   }
 )
 

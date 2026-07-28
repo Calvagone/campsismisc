@@ -96,7 +96,7 @@ setMethod("get_forest_plot", signature=c("forest_plot", "integer", "logical", "l
           definition=function(object, index, relative, show_labels, show_ref, show_range, range, ci, limits, 
                               geom_label_vjust=0, geom_label_nudge_x=0.15, geom_label_nudge_y=0, geom_label_size=3, label_nsig=3, geom_hline_color="darkblue", ...) {
   alpha <- (1-ci)/2
-  formula <- preprocessFunction(fun=~.x/.y, name="forest_plot_fct")
+  formula <- preprocess_function(fun=~.x/.y, name="forest_plot_fct")
   iResults <- object@results@list[[index]]
   output <- iResults@output
   results <- iResults@results

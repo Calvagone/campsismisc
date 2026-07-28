@@ -14,6 +14,8 @@ output: github_document
 Assume the following estimated 2-compartment model:
 
 ```{r, message=FALSE, warning=FALSE}
+library(campsis)
+library(campsisnca)
 library(campsismisc)
 library(progressr)
 
@@ -31,7 +33,7 @@ This model contains:
 
 ```{r, message=F}
 # Configure hardware
-settings <- Settings(Hardware(cpu=8, replicate_parallel=TRUE))
+settings <- Settings(Hardware(cpu=4, replicate_parallel=TRUE))
 dest <- "mrgsolve" # Much faster than RxODE
 ```
 
@@ -84,10 +86,10 @@ Instead of creating a `ModelParameterOutput` object, we create a `NcaMetricOutpu
 
 ```{r}
 outputs <- OATOutputs() %>%
-  add(NcaMetricOutput(AUC(variable="CONC"), filter=~campsisnca::timerange(.x, min=0, max=24))) %>%
-  add(NcaMetricOutput(AUC(variable="CONC"), filter=~campsisnca::timerange(.x, min=144, max=168), suffix="Day 7")) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~campsisnca::timerange(.x, min=0, max=24))) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~campsisnca::timerange(.x, min=144, max=168), suffix="Day 7"))
+  add(NcaMetricOutput(AUC(variable="CONC", window=TimeWindow(0, 24), name="AUC Day 1"))) %>%
+  add(NcaMetricOutput(AUC(variable="CONC", window=TimeWindow(144, 168), name="AUC Day 7"))) %>%
+  add(NcaMetricOutput(Cmax(variable="CONC", window=TimeWindow(0, 24), name="Cmax Day 1"))) %>%
+  add(NcaMetricOutput(Cmax(variable="CONC", window=TimeWindow(144, 168), name="Cmax Day 7")))
 ```
 
 A forest plot object can be instantiated and run as follows:
@@ -189,6 +191,6 @@ object %>% get_tornado_plot(index=2)
 ```
 
 ```{r, echo=FALSE, message=F, results='hide'}
-setupPlanSequential()
+setup_plan_sequential()
 ```
 

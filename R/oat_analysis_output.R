@@ -49,25 +49,16 @@ setClass(
   "nca_metric_output",
   representation(
     metric="nca_metric", # E.g. "AUC()"
-    suffix="character"
   ),
-  contains="oat_analysis_output",
-  validity=function(object) {
-    return(expect_one_for_all(object, c("suffix")))
-  }
+  contains="oat_analysis_output"
 )
 
 #' Create a model parameter output.
 #' 
 #' @param metric NCA metric coming from campsisnca
-#' @param suffix a possible suffix that will be added to the NCA metric name
-#'  (e.g. useful when the same metric appears more than once in the outputs list), default is NULL
 #' @export
-NcaMetricOutput <- function(metric, suffix=NULL) {
-  if (is.null(suffix)) {
-    suffix <- as.character(NA)
-  }
-  return(new("nca_metric_output", metric=metric, suffix=suffix))
+NcaMetricOutput <- function(metric) {
+  return(new("nca_metric_output", metric=metric))
 }
 
 #_______________________________________________________________________________
@@ -80,9 +71,6 @@ setMethod("get_name", signature=c("model_parameter_output"), definition=function
 
 setMethod("get_name", signature=c("nca_metric_output"), definition=function(x) {
   name <- x@metric %>% get_name()
-  if (!is.na(x@suffix)) {
-    name <- paste(name, x@suffix)
-  }
   return(name)
 })
 

@@ -13,6 +13,8 @@ coverage](https://codecov.io/gh/Calvagone/campsismisc/graph/badge.svg)](https://
 Assume the following estimated 2-compartment model:
 
 ``` r
+library(campsis)
+library(campsisnca)
 library(campsismisc)
 library(progressr)
 
@@ -72,7 +74,7 @@ model
     ## SIGMA's:
     ##      name index index2 value  fix type
     ## 1 RSV_FIX     1      1     1 TRUE  var
-    ## Variance-covariance matrix available (see ?getVarCov)
+    ## Variance-covariance matrix available (see ?get_var_cov)
     ## 
     ## Compartments:
     ## A_1 (CMT=1)
@@ -89,7 +91,7 @@ This model contains:
 
 ``` r
 # Configure hardware
-settings <- Settings(Hardware(cpu=8, replicate_parallel=TRUE))
+settings <- Settings(Hardware(cpu=4, replicate_parallel=TRUE))
 dest <- "mrgsolve" # Much faster than RxODE
 ```
 
@@ -153,10 +155,10 @@ outputs as follows:
 
 ``` r
 outputs <- OATOutputs() %>%
-  add(NcaMetricOutput(AUC(variable="CONC"), filter=~campsisnca::timerange(.x, min=0, max=24))) %>%
-  add(NcaMetricOutput(AUC(variable="CONC"), filter=~campsisnca::timerange(.x, min=144, max=168), suffix="Day 7")) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~campsisnca::timerange(.x, min=0, max=24))) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~campsisnca::timerange(.x, min=144, max=168), suffix="Day 7"))
+  add(NcaMetricOutput(AUC(variable="CONC", window=TimeWindow(0, 24), name="AUC Day 1"))) %>%
+  add(NcaMetricOutput(AUC(variable="CONC", window=TimeWindow(144, 168), name="AUC Day 7"))) %>%
+  add(NcaMetricOutput(Cmax(variable="CONC", window=TimeWindow(0, 24), name="Cmax Day 1"))) %>%
+  add(NcaMetricOutput(Cmax(variable="CONC", window=TimeWindow(144, 168), name="Cmax Day 7")))
 ```
 
 A forest plot object can be instantiated and run as follows:

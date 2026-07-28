@@ -48,8 +48,7 @@ ModelParameterOutput <- function(name) {
 setClass(
   "nca_metric_output",
   representation(
-    metric="nca_metric", # E.g. "Auc()"
-    filter="function",
+    metric="nca_metric", # E.g. "AUC()"
     suffix="character"
   ),
   contains="oat_analysis_output",
@@ -61,17 +60,14 @@ setClass(
 #' Create a model parameter output.
 #' 
 #' @param metric NCA metric coming from campsisnca
-#' @param filter function to be applied on the simulation output before the
-#'  NCA analysis, either a function or a lambda formula
 #' @param suffix a possible suffix that will be added to the NCA metric name
 #'  (e.g. useful when the same metric appears more than once in the outputs list), default is NULL
 #' @export
-NcaMetricOutput <- function(metric, filter=NULL, suffix=NULL) {
-  filter <- preprocessFunction(fun=filter, name="filter function")
+NcaMetricOutput <- function(metric, suffix=NULL) {
   if (is.null(suffix)) {
     suffix <- as.character(NA)
   }
-  return(new("nca_metric_output", metric=metric, filter=filter, suffix=suffix))
+  return(new("nca_metric_output", metric=metric, suffix=suffix))
 }
 
 #_______________________________________________________________________________

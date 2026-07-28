@@ -59,13 +59,13 @@ setMethod("add", signature=c("forest_plot", "forest_plot_item"), definition=func
 })
 
 #_______________________________________________________________________________
-#----                           createScenarios                             ----
+#----                          create_scenarios                             ----
 #_______________________________________________________________________________
 
-#' @rdname createScenarios
+#' @rdname create_scenarios
 #' @param dataset Campsis dataset
 #' @importFrom campsis Scenarios Scenario
-setMethod("createScenarios", signature=c("forest_plot"), definition=function(object, dataset, ...) {
+setMethod("create_scenarios", signature=c("forest_plot"), definition=function(object, dataset, ...) {
   scenarios <- campsis::Scenarios()
   items <- object@items
   

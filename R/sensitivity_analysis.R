@@ -60,12 +60,12 @@ setMethod("add", signature=c("sensitivity_analysis", "labeled_parameters"), defi
 })
 
 #_______________________________________________________________________________
-#----                           createScenarios                             ----
+#----                          create_scenarios                             ----
 #_______________________________________________________________________________
 
-#' @rdname createScenarios
+#' @rdname create_scenarios
 #' @param model Campsis model
-setMethod("createScenarios", signature=c("sensitivity_analysis"), definition=function(object, model, ...) {
+setMethod("create_scenarios", signature=c("sensitivity_analysis"), definition=function(object, model, ...) {
   # Note, IIV, VARCOV_OMEGA, VARCOV_SIGMA was already disabled in the given model, see oat_analysis.R, prepare()
   # Because simulations are not replicated, variance-covariance matrix is not used by default in CAMPSIS
   # If sensitivity analysis is replicated: nothing happens because the updated model is part of the scenario

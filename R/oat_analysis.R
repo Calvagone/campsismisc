@@ -31,7 +31,6 @@ setClass(
 #' @param object simulation results of the baseline, tibble
 #' @param output OAT output, one or several
 #' @return the baseline, double or list of double
-#' @export
 #' @rdname computeBaseline
 computeBaseline <- function(object, output) {
   stop("No default function is provided")
@@ -71,7 +70,7 @@ setMethod("computeBaseline", signature=c("tbl_df", "oat_analysis_outputs"), defi
 })
 
 #_______________________________________________________________________________
-#----                           createScenarios                             ----
+#----                          create_scenarios                             ----
 #_______________________________________________________________________________
 
 #' Create scenarios.
@@ -79,18 +78,17 @@ setMethod("computeBaseline", signature=c("tbl_df", "oat_analysis_outputs"), defi
 #' @param object OAT analysis, type forest plot or sensitivity analysis
 #' @param ... extra arguments
 #' @return a list of CAMPSIS scenarios to be run
-#' @export
-#' @rdname createScenarios
-createScenarios <- function(object, ...) {
+#' @rdname create_scenarios
+create_scenarios <- function(object, ...) {
   stop("No default function is provided")
 }
 
-setGeneric("createScenarios", function(object, ...) {
-  standardGeneric("createScenarios")
+setGeneric("create_scenarios", function(object, ...) {
+  standardGeneric("create_scenarios")
 })
 
 #_______________________________________________________________________________
-#----                         postProcessScenarios                          ----
+#----                               prepare                                 ----
 #_______________________________________________________________________________
 
 post_process_scenarios <- function(object, output) {
@@ -102,11 +100,6 @@ post_process_scenarios <- function(object, output) {
     dplyr::relocate(dplyr::any_of(c("replicate", "id", "value", "SCENARIO")))
   return(results)
 }
-
-#_______________________________________________________________________________
-#----                               prepare                                 ----
-#_______________________________________________________________________________
-
 
 #' @rdname prepare
 #' @importFrom campsis Outfun Outfuns NCATableOutfun simulate
@@ -139,7 +132,7 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   baselines <- base_scenario %>% computeBaseline(output=outputs)
   
   # Generate scenarios
-  scenarios <- object %>% createScenarios(dataset=base_dataset, model=model)
+  scenarios <- object %>% create_scenarios(dataset=base_dataset, model=model)
 
   # Prepare outfun function
   nca <- campsisnca::NCAAnalysis(strata=c(SCENARIO="all"))

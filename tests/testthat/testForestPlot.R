@@ -20,9 +20,6 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (rxode2/mrgsolve)", {
 
   expect_equal(object@items %>% get_names(), c("METAB:0", "METAB:1", "WT:60", "WT:80"))
 
-  object@dest <- "mrgsolve"
-  object <- object %>% prepare()
-
   simulation <- expression(
     object@dest <- destEngine,
     object <- progressr::with_progress(object %>% prepare())
@@ -31,7 +28,8 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (rxode2/mrgsolve)", {
   test <- expression(
     oatAnalysisRegressionTest(object=object, filename=regFilename),
     object %>% get_forest_plot(), # Default forest plot
-    object %>% get_forest_plot(limits=c(0.7, 1.5)) + ggplot2::scale_y_continuous(breaks=c(0.8,1,1.25))#,
+    object %>% get_forest_plot(limits=c(0.7, 1.5)) + ggplot2::scale_y_continuous(breaks=c(0.8,1,1.25)),
+    object %>% getForestPlot(limits=c(0.7, 1.5)) + ggplot2::scale_y_continuous(breaks=c(0.8,1,1.25)) # Deprecated method
     # class(object) <- "sensitivity_analysis",
     # # A tornado plot should work as well but a warning is thrown because it has more than 1 replicate
     # expect_warning(object %>% get_tornado_plot(), regexp="Multiple replicates detected")

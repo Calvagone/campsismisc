@@ -28,6 +28,7 @@ Imports:
     dplyr,
     ggplot2,
     ggrepel,
+    lifecycle,
     progressr,
     purrr,
     rlang,
@@ -72,4 +73,5 @@ Collate:
     'sensitivity_analysis_item.R'
     'sensitivity_analysis_items.R'
     'sensitivity_analysis.R'
+    'deprecated_methods.R'
 Config/roxygen2/version: 8.0.0

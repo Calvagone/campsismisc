@@ -75,7 +75,8 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
   test <- expression(
     oatAnalysisRegressionTest(object=object, filename=regFilename),
     object %>% get_tornado_plot(relative=TRUE),
-    object %>% get_tornado_plot(relative=FALSE)
+    object %>% get_tornado_plot(relative=FALSE),
+    object %>% getTornadoPlot(relative=FALSE) # Testing the deprecated method
     # class(object) <- "forest_plot",
     # object %>% get_forest_plot(relative=FALSE),
   )

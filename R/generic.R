@@ -1,3 +1,19 @@
+no_default_function_provided_debug <- function(args_list, fun_name) {
+  # Get the class of each argument as a string (fixed CHARACTER to character)
+  arg_classes <- vapply(args_list, function(x) {
+    if (is.null(x)) "NULL" else paste(class(x), collapse = "/")
+  }, character(1))
+  
+  # Format into a readable string: "arg1 (class), arg2 (class), ..."
+  formatted_args <- sprintf("%s (%s)", names(arg_classes), arg_classes)
+  error_details <- paste(formatted_args, collapse = "\n  ")
+  
+  stop(paste0(
+    "Generic '", fun_name, "' function cannot be called directly.\n",
+    "Received arguments:\n  ", error_details
+  ), call. = FALSE)
+}
+
 #_______________________________________________________________________________
 #----                              prepare                                  ----
 #_______________________________________________________________________________
@@ -53,8 +69,8 @@ setGeneric("get_label", function(object, ...) {
 #' @return ggplot
 #' @export
 #' @rdname get_forest_plot
-get_forest_plot <- function(object, index, relative, show_labels, show_ref, show_range, range, ci, ...) {
-  stop("No default function is provided")
+get_forest_plot <- function(object, index, relative, show_labels, show_ref, show_range, range, ci, limits, ...) {
+  no_default_function_provided_debug(mget(names(formals()), envir = environment()), "get_forest_plot")
 }
 
 setGeneric("get_forest_plot", function(object, index=NULL, relative=NULL, show_labels=NULL, show_ref=NULL, show_range=NULL, range=NULL, ci=NULL, limits=NULL, ...) {
@@ -103,8 +119,8 @@ setGeneric("get_forest_plot", function(object, index=NULL, relative=NULL, show_l
 #' @return ggplot
 #' @export
 #' @rdname get_tornado_plot
-get_tornado_plot <- function(object, index, relative, show_labels, show_ref, ...) {
-  stop("No default function is provided")
+get_tornado_plot <- function(object, index, relative, show_labels, show_ref, limits, ...) {
+  no_default_function_provided_debug(mget(names(formals()), envir = environment()), "get_tornado_plot")
 }
 
 setGeneric("get_tornado_plot", function(object, index=NULL, relative=NULL, show_labels=NULL, show_ref=NULL, limits=NULL, ...) {

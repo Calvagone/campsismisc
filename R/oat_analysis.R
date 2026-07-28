@@ -61,7 +61,6 @@ setMethod("computeBaseline", signature=c("tbl_df", "nca_metric_output"), definit
   baseline <- table %>%
     campsisnca::calculate(x=object) %>%
     campsismod::export(dest="dataframe", type="individual")
-  print("BASELINE OK")
   return(baseline %>% dplyr::pull(value))
 })
 
@@ -94,23 +93,7 @@ setGeneric("createScenarios", function(object, ...) {
 #----                         postProcessScenarios                          ----
 #_______________________________________________________________________________
 
-#' postProcessScenarios
-#' 
-#' @param object simulation results, tibble
-#' @param output plot output
-#' @return tibble
-#' @export
-#' @rdname postProcessScenarios
-postProcessScenarios <- function(object, output) {
-  stop("No default function is provided")
-}
-
-setGeneric("postProcessScenarios", function(object, output) {
-  standardGeneric("postProcessScenarios")
-})
-
-#' @rdname postProcessScenarios
-setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), definition=function(object, output) {
+post_process_scenarios <- function(object, output) {
   outputName <- output %>% get_name()
   results <- object %>%
     dplyr::filter(.data$metric==outputName) %>%
@@ -118,7 +101,7 @@ setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), 
     dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev())) %>%
     dplyr::relocate(dplyr::any_of(c("replicate", "id", "value", "SCENARIO")))
   return(results)
-})
+}
 
 #_______________________________________________________________________________
 #----                               prepare                                 ----
@@ -181,7 +164,7 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   # Post-processing
   tmp_results <- purrr::map2(.x=outputs@list, .y=baselines, .f=function(output, baseline) {
     res <- OATResult(output=output, baseline=baseline,
-                     results=postProcessScenarios(object=all_results, output=output))
+                     results=post_process_scenarios(object=all_results, output=output))
     return(res)
   })
   

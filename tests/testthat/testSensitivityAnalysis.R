@@ -27,8 +27,8 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
     add(SensitivityAnalysisItem(Change("Q", up=2, down=2, log=TRUE))) %>%
     add(SensitivityAnalysisItem(Change("CL", up=2, down=2, log=TRUE)))
 
-  expect_equal(object@items %>% getNames(), c("DUR", "VC", "VP", "Q", "CL"))
-  
+  expect_equal(object@items %>% get_names(), c("DUR", "VC", "VP", "Q", "CL"))
+ 
   simulation <- expression(
     object@dest <- destEngine,
     object <- progressr::with_progress(object %>% prepare())
@@ -41,6 +41,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
     # object %>% getForestPlot(relative=FALSE)
   )
   campsismiscTest(simulation, test, env=environment())
+  expect_true(TRUE)
 
 })
 
@@ -66,7 +67,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
 #     add(SensitivityAnalysisItem(Change("Q", up=2, down=2, log=TRUE))) %>%
 #     add(SensitivityAnalysisItem(Change("CL", up=2, down=2, log=TRUE)))
 
-#   expect_equal(object@items %>% getNames(), c("DUR", "VC", "VP", "Q", "CL"))
+#   expect_equal(object@items %>% get_names(), c("DUR", "VC", "VP", "Q", "CL"))
 
 #   simulation <- expression(
 #     object@dest <- destEngine,
@@ -105,7 +106,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
 #     add(SensitivityAnalysisItem(Change("Q", up=2, down=2, log=TRUE))) %>%
 #     add(SensitivityAnalysisItem(Change("CL", up=2, down=2, log=TRUE)))
 
-#   expect_equal(object@items %>% getNames(), c("DUR", "VC", "VP", "Q", "CL"))
+#   expect_equal(object@items %>% get_names(), c("DUR", "VC", "VP", "Q", "CL"))
 
 #   simulation <- expression(
 #     object@dest <- destEngine,

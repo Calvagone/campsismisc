@@ -5,6 +5,7 @@
 
 #' Forest plot class.
 #' 
+#' @importFrom campsis Dataset
 #' @export
 setClass(
   "forest_plot",
@@ -13,7 +14,7 @@ setClass(
     items="forest_plot_items"
   ),
   contains="oat_analysis",
-  prototype=prototype(model=CampsisModel(), dataset=Dataset())
+  prototype=prototype(model=CampsisModel(), dataset=campsis::Dataset())
 )
 
 #' Create a forest plot.
@@ -137,7 +138,7 @@ setMethod("getForestPlot", signature=c("forest_plot", "integer", "logical", "log
   
   plot <- plot +
     ggplot2::coord_flip(ylim=limits) +
-    ggplot2::ylab(paste0(ifelse(relative, "Relative ", ""), output %>% getName())) +
+    ggplot2::ylab(paste0(ifelse(relative, "Relative ", ""), output %>% get_name())) +
     ggplot2::xlab(NULL)
   
   return(plot)

@@ -83,10 +83,10 @@ CategoricalLabeledCovariate <- function(name, default_value, label=NULL, unit=NU
 }
 
 #_______________________________________________________________________________
-#----                              getName                                  ----
+#----                              get_name                                  ----
 #_______________________________________________________________________________
 
-setMethod("getName", signature=c("labeled_covariate"), definition=function(x) {
+setMethod("get_name", signature=c("labeled_covariate"), definition=function(x) {
   return(x@name)
 })
 

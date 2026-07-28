@@ -29,10 +29,10 @@ SensitivityAnalysisItem <- function(...) {
 }
 
 #_______________________________________________________________________________
-#----                              getName                                  ----
+#----                              get_name                                  ----
 #_______________________________________________________________________________
 
-setMethod("getName", signature=c("sensitivity_analysis_item"), definition=function(x) {
+setMethod("get_name", signature=c("sensitivity_analysis_item"), definition=function(x) {
   names <- x@changes@list %>% purrr::map_chr(~.x@parameter)
   return(paste0(names, collapse="/"))
 })
@@ -48,7 +48,7 @@ setMethod("getLabel", signature=c("sensitivity_analysis_item"), definition=funct
     stop("Please provide the labeled parameters")
   }
   individualLabels <- object@changes@list %>% purrr::map_chr(.f=function(change) {
-    parameterName <- change %>% getName()
+    parameterName <- change %>% get_name()
     parameterLabel <- labeled_parameters[parameterName]
     if (is.na(parameterLabel)) {
       parameterLabel <- parameterName

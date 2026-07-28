@@ -16,7 +16,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (rxode2/mrgsolve)", {
     add(ForestPlotItem(Covariate("WT", 60))) %>%
     add(ForestPlotItem(Covariate("WT", 80)))
 
-  expect_equal(object@items %>% getNames(), c("METAB:0", "METAB:1", "WT:60", "WT:80"))
+  expect_equal(object@items %>% get_names(), c("METAB:0", "METAB:1", "WT:60", "WT:80"))
 
 
   simulation <- expression(
@@ -53,7 +53,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC0-24 (rxode2/mrgsolve
     add(ForestPlotItem(Covariate("WT", 60))) %>%
     add(ForestPlotItem(Covariate("WT", 80)))
 
-  expect_equal(object@items %>% getNames(), c("METAB:0", "METAB:1", "WT:60", "WT:80"))
+  expect_equal(object@items %>% get_names(), c("METAB:0", "METAB:1", "WT:60", "WT:80"))
 
   simulation <- expression(
     object@dest <- destEngine,
@@ -86,7 +86,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (rxode2/mrgso
     add(ForestPlotItem(Covariate("WT", 60))) %>%
     add(ForestPlotItem(Covariate("WT", 80)))
 
-  expect_equal(object@items %>% getNames(), c("METAB:0", "METAB:1", "WT:60", "WT:80"))
+  expect_equal(object@items %>% get_names(), c("METAB:0", "METAB:1", "WT:60", "WT:80"))
 
   simulation <- expression(
     object@dest <- destEngine,
@@ -108,7 +108,7 @@ test_that("Forest plots must work when only 1 item is simulated (rxode2/mrgsolve
     add(LabeledCovariate(name="WT", default_value=70, label="Weight")) %>% # Units have been removed
     add(ForestPlotItem(Covariate("WT", 60)))
 
-  expect_equal(object@items %>% getNames(), c("WT:60"))
+  expect_equal(object@items %>% get_names(), c("WT:60"))
 
   # Requires campsis v1.5.4 since only 1 scenario is used
   # See https://github.com/Calvagone/campsis/issues/152

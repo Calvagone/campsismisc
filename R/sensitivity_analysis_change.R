@@ -57,9 +57,9 @@ checkWhereArgument <- function(x) {
 }
 
 #_______________________________________________________________________________
-#----                              getName                                  ----
+#----                              get_name                                  ----
 #_______________________________________________________________________________
 
-setMethod("getName", signature=c("sensitivity_analysis_change"), definition=function(x) {
+setMethod("get_name", signature=c("sensitivity_analysis_change"), definition=function(x) {
   return(x@parameter)
 })

@@ -28,10 +28,10 @@ ForestPlotItem <- function(...) {
 }
 
 #_______________________________________________________________________________
-#----                              getName                                  ----
+#----                              get_name                                  ----
 #_______________________________________________________________________________
 
-setMethod("getName", signature=c("forest_plot_item"), definition=function(x) {
+setMethod("get_name", signature=c("forest_plot_item"), definition=function(x) {
   names <- x@covariates@list %>% purrr::map_chr(~paste0(.x@name, ":", .x@distribution@value))
   return(paste0(names, collapse="/"))
 })

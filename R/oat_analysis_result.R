@@ -26,9 +26,9 @@ OATResult <- function(output, baseline, results) {
 }
 
 #_______________________________________________________________________________
-#----                              getName                                  ----
+#----                              get_name                                  ----
 #_______________________________________________________________________________
 
-setMethod("getName", signature=c("oat_analysis_result"), definition=function(x) {
-  return(x@output %>% getName())
+setMethod("get_name", signature=c("oat_analysis_result"), definition=function(x) {
+  return(x@output %>% get_name())
 })

@@ -5,6 +5,7 @@
 
 #' Sensitivity analysis class.
 #' 
+#' @importFrom campsis Dataset
 #' @export
 setClass(
   "sensitivity_analysis",
@@ -13,7 +14,7 @@ setClass(
     labeled_parameters="labeled_parameters"
   ),
   contains="oat_analysis",
-  prototype=prototype(model=CampsisModel(), dataset=Dataset())
+  prototype=prototype(model=CampsisModel(), dataset=campsis::Dataset())
 )
 
 #' Create an OAT-based sensitivity analysis object.
@@ -76,7 +77,7 @@ setMethod("createScenarios", signature=c("sensitivity_analysis"), definition=fun
     modelDown <- model # Other direction of tornado plot (direction down)
     
     for (change in changes@list) {
-      name <- change %>% getName()
+      name <- change %>% get_name()
       where <- change@where
 
       if (where == "equation") {
@@ -133,8 +134,8 @@ setMethod("createScenarios", signature=c("sensitivity_analysis"), definition=fun
       }
     }
     scenarios <- scenarios %>%
-      add(Scenario(name=paste0(item %>% getName(), ", up"), model=modelUp)) %>%
-      add(Scenario(name=paste0(item %>% getName(), ", down"), model=modelDown))
+      add(Scenario(name=paste0(item %>% get_name(), ", up"), model=modelUp)) %>%
+      add(Scenario(name=paste0(item %>% get_name(), ", down"), model=modelDown))
   }
   return(scenarios)
 })
@@ -193,7 +194,7 @@ setMethod("getTornadoPlot", signature=c("sensitivity_analysis", "integer", "logi
   
   # Customize item name if sensitivity analysis object
   if (isSensitivityAnalysis) {
-    itemNames <- object@items %>% getNames()
+    itemNames <- object@items %>% get_names()
     itemLabels <- object@items@list %>% purrr::map_chr(~.x %>% getLabel(object@labeled_parameters))
     order <- order(match(itemNames, unique(summary$ITEM_NAME)))
     itemNames <- itemNames[order]
@@ -238,11 +239,11 @@ setMethod("getTornadoPlot", signature=c("sensitivity_analysis", "integer", "logi
   
   if (relative) {
     plot <- plot +
-      ggplot2::ylab(paste0("Change in ", output %>% getName(), " (%)"))
+      ggplot2::ylab(paste0("Change in ", output %>% get_name(), " (%)"))
   } else {
     plot <- plot +
       ggplot2::scale_y_continuous(trans=shift_trans(baseline)) +
-      ggplot2::ylab(paste0(output %>% getName()))
+      ggplot2::ylab(paste0(output %>% get_name()))
   }
   
   return(plot)

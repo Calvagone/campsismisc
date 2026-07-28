@@ -75,15 +75,15 @@ NcaMetricOutput <- function(metric, filter=NULL, suffix=NULL) {
 }
 
 #_______________________________________________________________________________
-#----                              getName                                  ----
+#----                              get_name                                  ----
 #_______________________________________________________________________________
 
-setMethod("getName", signature=c("model_parameter_output"), definition=function(x) {
+setMethod("get_name", signature=c("model_parameter_output"), definition=function(x) {
   return(x@name)
 })
 
-setMethod("getName", signature=c("nca_metric_output"), definition=function(x) {
-  name <- x@metric %>% getName()
+setMethod("get_name", signature=c("nca_metric_output"), definition=function(x) {
+  name <- x@metric %>% get_name()
   if (!is.na(x@suffix)) {
     name <- paste(name, x@suffix)
   }
@@ -110,7 +110,7 @@ setGeneric("getOutvars", function(object) {
 
 #' @rdname getOutvars
 setMethod("getOutvars", signature=c("model_parameter_output"), definition=function(object) {
-  return(object %>% getName())
+  return(object %>% get_name())
 })
 
 #' @rdname getOutvars

@@ -43,13 +43,15 @@ setGeneric("computeBaseline", function(object, output) {
 
 #' @rdname computeBaseline
 setMethod("computeBaseline", signature=c("tbl_df", "model_parameter_output"), definition=function(object, output) {
-  outputName <- output %>% getName()
+  outputName <- output %>% get_name()
   baseline <- object %>% dplyr::pull(outputName) %>% unique()
   assertthat::assert_that(length(baseline)==1,
                           msg=paste0("Baseline should be unique for parameter ", outputName))
   return(baseline)
 })
 
+#' @importFrom campsismod add export
+#' @importFrom campsisnca calculate NCAAnalysis NCATable
 #' @rdname computeBaseline
 setMethod("computeBaseline", signature=c("tbl_df", "nca_metric_output"), definition=function(object, output) {
   nca <- campsisnca::NCAAnalysis() %>%
@@ -59,6 +61,7 @@ setMethod("computeBaseline", signature=c("tbl_df", "nca_metric_output"), definit
   baseline <- table %>%
     campsisnca::calculate(x=object) %>%
     campsismod::export(dest="dataframe", type="individual")
+  print("BASELINE OK")
   return(baseline %>% dplyr::pull(value))
 })
 
@@ -108,7 +111,7 @@ setGeneric("postProcessScenarios", function(object, output) {
 
 #' @rdname postProcessScenarios
 setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), definition=function(object, output) {
-  outputName <- output %>% getName()
+  outputName <- output %>% get_name()
   results <- object %>%
     dplyr::filter(.data$metric==outputName) %>%
     dplyr::select(-dplyr::all_of(c("discrete_value", "metric"))) %>% # TODO
@@ -123,7 +126,7 @@ setMethod("postProcessScenarios", signature=c("tbl_df", "oat_analysis_output"), 
 
 
 #' @rdname prepare
-#' @importFrom campsis Outfun Outfuns NCATableOutfun
+#' @importFrom campsis Outfun Outfuns NCATableOutfun simulate
 #' @importFrom campsisnca NCAAnalysis NCATable
 #' @importFrom progressr with_progress without_progress
 setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
@@ -132,7 +135,8 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   model <- object@model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA"))
   base_dataset <- object@dataset
   if (is(object, "forest_plot")) {
-    base_dataset <- base_dataset %>% add(object@labeled_covariates@list)
+    base_dataset <- base_dataset %>%
+      add(object@labeled_covariates@list)
   }
   items <- object@items
   outputs <- object@outputs
@@ -161,11 +165,12 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
     nca <- nca %>%
       add(output@metric)
   }
+  outfun <- campsis::NCATableOutfun(table = campsisnca::NCATable() %>% add(nca), export_type = "individual")
   outfuns <- campsis::Outfuns() %>%
-    add(campsis::NCATableOutfun(table = campsisnca::NCATable() %>% add(nca), export_type = "individual"))
+    add(outfun)
 
   # Simulate
-  all_results <- simulate(model=model, dataset=base_dataset, scenarios=scenarios, replicates=replicates,
+  all_results <- campsis::simulate(model=model, dataset=base_dataset, scenarios=scenarios, replicates=replicates,
                       seed=seed, dest=dest, outvars=outvars, outfun=outfuns, settings=object@settings)
 
   # Post-processing

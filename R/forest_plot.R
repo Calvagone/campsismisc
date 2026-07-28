@@ -76,7 +76,7 @@ setMethod("create_scenarios", signature=c("forest_plot"), definition=function(ob
       dataset_ <- dataset_ %>% campsismod::replace(covariate)
     }
     scenarios <- scenarios %>%
-      add(campsis::Scenario(name=item %>% getLabel(object@labeled_covariates), dataset=dataset_))
+      add(campsis::Scenario(name=item %>% get_label(object@labeled_covariates), dataset=dataset_))
   }
   return(scenarios)
 })

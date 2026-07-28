@@ -196,7 +196,7 @@ setMethod("getTornadoPlot", signature=c("sensitivity_analysis", "integer", "logi
   # Customize item name if sensitivity analysis object
   if (isSensitivityAnalysis) {
     itemNames <- object@items %>% get_names()
-    itemLabels <- object@items@list %>% purrr::map_chr(~.x %>% getLabel(object@labeled_parameters))
+    itemLabels <- object@items@list %>% purrr::map_chr(~.x %>% get_label(object@labeled_parameters))
     order <- order(match(itemNames, unique(summary$ITEM_NAME)))
     itemNames <- itemNames[order]
     itemLabels <- itemLabels[order]

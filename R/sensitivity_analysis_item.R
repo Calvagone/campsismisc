@@ -38,12 +38,12 @@ setMethod("get_name", signature=c("sensitivity_analysis_item"), definition=funct
 })
 
 #_______________________________________________________________________________
-#----                              getLabel                                 ----
+#----                              get_label                                ----
 #_______________________________________________________________________________
 
-#' @rdname getLabel
+#' @rdname get_label
 #' @param labeled_parameters labeled parameters object
-setMethod("getLabel", signature=c("sensitivity_analysis_item"), definition=function(object, labeled_parameters) {
+setMethod("get_label", signature=c("sensitivity_analysis_item"), definition=function(object, labeled_parameters) {
   if (!is(labeled_parameters, "labeled_parameters")) {
     stop("Please provide the labeled parameters")
   }

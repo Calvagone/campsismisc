@@ -23,7 +23,7 @@ setClass(
 )
 
 #_______________________________________________________________________________
-#----                           computeBaseline                             ----
+#----                          compute_baseline                             ----
 #_______________________________________________________________________________
 
 #' Compute baseline.
@@ -31,17 +31,17 @@ setClass(
 #' @param object simulation results of the baseline, tibble
 #' @param output OAT output, one or several
 #' @return the baseline, double or list of double
-#' @rdname computeBaseline
-computeBaseline <- function(object, output) {
+#' @rdname compute_baseline
+compute_baseline <- function(object, output) {
   stop("No default function is provided")
 }
 
-setGeneric("computeBaseline", function(object, output) {
-  standardGeneric("computeBaseline")
+setGeneric("compute_baseline", function(object, output) {
+  standardGeneric("compute_baseline")
 })
 
-#' @rdname computeBaseline
-setMethod("computeBaseline", signature=c("tbl_df", "model_parameter_output"), definition=function(object, output) {
+#' @rdname compute_baseline
+setMethod("compute_baseline", signature=c("tbl_df", "model_parameter_output"), definition=function(object, output) {
   outputName <- output %>% get_name()
   baseline <- object %>% dplyr::pull(outputName) %>% unique()
   assertthat::assert_that(length(baseline)==1,
@@ -51,8 +51,8 @@ setMethod("computeBaseline", signature=c("tbl_df", "model_parameter_output"), de
 
 #' @importFrom campsismod add export
 #' @importFrom campsisnca calculate NCAAnalysis NCATable
-#' @rdname computeBaseline
-setMethod("computeBaseline", signature=c("tbl_df", "nca_metric_output"), definition=function(object, output) {
+#' @rdname compute_baseline
+setMethod("compute_baseline", signature=c("tbl_df", "nca_metric_output"), definition=function(object, output) {
   nca <- campsisnca::NCAAnalysis() %>%
     add(output@metric)
   table <- campsisnca::NCATable() %>%
@@ -63,9 +63,9 @@ setMethod("computeBaseline", signature=c("tbl_df", "nca_metric_output"), definit
   return(baseline %>% dplyr::pull(value))
 })
 
-#' @rdname computeBaseline
-setMethod("computeBaseline", signature=c("tbl_df", "oat_analysis_outputs"), definition=function(object, output) {
-  baselines <- output@list %>% purrr::map(~computeBaseline(object=object, output=.x))
+#' @rdname compute_baseline
+setMethod("compute_baseline", signature=c("tbl_df", "oat_analysis_outputs"), definition=function(object, output) {
+  baselines <- output@list %>% purrr::map(~compute_baseline(object=object, output=.x))
   return(baselines)
 })
 
@@ -129,7 +129,7 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   base_scenario <- progressr::without_progress(
     simulate(model=model, dataset=base_dataset, outvars=outvars, seed=seed, dest=dest)
   )
-  baselines <- base_scenario %>% computeBaseline(output=outputs)
+  baselines <- base_scenario %>% compute_baseline(output=outputs)
   
   # Generate scenarios
   scenarios <- object %>% create_scenarios(dataset=base_dataset, model=model)

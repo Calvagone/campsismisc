@@ -37,12 +37,12 @@ setMethod("get_name", signature=c("forest_plot_item"), definition=function(x) {
 })
 
 #_______________________________________________________________________________
-#----                              getLabel                                 ----
+#----                              get_label                                ----
 #_______________________________________________________________________________
 
-#' @rdname getLabel
+#' @rdname get_label
 #' @param labeled_covariates labeled covariates object
-setMethod("getLabel", signature=c("forest_plot_item"), definition=function(object, labeled_covariates) {
+setMethod("get_label", signature=c("forest_plot_item"), definition=function(object, labeled_covariates) {
   if (!is(labeled_covariates, "labeled_covariates")) {
     stop("Please provide all labeled covariates")
   }

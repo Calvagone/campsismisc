@@ -2,16 +2,13 @@
 % Please edit documentation in R/oat_analysis_output.R
 \name{NcaMetricOutput}
 \alias{NcaMetricOutput}
-\title{Create a model parameter output.}
+\title{Create an NCA metric output.}
 \usage{
-NcaMetricOutput(metric, suffix = NULL)
+NcaMetricOutput(metric)
 }
 \arguments{
 \item{metric}{NCA metric coming from campsisnca}
-
-\item{suffix}{a possible suffix that will be added to the NCA metric name
-(e.g. useful when the same metric appears more than once in the outputs list), default is NULL}
 }
 \description{
-Create a model parameter output.
+Create an NCA metric output.
 }

@@ -1,3 +1,14 @@
+# campsismisc 1.0.0
+
+* Migrate campsismisc to snake_case #64
+* Review package dependencies #65
+* Review Campsismisc output function #66
+* Remove filter argument of NcaMetricOutput #67
+* Remove generic method postProcessScenarios #69
+* Review list of exported functions #70
+* Remove argument suffix from NcaMetricOutput #71
+* Get rid of plyr #72
+
 # campsismisc 0.6.0
 
 * Update package due to campsisnca rework #62

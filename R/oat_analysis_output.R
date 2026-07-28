@@ -7,8 +7,7 @@
 #' @export
 setClass(
   "oat_analysis_output",
-  representation(
-  ),
+  representation(),
   contains="pmx_element"
 )
 
@@ -48,12 +47,12 @@ ModelParameterOutput <- function(name) {
 setClass(
   "nca_metric_output",
   representation(
-    metric="nca_metric", # E.g. "AUC()"
+    metric="nca_metric" # E.g. "AUC()"
   ),
   contains="oat_analysis_output"
 )
 
-#' Create a model parameter output.
+#' Create an NCA metric output.
 #' 
 #' @param metric NCA metric coming from campsisnca
 #' @export

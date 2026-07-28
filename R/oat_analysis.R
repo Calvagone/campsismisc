@@ -122,7 +122,7 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   
   # Getting all necessary 'outvars' across all outputs
   # This in order to make 1 call to the simulate method
-  outvars <- outputs@list %>% purrr::map_chr(~getOutvars(.x)) %>% unique()
+  outvars <- outputs@list %>% purrr::map_chr(~get_outvars(.x)) %>% unique()
   
   # Compute and store baseline value of each output
   # Progress from campsis is deactivated for the base scenario

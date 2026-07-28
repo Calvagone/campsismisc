@@ -87,30 +87,29 @@ setMethod("get_name", signature=c("nca_metric_output"), definition=function(x) {
 })
 
 #_______________________________________________________________________________
-#----                             getOutvars                                ----
+#----                            get_outvars                                ----
 #_______________________________________________________________________________
 
 #' Get out variables to be simulated.
 #' 
 #' @param object output
 #' @return variables to be simulated
-#' @export
-#' @rdname getOutvars
-getOutvars <- function(object) {
+#' @rdname get_outvars
+get_outvars <- function(object) {
   stop("No default function is provided")
 }
 
-setGeneric("getOutvars", function(object) {
-  standardGeneric("getOutvars")
+setGeneric("get_outvars", function(object) {
+  standardGeneric("get_outvars")
 })
 
-#' @rdname getOutvars
-setMethod("getOutvars", signature=c("model_parameter_output"), definition=function(object) {
+#' @rdname get_outvars
+setMethod("get_outvars", signature=c("model_parameter_output"), definition=function(object) {
   return(object %>% get_name())
 })
 
-#' @rdname getOutvars
-setMethod("getOutvars", signature=c("nca_metric_output"), definition=function(object) {
+#' @rdname get_outvars
+setMethod("get_outvars", signature=c("nca_metric_output"), definition=function(object) {
   return(object@metric@variable)
 })
 

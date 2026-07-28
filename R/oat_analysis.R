@@ -159,8 +159,8 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   scenarios <- object %>% createScenarios(dataset=base_dataset, model=model)
 
   # Prepare outfun function
-
-  nca <- campsisnca::NCAAnalysis()
+  nca <- campsisnca::NCAAnalysis(strata=c(SCENARIO="all"))
+  nca@force_strat_vars <- "SCENARIO" # Even if there is only 1 level
   for (output in outputs@list) {
     if (is(output, "model_parameter_output")) {
       nca <- nca %>%

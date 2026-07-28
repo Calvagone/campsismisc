@@ -64,8 +64,9 @@ setMethod("add", signature=c("forest_plot", "forest_plot_item"), definition=func
 
 #' @rdname createScenarios
 #' @param dataset Campsis dataset
+#' @importFrom campsis Scenarios Scenario
 setMethod("createScenarios", signature=c("forest_plot"), definition=function(object, dataset, ...) {
-  scenarios <- Scenarios()
+  scenarios <- campsis::Scenarios()
   items <- object@items
   
   for (item in items@list) {
@@ -75,7 +76,7 @@ setMethod("createScenarios", signature=c("forest_plot"), definition=function(obj
       dataset_ <- dataset_ %>% campsismod::replace(covariate)
     }
     scenarios <- scenarios %>%
-      add(Scenario(name=item %>% getLabel(object@labeled_covariates), dataset=dataset_))
+      add(campsis::Scenario(name=item %>% getLabel(object@labeled_covariates), dataset=dataset_))
   }
   return(scenarios)
 })

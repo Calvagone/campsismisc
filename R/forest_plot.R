@@ -82,17 +82,17 @@ setMethod("create_scenarios", signature=c("forest_plot"), definition=function(ob
 })
 
 #_______________________________________________________________________________
-#----                               getForestPlot                           ----
+#----                               get_forest_plot                           ----
 #_______________________________________________________________________________
 
-#' @rdname getForestPlot
+#' @rdname get_forest_plot
 #' @param geom_label_vjust vjust argument of method geom_label
 #' @param geom_label_nudge_x nudge_x argument of method geom_label
 #' @param geom_label_nudge_y nudge_y argument of method geom_label
 #' @param geom_label_size size argument of method geom_label
 #' @param label_nsig number of significant digits in label
 #' @param geom_hline_color color argument of method geom_hline
-setMethod("getForestPlot", signature=c("forest_plot", "integer", "logical", "logical", "logical", "logical", "numeric", "numeric", "numeric"),
+setMethod("get_forest_plot", signature=c("forest_plot", "integer", "logical", "logical", "logical", "logical", "numeric", "numeric", "numeric"),
           definition=function(object, index, relative, show_labels, show_ref, show_range, range, ci, limits, 
                               geom_label_vjust=0, geom_label_nudge_x=0.15, geom_label_nudge_y=0, geom_label_size=3, label_nsig=3, geom_hline_color="darkblue", ...) {
   alpha <- (1-ci)/2

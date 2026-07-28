@@ -14,7 +14,7 @@
 
 # campsismisc 0.5.1
 
-* Slowness detected on getForestPlot/getTornadoPlot call #51
+* Slowness detected on get_forest_plot/get_tornado_plot call #51
 
 # campsismisc 0.5.0
 
@@ -37,7 +37,7 @@
 
 * Make tests run with both rxode2 and mrgsolve #39
 * Show labels should be optional in tornado plots #40
-* Add argument 'limits' to getTornadoPlot and getForestPlot #41
+* Add argument 'limits' to get_tornado_plot and get_forest_plot #41
 * Deactivate progress for the simulation of the base scenario #42
 
 # campsismisc 0.4.0

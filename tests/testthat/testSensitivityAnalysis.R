@@ -36,9 +36,9 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
 
   test <- expression(
     oatAnalysisRegressionTest(object=object, filename=regFilename),
-    expect_warning(object %>% getTornadoPlot(), regexp="Multiple replicates detected")
+    expect_warning(object %>% get_tornado_plot(), regexp="Multiple replicates detected")
     # class(object) <- "forest_plot",
-    # object %>% getForestPlot(relative=FALSE)
+    # object %>% get_forest_plot(relative=FALSE)
   )
   campsismiscTest(simulation, test, env=environment())
 })
@@ -74,10 +74,10 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
 
   test <- expression(
     oatAnalysisRegressionTest(object=object, filename=regFilename),
-    object %>% getTornadoPlot(relative=TRUE),
-    object %>% getTornadoPlot(relative=FALSE)
+    object %>% get_tornado_plot(relative=TRUE),
+    object %>% get_tornado_plot(relative=FALSE)
     # class(object) <- "forest_plot",
-    # object %>% getForestPlot(relative=FALSE),
+    # object %>% get_forest_plot(relative=FALSE),
   )
   campsismiscTest(simulation, test, env=environment())
 })
@@ -113,9 +113,9 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax (rxode2/mr
 
   test <- expression(
     oatAnalysisRegressionTest(object=object, filename=regFilename),
-    expect_warning(object %>% getTornadoPlot(), regexp="Multiple replicates detected")
+    expect_warning(object %>% get_tornado_plot(), regexp="Multiple replicates detected")
     # class(object) <- "forest_plot",
-    # object %>% getForestPlot()
+    # object %>% get_forest_plot()
   )
   campsismiscTest(simulation, test, env=environment())
 })
@@ -152,8 +152,8 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
 
   test <- expression(
     oatAnalysisRegressionTest(object=sens, filename=regFilename),
-    sens %>% getTornadoPlot(), # Default plot
-    sens %>% getTornadoPlot(limits=c(-15, 100), show_labels=FALSE) # Limits can be set, labels can be hidden, etc.
+    sens %>% get_tornado_plot(), # Default plot
+    sens %>% get_tornado_plot(limits=c(-15, 100), show_labels=FALSE) # Limits can be set, labels can be hidden, etc.
   )
   campsismiscTest(simulation, test, env=environment())
 })
@@ -190,8 +190,8 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
 
   test <- expression(
     oatAnalysisRegressionTest(object=sens, filename=regFilename),
-    sens %>% getTornadoPlot(), # Default plot
-    sens %>% getTornadoPlot(limits=c(-15, 100), show_labels=FALSE) # Limits can be set, labels can be hidden, etc.
+    sens %>% get_tornado_plot(), # Default plot
+    sens %>% get_tornado_plot(limits=c(-15, 100), show_labels=FALSE) # Limits can be set, labels can be hidden, etc.
   )
   campsismiscTest(simulation, test, env=environment())
 })

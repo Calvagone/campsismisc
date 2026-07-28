@@ -35,7 +35,7 @@ setGeneric("get_label", function(object, ...) {
 })
 
 #_______________________________________________________________________________
-#----                             getForestPlot                             ----
+#----                            get_forest_plot                            ----
 #_______________________________________________________________________________
 
 #' Get forest plot.
@@ -52,12 +52,12 @@ setGeneric("get_label", function(object, ...) {
 #' @param ... extra arguments like 'geom_label_vjust', 'geom_label_nudge_x', 'geom_label_nudge_y', 'geom_label_size', 'label_nsig', 'geom_hline_color'
 #' @return ggplot
 #' @export
-#' @rdname getForestPlot
-getForestPlot <- function(object, index, relative, show_labels, show_ref, show_range, range, ci, ...) {
+#' @rdname get_forest_plot
+get_forest_plot <- function(object, index, relative, show_labels, show_ref, show_range, range, ci, ...) {
   stop("No default function is provided")
 }
 
-setGeneric("getForestPlot", function(object, index=NULL, relative=NULL, show_labels=NULL, show_ref=NULL, show_range=NULL, range=NULL, ci=NULL, limits=NULL, ...) {
+setGeneric("get_forest_plot", function(object, index=NULL, relative=NULL, show_labels=NULL, show_ref=NULL, show_range=NULL, range=NULL, ci=NULL, limits=NULL, ...) {
   if (is.null(index)) {
     index <- 1L
   } else {
@@ -84,11 +84,11 @@ setGeneric("getForestPlot", function(object, index=NULL, relative=NULL, show_lab
   if (is.null(limits)) {
     limits <- as.numeric(NA)
   }
-  standardGeneric("getForestPlot")
+  standardGeneric("get_forest_plot")
 })
 
 #_______________________________________________________________________________
-#----                             getTornadoPlot                             ----
+#----                            get_tornado_plot                            ----
 #_______________________________________________________________________________
 
 #' Get tornado plot.
@@ -102,12 +102,12 @@ setGeneric("getForestPlot", function(object, index=NULL, relative=NULL, show_lab
 #' @param ... extra arguments like 'geom_bar_width', 'geom_text_nudge_y', 'label_nsig', 'geom_hline_color', 'geom_text_size'
 #' @return ggplot
 #' @export
-#' @rdname getTornadoPlot
-getTornadoPlot <- function(object, index, relative, show_labels, show_ref, ...) {
+#' @rdname get_tornado_plot
+get_tornado_plot <- function(object, index, relative, show_labels, show_ref, ...) {
   stop("No default function is provided")
 }
 
-setGeneric("getTornadoPlot", function(object, index=NULL, relative=NULL, show_labels=NULL, show_ref=NULL, limits=NULL, ...) {
+setGeneric("get_tornado_plot", function(object, index=NULL, relative=NULL, show_labels=NULL, show_ref=NULL, limits=NULL, ...) {
   if (is.null(index)) {
     index <- 1L
   } else {
@@ -125,6 +125,5 @@ setGeneric("getTornadoPlot", function(object, index=NULL, relative=NULL, show_la
   if (is.null(limits)) {
     limits <- as.numeric(NA)
   }
-  standardGeneric("getTornadoPlot")
+  standardGeneric("get_tornado_plot")
 })
-

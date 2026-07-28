@@ -142,16 +142,16 @@ setMethod("create_scenarios", signature=c("sensitivity_analysis"), definition=fu
 })
 
 #_______________________________________________________________________________
-#----                             getTornadoPlot                            ----
+#----                             get_tornado_plot                            ----
 #_______________________________________________________________________________
 
-#' @rdname getTornadoPlot
+#' @rdname get_tornado_plot
 #' @param geom_bar_width width argument of method geom_bar
 #' @param geom_text_nudge_y nudge_y argument of method geom_text
 #' @param label_nsig number of significant digits in label
 #' @param geom_hline_color color argument of method geom_hline
 #' @param geom_text_size size argument of method geom_text
-setMethod("getTornadoPlot", signature=c("sensitivity_analysis", "integer", "logical", "logical", "logical", "numeric"),
+setMethod("get_tornado_plot", signature=c("sensitivity_analysis", "integer", "logical", "logical", "logical", "numeric"),
           definition=function(object, index, relative, show_labels, show_ref, limits,
                               geom_bar_width=0.5, geom_text_nudge_y=1, label_nsig=3, geom_hline_color="grey", geom_text_size=3, ...) {
   isSensitivityAnalysis <- is(object, "sensitivity_analysis")

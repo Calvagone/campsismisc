@@ -1,7 +1,7 @@
 Type: Package
 Package: campsismisc
 Title: Miscellaneous Utilities for the Campsis Ecosystem
-Version: 0.6.0
+Version: 1.0.0
 Authors@R: 
     person("Nicolas", "Luyckx", , "nicolas.luyckx@calvagone.com", role = c("aut", "cre"))
 Description: A collection of utilities extending the 'campsis' ecosystem,
@@ -19,12 +19,12 @@ License: GPL (>= 3)
 URL: https://github.com/Calvagone/campsismisc
 BugReports: https://github.com/Calvagone/campsismisc/issues
 Depends: 
-    campsis,
     campsismod,
-    campsisnca,
-    R (>= 4.0.0)
+    R (>= 4.1.0)
 Imports: 
     assertthat,
+    campsis,
+    campsisnca,
     dplyr,
     ggplot2,
     ggrepel,
@@ -46,14 +46,15 @@ Suggests:
     tictoc
 VignetteBuilder: 
     knitr
-Remotes: 
-    Calvagone/campsis,
-    Calvagone/campsisnca
+Remotes:
+    Calvagone/campsismod@snake_case,
+    Calvagone/campsis@snake_case,
+    Calvagone/campsisnca@develop
 Encoding: UTF-8
 Language: en-US
 LazyData: true
-RoxygenNote: 7.3.3
 Collate:
+    'all_classes.R'
     'check.R'
     'utilities.R'
     'generic.R'
@@ -73,3 +74,4 @@ Collate:
     'sensitivity_analysis_item.R'
     'sensitivity_analysis_items.R'
     'sensitivity_analysis.R'
+Config/roxygen2/version: 8.0.0

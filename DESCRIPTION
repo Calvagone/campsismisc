@@ -47,9 +47,7 @@ Suggests:
 VignetteBuilder: 
     knitr
 Remotes:
-    Calvagone/campsismod@snake_case,
-    Calvagone/campsis@snake_case,
-    Calvagone/campsisnca@develop
+    Calvagone/campsisnca@main
 Encoding: UTF-8
 Language: en-US
 LazyData: true

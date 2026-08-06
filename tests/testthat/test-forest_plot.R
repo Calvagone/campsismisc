@@ -4,7 +4,7 @@ library(campsisnca)
 
 context("Test the forest plot feature")
 
-source(file.path(getwd(), test_path(), "testUtils.R"))
+source(file.path(getwd(), test_path(), "test-utils.R"))
 
 test_that("Forest plot: effect of METAB (0/1) and WT on CL (rxode2/mrgsolve)", {
   model <- getModel("metaboliser_effect_on_cl")

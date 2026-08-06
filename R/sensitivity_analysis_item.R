@@ -3,38 +3,38 @@
 #_______________________________________________________________________________
 
 #' Forest plot item: one or more labeled covariates.
-#' 
+#'
 #' @export
 setClass(
   "sensitivity_analysis_item",
   representation(
-    changes="sensitivity_analysis_changes",
-    label="character"
+    changes = "sensitivity_analysis_changes",
+    label = "character"
   ),
-  contains="pmx_element"
+  contains = "pmx_element"
 )
 
-#' 
+#'
 #' Create a sensitivity analysis item.
-#' 
+#'
 #' @param ... all changes
 #' @return a sensitivity analysis item
 #' @export
 SensitivityAnalysisItem <- function(...) {
   args <- list(...)
-  areChanges <- args %>% purrr::map_lgl(~is(.x, "sensitivity_analysis_change"))
-  assertthat::assert_that(all(areChanges), msg="Sensitivity analysis item can only accept one or multiple changes")
+  areChanges <- args %>% purrr::map_lgl(~ is(.x, "sensitivity_analysis_change"))
+  assertthat::assert_that(all(areChanges), msg = "Sensitivity analysis item can only accept one or multiple changes")
   changes <- SensitivityAnalysisChanges() %>% add(args)
-  return(new("sensitivity_analysis_item", changes=changes))
+  return(new("sensitivity_analysis_item", changes = changes))
 }
 
 #_______________________________________________________________________________
 #----                              get_name                                  ----
 #_______________________________________________________________________________
 
-setMethod("get_name", signature=c("sensitivity_analysis_item"), definition=function(x) {
-  names <- x@changes@list %>% purrr::map_chr(~.x@parameter)
-  return(paste0(names, collapse="/"))
+setMethod("get_name", signature = c("sensitivity_analysis_item"), definition = function(x) {
+  names <- x@changes@list %>% purrr::map_chr(~ .x@parameter)
+  return(paste0(names, collapse = "/"))
 })
 
 #_______________________________________________________________________________
@@ -43,23 +43,23 @@ setMethod("get_name", signature=c("sensitivity_analysis_item"), definition=funct
 
 #' @rdname get_label
 #' @param labeled_parameters labeled parameters object
-setMethod("get_label", signature=c("sensitivity_analysis_item"), definition=function(object, labeled_parameters) {
+setMethod("get_label", signature = c("sensitivity_analysis_item"), definition = function(object, labeled_parameters) {
   if (!is(labeled_parameters, "labeled_parameters")) {
     stop("Please provide the labeled parameters")
   }
-  individual_labels <- object@changes@list %>% purrr::map_chr(.f=function(change) {
-    parameter_name <- change %>% get_name()
-    parameter_label <- labeled_parameters[parameter_name]
-    if (is.na(parameter_label)) {
-      parameter_label <- parameter_name
-    }
-    if (change@up_down_as_factor) {
-      return(paste0(parameter_label, " (\U00F7", change@down, ", ", "\U00D7", change@up, ")"))
-    } else {
-      return(paste0(parameter_label, " (", change@down, ", ", change@up, ")"))
-    }
-  })
-  
-  return(paste0(individual_labels, collapse=" / "))
-})
+  individual_labels <- object@changes@list %>%
+    purrr::map_chr(.f = function(change) {
+      parameter_name <- change %>% get_name()
+      parameter_label <- labeled_parameters[parameter_name]
+      if (is.na(parameter_label)) {
+        parameter_label <- parameter_name
+      }
+      if (change@up_down_as_factor) {
+        return(paste0(parameter_label, " (\U00F7", change@down, ", ", "\U00D7", change@up, ")"))
+      } else {
+        return(paste0(parameter_label, " (", change@down, ", ", change@up, ")"))
+      }
+    })
 
+  return(paste0(individual_labels, collapse = " / "))
+})

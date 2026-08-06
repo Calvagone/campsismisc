@@ -3,24 +3,23 @@
 #_______________________________________________________________________________
 
 #' Labeled covariate.
-#' 
+#'
 #' @export
 setClass(
   "labeled_covariate",
   representation(
-    label="character",
-    unit="character"
+    label = "character",
+    unit = "character"
   ),
-  contains="fixed_covariate",
-  validity=function(object) {
-    return(c(expect_one(object, "label"),
-             expect_one(object, "unit")))
+  contains = "fixed_covariate",
+  validity = function(object) {
+    return(c(expect_one(object, "label"), expect_one(object, "unit")))
   }
 )
 
-#' 
+#'
 #' Create a labeled covariate.
-#' 
+#'
 #' @param name covariate name, single character value
 #' @param default_value default covariate value, single numeric value
 #' @param label covariate label, e.g. 'Weight'
@@ -28,15 +27,20 @@ setClass(
 #' @return a labeled covariate
 #' @importFrom campsis ConstantDistribution
 #' @export
-LabeledCovariate <- function(name, default_value, label=NULL, unit=NULL) {
+LabeledCovariate <- function(name, default_value, label = NULL, unit = NULL) {
   if (is.null(label)) {
     label <- as.character(NA)
   }
   if (is.null(unit)) {
     unit <- as.character(NA)
   }
-  return(new("labeled_covariate", name=name, distribution=campsis::ConstantDistribution(default_value),
-             label=label, unit=unit))
+  return(new(
+    "labeled_covariate",
+    name = name,
+    distribution = campsis::ConstantDistribution(default_value),
+    label = label,
+    unit = unit
+  ))
 }
 
 #_______________________________________________________________________________
@@ -44,15 +48,15 @@ LabeledCovariate <- function(name, default_value, label=NULL, unit=NULL) {
 #_______________________________________________________________________________
 
 #' Categorical labeled covariate.
-#' 
+#'
 #' @export
 setClass(
   "categorical_labeled_covariate",
   representation(
-    categories="numeric" # Named numeric vector, e.g. c(FASTED=0, FED=1)
+    categories = "numeric" # Named numeric vector, e.g. c(FASTED=0, FED=1)
   ),
-  contains="labeled_covariate",
-  validity=function(object) {
+  contains = "labeled_covariate",
+  validity = function(object) {
     isUnnamed <- is.null(names(object@categories))
     checkNames <- character(0)
     if (isUnnamed) {
@@ -62,9 +66,9 @@ setClass(
   }
 )
 
-#' 
+#'
 #' Create a categorical labeled covariate.
-#' 
+#'
 #' @param name covariate name, single character value
 #' @param default_value default covariate value, single numeric value
 #' @param label covariate label, e.g. 'Weight'
@@ -73,22 +77,27 @@ setClass(
 #' @return a labeled covariate
 #' @importFrom campsis ConstantDistribution
 #' @export
-CategoricalLabeledCovariate <- function(name, default_value, label=NULL, unit=NULL, categories) {
+CategoricalLabeledCovariate <- function(name, default_value, label = NULL, unit = NULL, categories) {
   if (is.null(label)) {
     label <- as.character(NA)
   }
   if (is.null(unit)) {
     unit <- as.character(NA)
   }
-  return(new("categorical_labeled_covariate", name=name, distribution=campsis::ConstantDistribution(default_value),
-             label=label, unit=unit, categories=categories))
+  return(new(
+    "categorical_labeled_covariate",
+    name = name,
+    distribution = campsis::ConstantDistribution(default_value),
+    label = label,
+    unit = unit,
+    categories = categories
+  ))
 }
 
 #_______________________________________________________________________________
 #----                              get_name                                  ----
 #_______________________________________________________________________________
 
-setMethod("get_name", signature=c("labeled_covariate"), definition=function(x) {
+setMethod("get_name", signature = c("labeled_covariate"), definition = function(x) {
   return(x@name)
 })
-

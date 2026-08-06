@@ -1,25 +1,24 @@
-
 #_______________________________________________________________________________
 #----                           oat_analysis class                          ----
 #_______________________________________________________________________________
 
 #' One-at-a-time analysis structure.
-#' 
+#'
 #' @importFrom campsis Dataset
 #' @export
 setClass(
   "oat_analysis",
   representation(
-    model="campsis_model",
-    dataset="dataset",
-    outputs="oat_analysis_outputs",
-    replicates="integer",
-    seed="integer",
-    dest="character",
-    settings="simulation_settings",
-    results="oat_analysis_results"
+    model = "campsis_model",
+    dataset = "dataset",
+    outputs = "oat_analysis_outputs",
+    replicates = "integer",
+    seed = "integer",
+    dest = "character",
+    settings = "simulation_settings",
+    results = "oat_analysis_results"
   ),
-  prototype=prototype(model=CampsisModel(), dataset=campsis::Dataset(), seed=1L)
+  prototype = prototype(model = CampsisModel(), dataset = campsis::Dataset(), seed = 1L)
 )
 
 #_______________________________________________________________________________
@@ -27,7 +26,7 @@ setClass(
 #_______________________________________________________________________________
 
 #' Compute baseline.
-#' 
+#'
 #' @param object simulation results of the baseline, tibble
 #' @param output OAT output, one or several
 #' @return the baseline, double or list of double
@@ -41,31 +40,30 @@ setGeneric("compute_baseline", function(object, output) {
 })
 
 #' @rdname compute_baseline
-setMethod("compute_baseline", signature=c("tbl_df", "model_parameter_output"), definition=function(object, output) {
+setMethod("compute_baseline", signature = c("tbl_df", "model_parameter_output"), definition = function(object, output) {
   outputName <- output %>% get_name()
   baseline <- object %>% dplyr::pull(outputName) %>% unique()
-  assertthat::assert_that(length(baseline)==1,
-                          msg=paste0("Baseline should be unique for parameter ", outputName))
+  assertthat::assert_that(length(baseline) == 1, msg = paste0("Baseline should be unique for parameter ", outputName))
   return(baseline)
 })
 
 #' @importFrom campsismod add export
 #' @importFrom campsisnca calculate NCAAnalysis NCATable
 #' @rdname compute_baseline
-setMethod("compute_baseline", signature=c("tbl_df", "nca_metric_output"), definition=function(object, output) {
+setMethod("compute_baseline", signature = c("tbl_df", "nca_metric_output"), definition = function(object, output) {
   nca <- campsisnca::NCAAnalysis() %>%
     add(output@metric)
   table <- campsisnca::NCATable() %>%
     add(nca)
   baseline <- table %>%
-    campsisnca::calculate(x=object) %>%
-    campsismod::export(dest="dataframe", type="individual")
+    campsisnca::calculate(x = object) %>%
+    campsismod::export(dest = "dataframe", type = "individual")
   return(baseline %>% dplyr::pull(value))
 })
 
 #' @rdname compute_baseline
-setMethod("compute_baseline", signature=c("tbl_df", "oat_analysis_outputs"), definition=function(object, output) {
-  baselines <- output@list %>% purrr::map(~compute_baseline(object=object, output=.x))
+setMethod("compute_baseline", signature = c("tbl_df", "oat_analysis_outputs"), definition = function(object, output) {
+  baselines <- output@list %>% purrr::map(~ compute_baseline(object = object, output = .x))
   return(baselines)
 })
 
@@ -74,7 +72,7 @@ setMethod("compute_baseline", signature=c("tbl_df", "oat_analysis_outputs"), def
 #_______________________________________________________________________________
 
 #' Create scenarios.
-#' 
+#'
 #' @param object OAT analysis, type forest plot or sensitivity analysis
 #' @param ... extra arguments
 #' @return a list of CAMPSIS scenarios to be run
@@ -94,9 +92,9 @@ setGeneric("create_scenarios", function(object, ...) {
 post_process_scenarios <- function(object, output) {
   outputName <- output %>% get_name()
   results <- object %>%
-    dplyr::filter(.data$metric==outputName) %>%
+    dplyr::filter(.data$metric == outputName) %>%
     dplyr::select(-dplyr::all_of(c("discrete_value", "metric"))) %>% # TODO
-    dplyr::mutate(SCENARIO=factor(SCENARIO, levels=unique(SCENARIO) %>% rev())) %>%
+    dplyr::mutate(SCENARIO = factor(SCENARIO, levels = unique(SCENARIO) %>% rev())) %>%
     dplyr::relocate(dplyr::any_of(c("replicate", "id", "value", "SCENARIO")))
   return(results)
 }
@@ -105,7 +103,7 @@ post_process_scenarios <- function(object, output) {
 #' @importFrom campsis Outfun Outfuns NCATableOutfun simulate
 #' @importFrom campsisnca NCAAnalysis NCATable
 #' @importFrom progressr with_progress without_progress
-setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
+setMethod("prepare", signature = c("oat_analysis"), definition = function(object) {
   # Fix IIV, VARCOV_OMEGA, VARCOV_SIGMA at the beginning!
   # This way, calling disable is not needed in the scenarios
   model <- object@model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA"))
@@ -119,28 +117,28 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
   replicates <- object@replicates
   dest <- object@dest
   seed <- object@seed
-  
+
   # Getting all necessary 'outvars' across all outputs
   # This in order to make 1 call to the simulate method
-  outvars <- outputs@list %>% purrr::map_chr(~get_outvars(.x)) %>% unique()
-  
+  outvars <- outputs@list %>% purrr::map_chr(~ get_outvars(.x)) %>% unique()
+
   # Compute and store baseline value of each output
   # Progress from campsis is deactivated for the base scenario
   base_scenario <- progressr::without_progress(
-    simulate(model=model, dataset=base_dataset, outvars=outvars, seed=seed, dest=dest)
+    simulate(model = model, dataset = base_dataset, outvars = outvars, seed = seed, dest = dest)
   )
-  baselines <- base_scenario %>% compute_baseline(output=outputs)
-  
+  baselines <- base_scenario %>% compute_baseline(output = outputs)
+
   # Generate scenarios
-  scenarios <- object %>% create_scenarios(dataset=base_dataset, model=model)
+  scenarios <- object %>% create_scenarios(dataset = base_dataset, model = model)
 
   # Prepare outfun function
-  nca <- campsisnca::NCAAnalysis(strata=c(SCENARIO="all"))
+  nca <- campsisnca::NCAAnalysis(strata = c(SCENARIO = "all"))
   nca@force_strat_vars <- "SCENARIO" # Even if there is only 1 level
   for (output in outputs@list) {
     if (is(output, "model_parameter_output")) {
       nca <- nca %>%
-        add(campsisnca::Last(variable=output@name, name=output@name))
+        add(campsisnca::Last(variable = output@name, name = output@name))
     } else {
       nca <- nca %>%
         add(output@metric)
@@ -151,16 +149,28 @@ setMethod("prepare", signature=c("oat_analysis"), definition=function(object) {
     add(outfun)
 
   # Simulate
-  all_results <- campsis::simulate(model=model, dataset=base_dataset, scenarios=scenarios, replicates=replicates,
-                      seed=seed, dest=dest, outvars=outvars, outfun=outfuns, settings=object@settings)
+  all_results <- campsis::simulate(
+    model = model,
+    dataset = base_dataset,
+    scenarios = scenarios,
+    replicates = replicates,
+    seed = seed,
+    dest = dest,
+    outvars = outvars,
+    outfun = outfuns,
+    settings = object@settings
+  )
 
   # Post-processing
-  tmp_results <- purrr::map2(.x=outputs@list, .y=baselines, .f=function(output, baseline) {
-    res <- OATResult(output=output, baseline=baseline,
-                     results=post_process_scenarios(object=all_results, output=output))
+  tmp_results <- purrr::map2(.x = outputs@list, .y = baselines, .f = function(output, baseline) {
+    res <- OATResult(
+      output = output,
+      baseline = baseline,
+      results = post_process_scenarios(object = all_results, output = output)
+    )
     return(res)
   })
-  
+
   # Save
   object@results <- OATResults() %>%
     add(tmp_results)

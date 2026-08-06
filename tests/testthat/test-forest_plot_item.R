@@ -1,4 +1,5 @@
 library(testthat)
+library(campsis)
 
 context("Test all methods from the forest plot class")
 

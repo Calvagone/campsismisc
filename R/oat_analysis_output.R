@@ -3,13 +3,12 @@
 #_______________________________________________________________________________
 
 #' OAT analysis output, see this class as an interface.
-#' 
+#'
 #' @export
 setClass(
   "oat_analysis_output",
-  representation(
-  ),
-  contains="pmx_element"
+  representation(),
+  contains = "pmx_element"
 )
 
 #_______________________________________________________________________________
@@ -17,25 +16,25 @@ setClass(
 #_______________________________________________________________________________
 
 #' Model parameter output.
-#' 
+#'
 #' @export
 setClass(
   "model_parameter_output",
   representation(
-    name="character" # E.g. "CL"
+    name = "character" # E.g. "CL"
   ),
-  contains="oat_analysis_output",
-  validity=function(object) {
-    return(c(expectOne(object, "name")))
+  contains = "oat_analysis_output",
+  validity = function(object) {
+    return(c(expect_one(object, "name")))
   }
 )
 
 #' Create a model parameter output.
-#' 
+#'
 #' @param name model parameter name
 #' @export
 ModelParameterOutput <- function(name) {
-  return(new("model_parameter_output", name=name))
+  return(new("model_parameter_output", name = name))
 }
 
 #_______________________________________________________________________________
@@ -43,78 +42,60 @@ ModelParameterOutput <- function(name) {
 #_______________________________________________________________________________
 
 #' NCA metric output.
-#' 
+#'
 #' @export
 setClass(
   "nca_metric_output",
   representation(
-    metric="nca_metric", # E.g. "Auc()"
-    filter="function",
-    suffix="character"
+    metric = "nca_metric" # E.g. "AUC()"
   ),
-  contains="oat_analysis_output",
-  validity=function(object) {
-    return(expectOneForAll(object, c("suffix")))
-  }
+  contains = "oat_analysis_output"
 )
 
-#' Create a model parameter output.
-#' 
+#' Create an NCA metric output.
+#'
 #' @param metric NCA metric coming from campsisnca
-#' @param filter function to be applied on the simulation output before the
-#'  NCA analysis, either a function or a lambda formula
-#' @param suffix a possible suffix that will be added to the NCA metric name
-#'  (e.g. useful when the same metric appears more than once in the outputs list), default is NULL
 #' @export
-NcaMetricOutput <- function(metric, filter=NULL, suffix=NULL) {
-  filter <- preprocessFunction(fun=filter, name="filter function")
-  if (is.null(suffix)) {
-    suffix <- as.character(NA)
-  }
-  return(new("nca_metric_output", metric=metric, filter=filter, suffix=suffix))
+NcaMetricOutput <- function(metric) {
+  return(new("nca_metric_output", metric = metric))
 }
 
 #_______________________________________________________________________________
-#----                              getName                                  ----
+#----                              get_name                                  ----
 #_______________________________________________________________________________
 
-setMethod("getName", signature=c("model_parameter_output"), definition=function(x) {
+setMethod("get_name", signature = c("model_parameter_output"), definition = function(x) {
   return(x@name)
 })
 
-setMethod("getName", signature=c("nca_metric_output"), definition=function(x) {
-  name <- x@metric %>% getName()
-  if (!is.na(x@suffix)) {
-    name <- paste(name, x@suffix)
-  }
+setMethod("get_name", signature = c("nca_metric_output"), definition = function(x) {
+  name <- x@metric %>% get_name()
   return(name)
 })
 
 #_______________________________________________________________________________
-#----                             getOutvars                                ----
+#----                            get_outvars                                ----
 #_______________________________________________________________________________
 
 #' Get out variables to be simulated.
-#' 
+#'
 #' @param object output
 #' @return variables to be simulated
-#' @export
-#' @rdname getOutvars
-getOutvars <- function(object) {
+#' @rdname get_outvars
+get_outvars <- function(object) {
   stop("No default function is provided")
 }
 
-setGeneric("getOutvars", function(object) {
-  standardGeneric("getOutvars")
+setGeneric("get_outvars", function(object) {
+  standardGeneric("get_outvars")
 })
 
-#' @rdname getOutvars
-setMethod("getOutvars", signature=c("model_parameter_output"), definition=function(object) {
-  return(object %>% getName())
+#' @rdname get_outvars
+setMethod("get_outvars", signature = c("model_parameter_output"), definition = function(object) {
+  return(object %>% get_name())
 })
 
-#' @rdname getOutvars
-setMethod("getOutvars", signature=c("nca_metric_output"), definition=function(object) {
+#' @rdname get_outvars
+setMethod("get_outvars", signature = c("nca_metric_output"), definition = function(object) {
   return(object@metric@variable)
 })
-

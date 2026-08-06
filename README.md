@@ -13,6 +13,8 @@ coverage](https://codecov.io/gh/Calvagone/campsismisc/graph/badge.svg)](https://
 Assume the following estimated 2-compartment model:
 
 ``` r
+library(campsis)
+library(campsisnca)
 library(campsismisc)
 library(progressr)
 
@@ -72,7 +74,7 @@ model
     ## SIGMA's:
     ##      name index index2 value  fix type
     ## 1 RSV_FIX     1      1     1 TRUE  var
-    ## Variance-covariance matrix available (see ?getVarCov)
+    ## Variance-covariance matrix available (see ?get_var_cov)
     ## 
     ## Compartments:
     ## A_1 (CMT=1)
@@ -89,7 +91,7 @@ This model contains:
 
 ``` r
 # Configure hardware
-settings <- Settings(Hardware(cpu=8, replicate_parallel=TRUE))
+settings <- Settings(Hardware(cpu=4, replicate_parallel=TRUE))
 dest <- "mrgsolve" # Much faster than RxODE
 ```
 
@@ -117,7 +119,7 @@ fp <- with_progress({fp %>% prepare()})
 The forest plot for clearance can be otained as follows (use `index=1`):
 
 ``` r
-fp %>% getForestPlot(index=1) +
+fp %>% get_forest_plot(index=1) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
@@ -127,7 +129,7 @@ Similarly, the forest plot for volume can be obtained as follows (use
 `index=2`):
 
 ``` r
-fp %>% getForestPlot(index=2) +
+fp %>% get_forest_plot(index=2) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
@@ -153,10 +155,10 @@ outputs as follows:
 
 ``` r
 outputs <- OATOutputs() %>%
-  add(NcaMetricOutput(AUC(variable="CONC"), filter=~campsisnca::timerange(.x, min=0, max=24))) %>%
-  add(NcaMetricOutput(AUC(variable="CONC"), filter=~campsisnca::timerange(.x, min=144, max=168), suffix="Day 7")) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~campsisnca::timerange(.x, min=0, max=24))) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC"), filter=~campsisnca::timerange(.x, min=144, max=168), suffix="Day 7"))
+  add(NcaMetricOutput(AUC(variable="CONC", window=TimeWindow(0, 24), name="AUC Day 1"))) %>%
+  add(NcaMetricOutput(AUC(variable="CONC", window=TimeWindow(144, 168), name="AUC Day 7"))) %>%
+  add(NcaMetricOutput(Cmax(variable="CONC", window=TimeWindow(0, 24), name="Cmax Day 1"))) %>%
+  add(NcaMetricOutput(Cmax(variable="CONC", window=TimeWindow(144, 168), name="Cmax Day 7")))
 ```
 
 A forest plot object can be instantiated and run as follows:
@@ -177,7 +179,7 @@ fp <- with_progress({fp %>% prepare()})
 We can look at AUC day 1 by doing:
 
 ``` r
-fp %>% getForestPlot(index=1) +
+fp %>% get_forest_plot(index=1) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
@@ -187,7 +189,7 @@ If we are interested to see the absolute change in AUC, argument
 relative can be set to FALSE as follows.
 
 ``` r
-fp %>% getForestPlot(index=1, relative=FALSE)
+fp %>% get_forest_plot(index=1, relative=FALSE)
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d1_absolute-1.png" alt="" style="display: block; margin: auto;" />
@@ -195,7 +197,7 @@ fp %>% getForestPlot(index=1, relative=FALSE)
 To look at AUC on day 7, we proceed as follows:
 
 ``` r
-fp %>% getForestPlot(index=2) +
+fp %>% get_forest_plot(index=2) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
@@ -204,7 +206,7 @@ fp %>% getForestPlot(index=2) +
 Again, we can look at the absolute values.
 
 ``` r
-fp %>% getForestPlot(index=2, relative=FALSE)
+fp %>% get_forest_plot(index=2, relative=FALSE)
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d7_absolute-1.png" alt="" style="display: block; margin: auto;" />
@@ -212,7 +214,7 @@ fp %>% getForestPlot(index=2, relative=FALSE)
 Let’s produce one more plot with Cmax on day 1.
 
 ``` r
-fp %>% getForestPlot(index=3) +
+fp %>% get_forest_plot(index=3) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
@@ -221,7 +223,7 @@ fp %>% getForestPlot(index=3) +
 And a final one with Cmax on day 7.
 
 ``` r
-fp %>% getForestPlot(index=4) +
+fp %>% get_forest_plot(index=4) +
   ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
 ```
 
@@ -243,7 +245,7 @@ achieved with a one-at-a-time (OAT)-method-based sensitivity analysis.
 Most of the time, these analyses are done without parameter uncertainty
 (replicates=1, by default) and represented with tornado plots, as shown
 below. However if parameter uncertainty is used, you can still call
-`getForestPlot()` on this new type of object.
+`get_forest_plot()` on this new type of object.
 
 ``` r
 outputs <- OATOutputs() %>%
@@ -265,7 +267,7 @@ object <- SensitivityAnalysis(model=model, dataset=dataset, outputs=outputs) %>%
   add(SensitivityAnalysisItem(Change("CL", up=2, down=2, log=TRUE)))
 
 object <- object %>% prepare()
-object %>% getTornadoPlot(index=1)
+object %>% get_tornado_plot(index=1)
 ```
 
 <img src="README_files/figure-gfm/sensibility_analysis_auc_example-1.png" alt="" style="display: block; margin: auto;" />
@@ -273,7 +275,7 @@ object %>% getTornadoPlot(index=1)
 Absolute values may also be shown:
 
 ``` r
-object %>% getTornadoPlot(index=1, relative=FALSE)
+object %>% get_tornado_plot(index=1, relative=FALSE)
 ```
 
 <img src="README_files/figure-gfm/sensibility_analysis_auc_example_absolute-1.png" alt="" style="display: block; margin: auto;" />
@@ -281,7 +283,7 @@ object %>% getTornadoPlot(index=1, relative=FALSE)
 Cmax can also be shown using `index=2`.
 
 ``` r
-object %>% getTornadoPlot(index=2)
+object %>% get_tornado_plot(index=2)
 ```
 
 <img src="README_files/figure-gfm/sensibility_analysis_cmax_example-1.png" alt="" style="display: block; margin: auto;" />

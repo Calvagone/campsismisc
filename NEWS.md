@@ -8,6 +8,9 @@
 * Review list of exported functions #70
 * Remove argument suffix from NcaMetricOutput #71
 * Get rid of plyr #72
+* Update NEWS #73
+* Prepare package for CRAN submission #74
+* Format code with Air
 
 # campsismisc 0.6.0
 

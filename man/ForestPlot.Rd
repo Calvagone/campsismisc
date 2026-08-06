@@ -19,7 +19,7 @@ ForestPlot(
 
 \item{outputs}{output(s) of interest, e.g. 'CL' or a PK metric from campsisnca or a list of them}
 
-\item{dataset}{CAMPSIS dataset, if NULL, minimalist dataset with 1 subject 
+\item{dataset}{CAMPSIS dataset, if NULL, minimalist dataset with 1 subject
 and single observation at time 0 is created}
 
 \item{replicates}{number of replicates, default is 100}

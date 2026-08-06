@@ -3,70 +3,66 @@
 #_______________________________________________________________________________
 
 #' Forest plot item: one or more labeled covariates.
-#' 
+#'
 #' @export
 setClass(
   "forest_plot_item",
   representation(
-    covariates="covariates"
+    covariates = "covariates"
   ),
-  contains="pmx_element"
+  contains = "pmx_element"
 )
 
-#' 
+#'
 #' Create a forest plot item.
-#' 
+#'
 #' @param ... all constant covariates
 #' @return a forest plot item
 #' @export
 ForestPlotItem <- function(...) {
   args <- list(...)
-  areConstantCovariates <- args %>% purrr::map_lgl(~is(.x, "fixed_covariate"))
-  assertthat::assert_that(all(areConstantCovariates), msg="Forest plot item can only accept fixed covariates")
+  are_constant_covariates <- args %>% purrr::map_lgl(~ is(.x, "fixed_covariate"))
+  assertthat::assert_that(all(are_constant_covariates), msg = "Forest plot item can only accept fixed covariates")
   covariates <- new("covariates") %>% add(args)
-  return(new("forest_plot_item", covariates=covariates))
+  return(new("forest_plot_item", covariates = covariates))
 }
 
 #_______________________________________________________________________________
-#----                              getName                                  ----
+#----                              get_name                                  ----
 #_______________________________________________________________________________
 
-setMethod("getName", signature=c("forest_plot_item"), definition=function(x) {
-  names <- x@covariates@list %>% purrr::map_chr(~paste0(.x@name, ":", .x@distribution@value))
-  return(paste0(names, collapse="/"))
+setMethod("get_name", signature = c("forest_plot_item"), definition = function(x) {
+  names <- x@covariates@list %>% purrr::map_chr(~ paste0(.x@name, ":", .x@distribution@value))
+  return(paste0(names, collapse = "/"))
 })
 
 #_______________________________________________________________________________
-#----                              getLabel                                 ----
+#----                              get_label                                ----
 #_______________________________________________________________________________
 
-#' @rdname getLabel
+#' @rdname get_label
 #' @param labeled_covariates labeled covariates object
-setMethod("getLabel", signature=c("forest_plot_item"), definition=function(object, labeled_covariates) {
+setMethod("get_label", signature = c("forest_plot_item"), definition = function(object, labeled_covariates) {
   if (!is(labeled_covariates, "labeled_covariates")) {
     stop("Please provide all labeled covariates")
   }
-  individualLabels <- object@covariates@list %>% purrr::map_chr(.f=function(covariate) {
-    labeledCovariate <- labeled_covariates %>% find(covariate)
-    if (is(labeledCovariate, "categorical_labeled_covariate")) {
-      return(paste0(labeledCovariate@label, ": ",
-                    names(which(labeledCovariate@categories==covariate@distribution@value))))
-    } else {
-      if (!is.na(labeledCovariate@unit) && labeledCovariate@unit != "") {
-        return(paste0(labeledCovariate@label, ": ", covariate@distribution@value, " ", labeledCovariate@unit))
+  individual_labels <- object@covariates@list %>%
+    purrr::map_chr(.f = function(covariate) {
+      labeled_covariate <- labeled_covariates %>% find(covariate)
+      if (is(labeled_covariate, "categorical_labeled_covariate")) {
+        return(paste0(
+          labeled_covariate@label,
+          ": ",
+          names(which(labeled_covariate@categories == covariate@distribution@value))
+        ))
       } else {
-        return(paste0(labeledCovariate@label, ": ", covariate@distribution@value))
+        if (!is.na(labeled_covariate@unit) && labeled_covariate@unit != "") {
+          return(paste0(labeled_covariate@label, ": ", covariate@distribution@value, " ", labeled_covariate@unit))
+        } else {
+          return(paste0(labeled_covariate@label, ": ", covariate@distribution@value))
+        }
       }
-    }
-  })
-  
-  return(paste0(individualLabels, collapse=" / "))
-})
+    })
 
-#_______________________________________________________________________________
-#----                           getCovariates                               ----
-#_______________________________________________________________________________
-
-setMethod("getCovariates", signature=c("forest_plot_item"), definition=function(object) {
-  return(object@covariates)
+  return(paste0(individual_labels, collapse = " / "))
 })

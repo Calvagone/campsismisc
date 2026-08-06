@@ -85,7 +85,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
     oatAnalysisRegressionTest(object = object, filename = regFilename),
     object %>% get_tornado_plot(relative = TRUE),
     object %>% get_tornado_plot(relative = FALSE),
-    object %>% getTornadoPlot(relative = FALSE) # Testing the deprecated method
+    suppressWarnings(object %>% getTornadoPlot(relative = FALSE)) # Testing the deprecated method
     # class(object) <- "forest_plot",
     # object %>% get_forest_plot(relative=FALSE),
   )
@@ -147,8 +147,8 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
   arm1 <- Arm(subjects = 10, label = "Arm 1") %>%
     add(Bolus(time = 0, amount = 1000, compartment = 1, ii = 24, addl = 0)) %>%
     add(Observations(seq(0, 48, by = 0.1))) %>%
-    setSubjects(1) %>%
-    setLabel(as.character(NA))
+    set_subjects(1) %>%
+    set_label(as.character(NA))
 
   outputs <- OATOutputs() %>%
     add(NcaMetricOutput(AUC(variable = "CONC", window = TimeWindow(0, "last"), method = 1, name = "AUC")))
@@ -190,8 +190,8 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
   arm1 <- Arm(subjects = 10, label = "Arm 1") %>%
     add(Bolus(time = 0, amount = 1000, compartment = 1, ii = 24, addl = 0)) %>%
     add(Observations(seq(0, 48, by = 0.1))) %>%
-    setSubjects(1) %>%
-    setLabel(as.character(NA))
+    set_subjects(1) %>%
+    set_label(as.character(NA))
 
   outputs <- OATOutputs() %>%
     add(NcaMetricOutput(AUC(variable = "CONC", window = TimeWindow(0, "last"), method = 1, name = "AUC")))

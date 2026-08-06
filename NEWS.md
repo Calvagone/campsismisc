@@ -10,7 +10,7 @@
 * Get rid of plyr #72
 * Update NEWS #73
 * Prepare package for CRAN submission #74
-* Format code with Air
+* Format code with Air #75
 
 # campsismisc 0.6.0
 

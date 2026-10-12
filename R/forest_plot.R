@@ -43,16 +43,7 @@ ForestPlot <- function(
     dataset <- campsis::Dataset(1) %>%
       add(campsis::Observations(times = 0))
   }
-  if (is.character(outputs)) {
-    params <- outputs
-    outputs <- campsisnca::NCAAnalysis()
-    for (param in params) {
-      outputs <- outputs %>% add(campsisnca::Last(variable = param, name = param))
-    }
-  }
-  if (is(outputs, "nca_metric")) {
-    outputs <- campsisnca::NCAAnalysis() %>% add(outputs)
-  }
+  outputs <- process_outputs(outputs)
   return(new(
     "forest_plot",
     model = model,

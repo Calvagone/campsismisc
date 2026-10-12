@@ -83,6 +83,30 @@ setGeneric("create_scenarios", function(object, ...) {
 })
 
 #_______________________________________________________________________________
+#----                                utilities                              ----
+#_______________________________________________________________________________
+
+#' Process OAT outputs.
+#'
+#' @param outputs outputs as character, nca_metric or nca_analysis
+#' @return an nca_analysis object
+#' @importFrom campsisnca NCAAnalysis Last
+#' @keywords internal
+process_outputs <- function(outputs) {
+  if (is.character(outputs)) {
+    params <- outputs
+    outputs <- campsisnca::NCAAnalysis()
+    for (param in params) {
+      outputs <- outputs %>% add(campsisnca::Last(variable = param, name = param))
+    }
+  }
+  if (is(outputs, "nca_metric")) {
+    outputs <- campsisnca::NCAAnalysis() %>% add(outputs)
+  }
+  return(outputs)
+}
+
+#_______________________________________________________________________________
 #----                               prepare                                 ----
 #_______________________________________________________________________________
 

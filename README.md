@@ -101,9 +101,7 @@ Let’s show how the metabolism effect and the weight influence the
 clearance or the volume. This can be achieved as follows:
 
 ``` r
-outputs <- OATOutputs() %>%
-  add(ModelParameterOutput("CL")) %>%
-  add(ModelParameterOutput("VC"))
+outputs <- c("CL", "VC")
 
 fp <- ForestPlot(model=model, outputs=outputs, replicates=100, dest=dest, settings=settings) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
@@ -148,17 +146,14 @@ dataset <- Dataset(1) %>%
     add(Observations(times=c(0:24, 144:168)))
 ```
 
-Instead of creating a `ModelParameterOutput` object, we create a
-`NcaMetricOutput` for each metric we want to compute (by referring to
-the proper `campsisnca` metric). Each output is added to the list of
-outputs as follows:
+PK metrics can be added directly using the `campsisnca` API:
 
 ``` r
-outputs <- OATOutputs() %>%
-  add(NcaMetricOutput(AUC(variable="CONC", window=TimeWindow(0, 24), name="AUC Day 1"))) %>%
-  add(NcaMetricOutput(AUC(variable="CONC", window=TimeWindow(144, 168), name="AUC Day 7"))) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC", window=TimeWindow(0, 24), name="Cmax Day 1"))) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC", window=TimeWindow(144, 168), name="Cmax Day 7")))
+outputs <- NCAAnalysis(variable="CONC") %>%
+  add(AUC(window=TimeWindow(0, 24), name="AUC Day 1")) %>%
+  add(AUC(window=TimeWindow(144, 168), name="AUC Day 7")) %>%
+  add(Cmax(window=TimeWindow(0, 24), name="Cmax Day 1")) %>%
+  add(Cmax(window=TimeWindow(144, 168), name="Cmax Day 7"))
 ```
 
 A forest plot object can be instantiated and run as follows:
@@ -248,9 +243,9 @@ below. However if parameter uncertainty is used, you can still call
 `get_forest_plot()` on this new type of object.
 
 ``` r
-outputs <- OATOutputs() %>%
-  add(NcaMetricOutput(AUC(variable="CONC"))) %>%
-  add(NcaMetricOutput(Cmax(variable="CONC")))
+outputs <- NCAAnalysis(variable="CONC") %>%
+  add(AUC()) %>%
+  add(Cmax())
 
 dataset <- Dataset(1) %>%
   add(Infusion(time=0, amount=1000, compartment=1)) %>%

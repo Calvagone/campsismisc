@@ -43,9 +43,7 @@ dest <- "mrgsolve" # Much faster than RxODE
 Let's show how the metabolism effect and the weight influence the clearance or the volume. This can be achieved as follows:
 
 ```{r, message=F}
-outputs <- NCAAnalysis() %>%
-  add(Last(variable="CL", name="PARAM_CL")) %>%
-  add(Last(variable="VC", name="PARAM_VC"))
+outputs <- c("CL", "VC")
 
 fp <- ForestPlot(model=model, outputs=outputs, replicates=100, dest=dest, settings=settings) %>%
     add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%

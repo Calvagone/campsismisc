@@ -10,7 +10,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (rxode2/mrgsolve)", {
   model <- getModel("metaboliser_effect_on_cl")
   regFilename <- "meta_effect_cl_output"
 
-  object <- ForestPlot(model = model, outputs = ModelParameterOutput("CL"), replicates = 10) %>%
+  object <- ForestPlot(model = model, outputs = "CL", replicates = 10) %>%
     add(CategoricalLabeledCovariate(
       name = "METAB",
       default_value = 0,
@@ -53,7 +53,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC0-24 (rxode2/mrgsolve
   object <- ForestPlot(
     model = model,
     dataset = dataset,
-    outputs = NcaMetricOutput(AUC(variable = "CONC")),
+    outputs = AUC(variable = "CONC"),
     replicates = 10
   ) %>%
     add(CategoricalLabeledCovariate(
@@ -93,7 +93,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (rxode2/mrgso
   object <- ForestPlot(
     model = model,
     dataset = dataset,
-    outputs = NcaMetricOutput(AUC(variable = "CONC", window = TimeWindow(144, 168))),
+    outputs = AUC(variable = "CONC", window = TimeWindow(144, 168)),
     replicates = 2
   ) %>%
     add(CategoricalLabeledCovariate(
@@ -125,7 +125,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (rxode2/mrgso
 test_that("Forest plots must work when only 1 item is simulated (rxode2/mrgsolve)", {
   model <- getModel("metaboliser_effect_on_cl")
 
-  object <- ForestPlot(model = model, outputs = ModelParameterOutput("CL"), replicates = 2) %>%
+  object <- ForestPlot(model = model, outputs = "CL", replicates = 2) %>%
     add(CategoricalLabeledCovariate(
       name = "METAB",
       default_value = 0,

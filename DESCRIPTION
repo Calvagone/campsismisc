@@ -58,8 +58,6 @@ Collate:
     'labeled_covariate.R'
     'labeled_covariates.R'
     'labeled_parameters.R'
-    'oat_analysis_output.R'
-    'oat_analysis_outputs.R'
     'oat_analysis_result.R'
     'oat_analysis_results.R'
     'oat_analysis.R'
@@ -72,4 +70,4 @@ Collate:
     'sensitivity_analysis_items.R'
     'sensitivity_analysis.R'
     'deprecated_methods.R'
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

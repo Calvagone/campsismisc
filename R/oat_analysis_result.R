@@ -8,7 +8,7 @@
 setClass(
   "oat_analysis_result",
   representation(
-    output = "oat_analysis_output",
+    output = "nca_metric",
     baseline = "numeric",
     results = "data.frame"
   ),

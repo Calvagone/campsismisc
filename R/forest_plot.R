@@ -28,6 +28,7 @@ setClass(
 #' @param settings simulation settings
 #' @return an empty forest plot
 #' @importFrom campsis Dataset Observations Settings
+#' @importFrom campsisnca NCAAnalysis Last
 #' @export
 ForestPlot <- function(
   model,
@@ -42,10 +43,15 @@ ForestPlot <- function(
     dataset <- campsis::Dataset(1) %>%
       add(campsis::Observations(times = 0))
   }
-  if (is(outputs, "oat_analysis_output")) {
-    # Add single output into multiple outputs object
-    outputs <- OATOutputs() %>%
-      add(outputs)
+  if (is.character(outputs)) {
+    params <- outputs
+    outputs <- campsisnca::NCAAnalysis()
+    for (param in params) {
+      outputs <- outputs %>% add(campsisnca::Last(variable = param, name = param))
+    }
+  }
+  if (is(outputs, "nca_metric")) {
+    outputs <- campsisnca::NCAAnalysis() %>% add(outputs)
   }
   return(new(
     "forest_plot",

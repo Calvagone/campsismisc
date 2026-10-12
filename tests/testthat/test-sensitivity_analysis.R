@@ -22,7 +22,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
   object <- SensitivityAnalysis(
     model = model,
     dataset = dataset,
-    outputs = NcaMetricOutput(AUC(variable = "CONC")),
+    outputs = AUC(variable = "CONC"),
     replicates = 3
   ) %>%
     add(SensitivityAnalysisItem(Change("DUR", up = 2, down = 2, log = TRUE))) %>%
@@ -60,7 +60,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
   results <- simulate(model = model %>% disable("IIV"), dataset = dataset)
   spaghettiPlot(results, "CONC")
 
-  object <- SensitivityAnalysis(model = model, dataset = dataset, outputs = NcaMetricOutput(AUC(variable = "CONC"))) %>%
+  object <- SensitivityAnalysis(model = model, dataset = dataset, outputs = AUC(variable = "CONC")) %>%
     add(LabeledParameters(c(
       DUR = "Duration",
       VC = "Central volume",
@@ -108,7 +108,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax (rxode2/mr
   object <- SensitivityAnalysis(
     model = model,
     dataset = dataset,
-    outputs = NcaMetricOutput(Cmax(variable = "CONC")),
+    outputs = Cmax(variable = "CONC"),
     replicates = 3
   ) %>%
     add(LabeledParameters(c(
@@ -150,8 +150,7 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
     set_subjects(1) %>%
     set_label(as.character(NA))
 
-  outputs <- OATOutputs() %>%
-    add(NcaMetricOutput(AUC(variable = "CONC", window = TimeWindow(0, "last"), method = 1, name = "AUC")))
+  outputs <- AUC(variable = "CONC", window = TimeWindow(0, "last"), method = 1, name = "AUC")
 
   dataset_sens <- Dataset() %>% add(arm1) %>% add(DatasetConfig(exportTSLD = TRUE, exportTDOS = TRUE))
 
@@ -193,8 +192,7 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
     set_subjects(1) %>%
     set_label(as.character(NA))
 
-  outputs <- OATOutputs() %>%
-    add(NcaMetricOutput(AUC(variable = "CONC", window = TimeWindow(0, "last"), method = 1, name = "AUC")))
+  outputs <- AUC(variable = "CONC", window = TimeWindow(0, "last"), method = 1, name = "AUC")
 
   dataset_sens <- Dataset() %>% add(arm1) %>% add(DatasetConfig(exportTSLD = TRUE, exportTDOS = TRUE))
 

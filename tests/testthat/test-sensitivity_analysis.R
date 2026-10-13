@@ -61,13 +61,6 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
   spaghettiPlot(results, "CONC")
 
   object <- SensitivityAnalysis(model = model, dataset = dataset, outputs = AUC(variable = "CONC")) %>%
-    add(LabeledParameters(c(
-      DUR = "Duration",
-      VC = "Central volume",
-      VP = "Peripheral volume",
-      Q = "Inter-compartmental clearance",
-      CL = "Clearance"
-    ))) %>%
     add(SensitivityAnalysisItem(Change("DUR", up = 2, down = 2, log = TRUE))) %>%
     add(SensitivityAnalysisItem(Change("VC", up = 2, down = 2, log = TRUE))) %>%
     add(SensitivityAnalysisItem(Change("VP", up = 2, down = 2, log = TRUE))) %>%
@@ -111,13 +104,6 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax (rxode2/mr
     outputs = Cmax(variable = "CONC"),
     replicates = 3
   ) %>%
-    add(LabeledParameters(c(
-      DUR = "Duration",
-      VC = "Central volume",
-      VP = "Peripheral volume",
-      Q = "Inter-compartmental clearance",
-      CL = "Clearance"
-    ))) %>%
     add(SensitivityAnalysisItem(Change("DUR", up = 2, down = 2, log = TRUE))) %>%
     add(SensitivityAnalysisItem(Change("VC", up = 2, down = 2, log = TRUE))) %>%
     add(SensitivityAnalysisItem(Change("VP", up = 2, down = 2, log = TRUE))) %>%
@@ -155,12 +141,6 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
   dataset_sens <- Dataset() %>% add(arm1) %>% add(DatasetConfig(exportTSLD = TRUE, exportTDOS = TRUE))
 
   sens <- SensitivityAnalysis(model = model, dataset = dataset_sens, outputs = outputs) %>%
-    add(LabeledParameters(c(
-      BIO = "Bioavailability",
-      KA = "Absorption rate",
-      CL = "Clearance",
-      VC = "Volume of central compartment"
-    ))) %>%
     add(SensitivityAnalysisItem(Change("BIO", up = 2, down = 2))) %>%
     add(SensitivityAnalysisItem(Change("KA", up = 2, down = 2))) %>%
     add(SensitivityAnalysisItem(Change("CL", up = 2, down = 2))) %>%
@@ -197,12 +177,6 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
   dataset_sens <- Dataset() %>% add(arm1) %>% add(DatasetConfig(exportTSLD = TRUE, exportTDOS = TRUE))
 
   sens <- SensitivityAnalysis(model = model, dataset = dataset_sens, outputs = outputs) %>%
-    add(LabeledParameters(c(
-      BIO = "Bioavailability",
-      KA = "Absorption rate",
-      CL = "Clearance",
-      VC = "Volume of central compartment"
-    ))) %>%
     add(SensitivityAnalysisItem(Change("BIO", up = 2, down = 2, where = "equation"))) %>%
     add(SensitivityAnalysisItem(Change("KA", up = 2, down = 2, where = "equation"))) %>%
     add(SensitivityAnalysisItem(Change("CL", up = 2, down = 2, where = "equation"))) %>%

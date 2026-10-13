@@ -49,19 +49,20 @@ setMethod("get_label", signature = c("forest_plot_item"), definition = function(
   individual_labels <- object@covariates@list %>%
     purrr::map_chr(.f = function(covariate) {
       labeled_covariate <- labeled_covariates %>% find(covariate)
-      if (is(labeled_covariate, "categorical_labeled_covariate")) {
-        return(paste0(
+      label <- if (is(labeled_covariate, "categorical_labeled_covariate")) {
+        paste0(
           labeled_covariate@label,
           ": ",
           names(which(labeled_covariate@categories == covariate@distribution@value))
-        ))
+        )
       } else {
         if (!is.na(labeled_covariate@unit) && labeled_covariate@unit != "") {
-          return(paste0(labeled_covariate@label, ": ", covariate@distribution@value, " ", labeled_covariate@unit))
+          paste0(labeled_covariate@label, ": ", covariate@distribution@value, " ", labeled_covariate@unit)
         } else {
-          return(paste0(labeled_covariate@label, ": ", covariate@distribution@value))
+          paste0(labeled_covariate@label, ": ", covariate@distribution@value)
         }
       }
+      return(gsub("\\\\n", "\n", label))
     })
 
   return(paste0(individual_labels, collapse = " / "))

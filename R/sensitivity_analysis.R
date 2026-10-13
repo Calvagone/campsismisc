@@ -9,8 +9,7 @@
 setClass(
   "sensitivity_analysis",
   representation(
-    items = "sensitivity_analysis_items",
-    labeled_parameters = "labeled_parameters"
+    items = "sensitivity_analysis_items"
   ),
   contains = "oat_analysis",
   prototype = prototype(model = CampsisModel(), dataset = campsis::Dataset())
@@ -62,11 +61,6 @@ SensitivityAnalysis <- function(
 
 setMethod("add", signature = c("sensitivity_analysis", "sensitivity_analysis_item"), definition = function(object, x) {
   object@items <- object@items %>% add(x)
-  return(object)
-})
-
-setMethod("add", signature = c("sensitivity_analysis", "labeled_parameters"), definition = function(object, x) {
-  object@labeled_parameters <- x
   return(object)
 })
 
@@ -220,7 +214,7 @@ setMethod(
     # Customize item name if sensitivity analysis object
     if (isSensitivityAnalysis) {
       itemNames <- object@items %>% get_names()
-      itemLabels <- object@items@list %>% purrr::map_chr(~ .x %>% get_label(object@labeled_parameters))
+      itemLabels <- object@items@list %>% purrr::map_chr(~ .x %>% get_label(object@model))
       order <- order(match(itemNames, unique(summary$ITEM_NAME)))
       itemNames <- itemNames[order]
       itemLabels <- itemLabels[order]

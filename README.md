@@ -56,14 +56,22 @@ model
     ## 
     ## 
     ## THETA's:
-    ##       name index     value   fix           se         rse%
-    ## 1      DUR     1  0.414183 FALSE 3.399015e-02 8.206553e+00
-    ## 2       VC     2  4.432130 FALSE 3.975538e-02 8.969813e-01
-    ## 3       VP     3  5.195360 FALSE 2.445976e-07 4.708002e-06
-    ## 4        Q     4  1.404670 FALSE 4.577521e-06 3.258788e-04
-    ## 5       CL     5  1.659260 FALSE 3.756954e-02 2.264234e+00
-    ## 6 PROP_RUV     6 -1.954050 FALSE 4.252646e-02 2.176324e+00
-    ## 7 METAB_CL     7  0.243992 FALSE 7.265659e-02 2.977827e+01
+    ##       name index     value   fix                           label unit
+    ## 1      DUR     1  0.414183 FALSE                        Duration    h
+    ## 2       VC     2  4.432130 FALSE                  Central volume    L
+    ## 3       VP     3  5.195360 FALSE               Peripheral volume    L
+    ## 4        Q     4  1.404670 FALSE Inter-compartmental\\nclearance  L/h
+    ## 5       CL     5  1.659260 FALSE                       Clearance  L/h
+    ## 6 PROP_RUV     6 -1.954050 FALSE              Proportional error <NA>
+    ## 7 METAB_CL     7  0.243992 FALSE               Metabolism effect <NA>
+    ##             se         rse%
+    ## 1 3.399015e-02 8.206553e+00
+    ## 2 3.975538e-02 8.969813e-01
+    ## 3 2.445976e-07 4.708002e-06
+    ## 4 4.577521e-06 3.258788e-04
+    ## 5 3.756954e-02 2.264234e+00
+    ## 6 4.252646e-02 2.176324e+00
+    ## 7 7.265659e-02 2.977827e+01
     ## OMEGA's:
     ##   name index index2       value   fix type           se      rse%
     ## 1  DUR     1      1 1.54000e-02 FALSE  var 8.199963e-03  53.24652
@@ -254,7 +262,6 @@ dataset <- Dataset(1) %>%
   add(Covariate("WT", 70))
 
 object <- SensitivityAnalysis(model=model, dataset=dataset, outputs=outputs) %>%
-  add(LabeledParameters(c(DUR="Duration", VC="Central volume", VP="Peripheral volume", Q="Inter-compartmental\nclearance", CL="Clearance"))) %>%
   add(SensitivityAnalysisItem(Change("DUR", up=2, down=2, log=TRUE))) %>%
   add(SensitivityAnalysisItem(Change("VC", up=2, down=2, log=TRUE))) %>%
   add(SensitivityAnalysisItem(Change("VP", up=2, down=2, log=TRUE))) %>%

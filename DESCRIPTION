@@ -57,7 +57,6 @@ Collate:
     'generic.R'
     'labeled_covariate.R'
     'labeled_covariates.R'
-    'labeled_parameters.R'
     'oat_analysis_result.R'
     'oat_analysis_results.R'
     'oat_analysis.R'

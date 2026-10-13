@@ -42,18 +42,22 @@ setMethod("get_name", signature = c("sensitivity_analysis_item"), definition = f
 #_______________________________________________________________________________
 
 #' @rdname get_label
-#' @param labeled_parameters labeled parameters object
-setMethod("get_label", signature = c("sensitivity_analysis_item"), definition = function(object, labeled_parameters) {
-  if (!is(labeled_parameters, "labeled_parameters")) {
-    stop("Please provide the labeled parameters")
-  }
+#' @param model Campsis model
+setMethod("get_label", signature = c("sensitivity_analysis_item"), definition = function(object, model) {
   individual_labels <- object@changes@list %>%
     purrr::map_chr(.f = function(change) {
       parameter_name <- change %>% get_name()
-      parameter_label <- labeled_parameters[parameter_name]
-      if (is.na(parameter_label)) {
-        parameter_label <- parameter_name
+      where <- change@where
+
+      parameter_label <- parameter_name
+      if (where == "theta") {
+        theta <- model %>% find(Theta(parameter_name))
+        if (!is.null(theta) && !is.na(theta@label) && theta@label != "") {
+          parameter_label <- theta@label
+        }
       }
+      parameter_label <- gsub("\\\\n", "\n", parameter_label)
+
       if (change@up_down_as_factor) {
         return(paste0(parameter_label, " (\U00F7", change@down, ", ", "\U00D7", change@up, ")"))
       } else {

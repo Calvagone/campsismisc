@@ -7,17 +7,17 @@ context("Test the forest plot feature")
 source(file.path(getwd(), test_path(), "test-utils.R"))
 
 test_that("Forest plot: effect of METAB (0/1) and WT on CL (rxode2/mrgsolve)", {
-  model <- getModel("metaboliser_effect_on_cl")
-  regFilename <- "meta_effect_cl_output"
-
-  object <- ForestPlot(model = model, outputs = "CL", replicates = 10) %>%
-    add(CategoricalLabeledCovariate(
+  model <- getModel("metaboliser_effect_on_cl") %>%
+    add(NumericCovariateDefinition(name = "WT", default_value = 70, label = "Weight", unit = "kg")) %>%
+    add(CategoricalCovariateDefinition(
       name = "METAB",
       default_value = 0,
       label = "Metaboliser",
       categories = c(Slow = 0, Fast = 1)
-    )) %>%
-    add(LabeledCovariate(name = "WT", default_value = 70, label = "Weight", unit = "kg")) %>%
+    ))
+  regFilename <- "meta_effect_cl_output"
+
+  object <- ForestPlot(model = model, outputs = "CL", replicates = 10) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
     add(ForestPlotItem(Covariate("METAB", 1))) %>%
     add(ForestPlotItem(Covariate("WT", 60))) %>%
@@ -43,7 +43,14 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (rxode2/mrgsolve)", {
 })
 
 test_that("Forest plot: effect of METAB (0/1) and WT on AUC0-24 (rxode2/mrgsolve)", {
-  model <- getModel("metaboliser_effect_on_cl")
+  model <- getModel("metaboliser_effect_on_cl") %>%
+    add(NumericCovariateDefinition(name = "WT", default_value = 70, label = "Weight", unit = "kg")) %>%
+    add(CategoricalCovariateDefinition(
+      name = "METAB",
+      default_value = 0,
+      label = "Metaboliser",
+      categories = c(Slow = 0, Fast = 1)
+    ))
   regFilename <- "meta_effect_auc_output"
 
   dataset <- Dataset(1) %>%
@@ -56,13 +63,6 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC0-24 (rxode2/mrgsolve
     outputs = AUC(variable = "CONC"),
     replicates = 10
   ) %>%
-    add(CategoricalLabeledCovariate(
-      name = "METAB",
-      default_value = 0,
-      label = "Metaboliser",
-      categories = c(Slow = 0, Fast = 1)
-    )) %>%
-    add(LabeledCovariate(name = "WT", default_value = 70, label = "Weight", unit = "kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
     add(ForestPlotItem(Covariate("METAB", 1))) %>%
     add(ForestPlotItem(Covariate("WT", 60))) %>%
@@ -83,7 +83,14 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC0-24 (rxode2/mrgsolve
 })
 
 test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (rxode2/mrgsolve)", {
-  model <- getModel("metaboliser_effect_on_cl")
+  model <- getModel("metaboliser_effect_on_cl") %>%
+    add(NumericCovariateDefinition(name = "WT", default_value = 70, label = "Weight", unit = "kg")) %>%
+    add(CategoricalCovariateDefinition(
+      name = "METAB",
+      default_value = 0,
+      label = "Metaboliser",
+      categories = c(Slow = 0, Fast = 1)
+    ))
   regFilename <- "meta_effect_aucd7_output"
 
   dataset <- Dataset(1) %>%
@@ -96,13 +103,6 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (rxode2/mrgso
     outputs = AUC(variable = "CONC", window = TimeWindow(144, 168)),
     replicates = 2
   ) %>%
-    add(CategoricalLabeledCovariate(
-      name = "METAB",
-      default_value = 0,
-      label = "Metaboliser",
-      categories = c(Slow = 0, Fast = 1)
-    )) %>%
-    add(LabeledCovariate(name = "WT", default_value = 70, label = "Weight", unit = "kg")) %>%
     add(ForestPlotItem(Covariate("METAB", 0))) %>%
     add(ForestPlotItem(Covariate("METAB", 1))) %>%
     add(ForestPlotItem(Covariate("WT", 60))) %>%
@@ -123,16 +123,16 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (rxode2/mrgso
 })
 
 test_that("Forest plots must work when only 1 item is simulated (rxode2/mrgsolve)", {
-  model <- getModel("metaboliser_effect_on_cl")
-
-  object <- ForestPlot(model = model, outputs = "CL", replicates = 2) %>%
-    add(CategoricalLabeledCovariate(
+  model <- getModel("metaboliser_effect_on_cl") %>%
+    add(NumericCovariateDefinition(name = "WT", default_value = 70, label = "Weight")) %>%
+    add(CategoricalCovariateDefinition(
       name = "METAB",
       default_value = 0,
       label = "Metaboliser",
       categories = c(Slow = 0, Fast = 1)
-    )) %>%
-    add(LabeledCovariate(name = "WT", default_value = 70, label = "Weight")) %>% # Units have been removed
+    ))
+
+  object <- ForestPlot(model = model, outputs = "CL", replicates = 2) %>%
     add(ForestPlotItem(Covariate("WT", 60)))
 
   expect_equal(object@items %>% get_names(), c("WT:60"))

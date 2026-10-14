@@ -9,7 +9,6 @@
 setClass(
   "forest_plot",
   representation(
-    labeled_covariates = "labeled_covariates",
     items = "forest_plot_items"
   ),
   contains = "oat_analysis",
@@ -60,11 +59,6 @@ ForestPlot <- function(
 #----                                add                                    ----
 #_______________________________________________________________________________
 
-setMethod("add", signature = c("forest_plot", "labeled_covariate"), definition = function(object, x) {
-  object@labeled_covariates <- object@labeled_covariates %>% add(x)
-  return(object)
-})
-
 setMethod("add", signature = c("forest_plot", "forest_plot_item"), definition = function(object, x) {
   object@items <- object@items %>% add(x)
   return(object)
@@ -88,7 +82,7 @@ setMethod("create_scenarios", signature = c("forest_plot"), definition = functio
       dataset_ <- dataset_ %>% campsismod::replace(covariate)
     }
     scenarios <- scenarios %>%
-      add(campsis::Scenario(name = item %>% get_label(object@labeled_covariates), dataset = dataset_))
+      add(campsis::Scenario(name = item %>% get_label(object@model), dataset = dataset_))
   }
   return(scenarios)
 })

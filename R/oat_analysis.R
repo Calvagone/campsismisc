@@ -130,8 +130,9 @@ setMethod("prepare", signature = c("oat_analysis"), definition = function(object
   model <- object@model %>% disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA"))
   base_dataset <- object@dataset
   if (is(object, "forest_plot")) {
-    base_dataset <- base_dataset %>%
-      add(object@labeled_covariates@list)
+    for (cov_def in model@covariates@list) {
+      base_dataset <- base_dataset %>% add(campsis::Covariate(name = cov_def@name, distribution = cov_def@default_value))
+    }
   }
   items <- object@items
   outputs <- object@outputs

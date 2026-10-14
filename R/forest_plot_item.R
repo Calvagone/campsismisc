@@ -41,25 +41,28 @@ setMethod("get_name", signature = c("forest_plot_item"), definition = function(x
 #_______________________________________________________________________________
 
 #' @rdname get_label
-#' @param labeled_covariates labeled covariates object
-setMethod("get_label", signature = c("forest_plot_item"), definition = function(object, labeled_covariates) {
-  if (!is(labeled_covariates, "labeled_covariates")) {
-    stop("Please provide all labeled covariates")
+#' @param model Campsis model
+setMethod("get_label", signature = c("forest_plot_item"), definition = function(object, model) {
+  if (!is(model, "campsis_model")) {
+    stop("Please provide a Campsis model")
   }
   individual_labels <- object@covariates@list %>%
     purrr::map_chr(.f = function(covariate) {
-      labeled_covariate <- labeled_covariates %>% find(covariate)
-      label <- if (is(labeled_covariate, "categorical_labeled_covariate")) {
+      cov_def <- model@covariates %>% find(covariate)
+      if (is.null(cov_def)) {
+        stop(paste0("Covariate '", covariate@name, "' was not found in the model"))
+      }
+      label <- if (is(cov_def, "categorical_covariate_definition")) {
         paste0(
-          labeled_covariate@label,
+          cov_def@label,
           ": ",
-          names(which(labeled_covariate@categories == covariate@distribution@value))
+          names(which(cov_def@categories == covariate@distribution@value))
         )
       } else {
-        if (!is.na(labeled_covariate@unit) && labeled_covariate@unit != "") {
-          paste0(labeled_covariate@label, ": ", covariate@distribution@value, " ", labeled_covariate@unit)
+        if (!is.na(cov_def@unit) && cov_def@unit != "") {
+          paste0(cov_def@label, ": ", covariate@distribution@value, " ", cov_def@unit)
         } else {
-          paste0(labeled_covariate@label, ": ", covariate@distribution@value)
+          paste0(cov_def@label, ": ", covariate@distribution@value)
         }
       }
       return(gsub("\\\\n", "\n", label))

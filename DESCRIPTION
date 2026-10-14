@@ -1,7 +1,7 @@
 Type: Package
 Package: campsismisc
 Title: Miscellaneous Utilities for the Campsis Ecosystem
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: 
     person("Nicolas", "Luyckx", , "nicolas.luyckx@calvagone.com", role = c("aut", "cre"))
 Description: A collection of utilities extending the 'campsis' ecosystem,
@@ -47,7 +47,7 @@ Suggests:
 VignetteBuilder: 
     knitr
 Remotes:
-    Calvagone/campsisnca@main
+    Calvagone/campsismod@develop
 Encoding: UTF-8
 Language: en-US
 LazyData: true

@@ -26,7 +26,7 @@ setClass(
 #' @param dest destination engine: rxode2, RxODE or mrgsolve (default)
 #' @param settings simulation settings
 #' @return an empty forest plot
-#' @importFrom campsis Dataset Observations Settings
+#' @importFrom campsis Dataset Observations Settings CampsisModel
 #' @importFrom campsisnca NCAAnalysis Last
 #' @export
 ForestPlot <- function(
@@ -39,7 +39,7 @@ ForestPlot <- function(
   settings = campsis::Settings()
 ) {
   if (is.null(dataset)) {
-    dataset <- campsis::Dataset(1) %>%
+    dataset <- campsis::Dataset(1) |>
       add(campsis::Observations(times = 0))
   }
   outputs <- process_outputs(outputs)
@@ -60,7 +60,7 @@ ForestPlot <- function(
 #_______________________________________________________________________________
 
 setMethod("add", signature = c("forest_plot", "forest_plot_item"), definition = function(object, x) {
-  object@items <- object@items %>% add(x)
+  object@items <- object@items |> add(x)
   return(object)
 })
 
@@ -71,6 +71,7 @@ setMethod("add", signature = c("forest_plot", "forest_plot_item"), definition = 
 #' @rdname create_scenarios
 #' @param dataset Campsis dataset
 #' @importFrom campsis Scenarios Scenario
+#' @importFrom campsismod replace
 setMethod("create_scenarios", signature = c("forest_plot"), definition = function(object, dataset, ...) {
   scenarios <- campsis::Scenarios()
   items <- object@items
@@ -79,10 +80,10 @@ setMethod("create_scenarios", signature = c("forest_plot"), definition = functio
     covariates <- item@covariates
     dataset_ <- dataset
     for (covariate in covariates@list) {
-      dataset_ <- dataset_ %>% campsismod::replace(covariate)
+      dataset_ <- dataset_ |> campsismod::replace(covariate)
     }
-    scenarios <- scenarios %>%
-      add(campsis::Scenario(name = item %>% get_label(object@model), dataset = dataset_))
+    scenarios <- scenarios |>
+      add(campsis::Scenario(name = item |> get_label(object@model), dataset = dataset_))
   }
   return(scenarios)
 })
@@ -135,8 +136,8 @@ setMethod(
     if (relative) {
       results$value <- formula(results$value, baseline)
     }
-    summary <- results %>%
-      dplyr::group_by(dplyr::across("SCENARIO")) %>%
+    summary <- results |>
+      dplyr::group_by(dplyr::across("SCENARIO")) |>
       dplyr::summarise(
         LOW = quantile(.data$value, alpha),
         MED = median(.data$value),
@@ -153,9 +154,9 @@ setMethod(
       ')'
     )
 
-    plot <- ggplot2::ggplot(summary, ggplot2::aes(x = SCENARIO, y = MED)) +
+    plot <- ggplot2::ggplot(summary, ggplot2::aes(x = .data$SCENARIO, y = .data$MED)) +
       ggplot2::geom_point() +
-      ggplot2::geom_errorbar(ggplot2::aes(ymin = LOW, ymax = UP), width = 0.2)
+      ggplot2::geom_errorbar(ggplot2::aes(ymin = .data$LOW, ymax = .data$UP), width = 0.2)
 
     if (show_ref) {
       plot <- plot + ggplot2::geom_hline(yintercept = ifelse(relative, 1, baseline), color = geom_hline_color)
@@ -167,7 +168,7 @@ setMethod(
       # Note when hjust not set, geom_labels are automatically aligned with data
       plot <- plot +
         ggplot2::geom_label(
-          ggplot2::aes(label = LABEL),
+          ggplot2::aes(label = .data$LABEL),
           vjust = geom_label_vjust,
           nudge_x = geom_label_nudge_x,
           nudge_y = geom_label_nudge_y,
@@ -178,7 +179,7 @@ setMethod(
 
     plot <- plot +
       ggplot2::coord_flip(ylim = limits) +
-      ggplot2::ylab(paste0(ifelse(relative, "Relative ", ""), output %>% get_name())) +
+      ggplot2::ylab(paste0(ifelse(relative, "Relative ", ""), output |> get_name())) +
       ggplot2::xlab(NULL)
 
     return(plot)

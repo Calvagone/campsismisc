@@ -22,9 +22,9 @@ setClass(
 #' @export
 SensitivityAnalysisItem <- function(...) {
   args <- list(...)
-  areChanges <- args %>% purrr::map_lgl(~ is(.x, "sensitivity_analysis_change"))
+  areChanges <- args |> purrr::map_lgl(\(x) is(x, "sensitivity_analysis_change"))
   assertthat::assert_that(all(areChanges), msg = "Sensitivity analysis item can only accept one or multiple changes")
-  changes <- SensitivityAnalysisChanges() %>% add(args)
+  changes <- SensitivityAnalysisChanges() |> add(args)
   return(new("sensitivity_analysis_item", changes = changes))
 }
 
@@ -33,7 +33,7 @@ SensitivityAnalysisItem <- function(...) {
 #_______________________________________________________________________________
 
 setMethod("get_name", signature = c("sensitivity_analysis_item"), definition = function(x) {
-  names <- x@changes@list %>% purrr::map_chr(~ .x@parameter)
+  names <- x@changes@list |> purrr::map_chr(\(x) x@parameter)
   return(paste0(names, collapse = "/"))
 })
 
@@ -44,14 +44,14 @@ setMethod("get_name", signature = c("sensitivity_analysis_item"), definition = f
 #' @rdname get_label
 #' @param model Campsis model
 setMethod("get_label", signature = c("sensitivity_analysis_item"), definition = function(object, model) {
-  individual_labels <- object@changes@list %>%
+  individual_labels <- object@changes@list |>
     purrr::map_chr(.f = function(change) {
-      parameter_name <- change %>% get_name()
+      parameter_name <- change |> get_name()
       where <- change@where
 
       parameter_label <- parameter_name
       if (where == "theta") {
-        theta <- model %>% find(Theta(parameter_name))
+        theta <- model |> find(campsis::Theta(parameter_name))
         if (!is.null(theta) && !is.na(theta@label) && theta@label != "") {
           parameter_label <- theta@label
         }

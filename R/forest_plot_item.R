@@ -21,9 +21,9 @@ setClass(
 #' @export
 ForestPlotItem <- function(...) {
   args <- list(...)
-  are_constant_covariates <- args %>% purrr::map_lgl(~ is(.x, "fixed_covariate"))
+  are_constant_covariates <- args |> purrr::map_lgl(\(x) is(x, "fixed_covariate"))
   assertthat::assert_that(all(are_constant_covariates), msg = "Forest plot item can only accept fixed covariates")
-  covariates <- new("covariates") %>% add(args)
+  covariates <- new("covariates") |> add(args)
   return(new("forest_plot_item", covariates = covariates))
 }
 
@@ -32,7 +32,7 @@ ForestPlotItem <- function(...) {
 #_______________________________________________________________________________
 
 setMethod("get_name", signature = c("forest_plot_item"), definition = function(x) {
-  names <- x@covariates@list %>% purrr::map_chr(~ paste0(.x@name, ":", .x@distribution@value))
+  names <- x@covariates@list |> purrr::map_chr(\(x) paste0(x@name, ":", x@distribution@value))
   return(paste0(names, collapse = "/"))
 })
 
@@ -46,9 +46,9 @@ setMethod("get_label", signature = c("forest_plot_item"), definition = function(
   if (!is(model, "campsis_model")) {
     stop("Please provide a Campsis model")
   }
-  individual_labels <- object@covariates@list %>%
+  individual_labels <- object@covariates@list |>
     purrr::map_chr(.f = function(covariate) {
-      cov_def <- model@covariates %>% find(covariate)
+      cov_def <- model@covariates |> find(covariate)
       if (is.null(cov_def)) {
         stop(paste0("Covariate '", covariate@name, "' was not found in the model"))
       }

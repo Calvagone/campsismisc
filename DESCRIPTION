@@ -32,6 +32,7 @@ Imports:
     ggplot2,
     ggrepel,
     lifecycle,
+    methods,
     progressr,
     purrr,
     rlang,
@@ -47,8 +48,6 @@ Suggests:
     rxode2,
     testthat,
     tictoc
-VignetteBuilder: 
-    knitr
 Remotes:
     Calvagone/campsismod@develop
 Encoding: UTF-8

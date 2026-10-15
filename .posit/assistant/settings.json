@@ -2,6 +2,10 @@
   "permission": {
     "edit": {
       "*.md": "allow"
+    },
+    "bash": {
+      "Rscript *": "allow",
+      "air *": "allow"
     }
   }
 }

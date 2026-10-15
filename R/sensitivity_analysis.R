@@ -26,7 +26,7 @@ setClass(
 #' @param dest destination engine: rxode2, RxODE or mrgsolve (default)
 #' @param settings simulation settings
 #' @return an empty OAT-based sensibility analysis object
-#' @importFrom campsis Dataset Observations Settings
+#' @importFrom campsis Dataset Observations Settings CampsisModel
 #' @importFrom campsisnca NCAAnalysis Last
 #' @export
 SensitivityAnalysis <- function(
@@ -39,7 +39,7 @@ SensitivityAnalysis <- function(
   settings = campsis::Settings()
 ) {
   if (is.null(dataset)) {
-    dataset <- campsis::Dataset(1) %>%
+    dataset <- campsis::Dataset(1) |>
       add(campsis::Observations(times = 0))
   }
   outputs <- process_outputs(outputs)
@@ -60,7 +60,7 @@ SensitivityAnalysis <- function(
 #_______________________________________________________________________________
 
 setMethod("add", signature = c("sensitivity_analysis", "sensitivity_analysis_item"), definition = function(object, x) {
-  object@items <- object@items %>% add(x)
+  object@items <- object@items |> add(x)
   return(object)
 })
 
@@ -70,6 +70,8 @@ setMethod("add", signature = c("sensitivity_analysis", "sensitivity_analysis_ite
 
 #' @rdname create_scenarios
 #' @param model Campsis model
+#' @importFrom campsis Scenarios Scenario Equation Theta
+#' @importFrom campsismod replace
 setMethod("create_scenarios", signature = c("sensitivity_analysis"), definition = function(object, model, ...) {
   # Note, IIV, VARCOV_OMEGA, VARCOV_SIGMA was already disabled in the given model, see oat_analysis.R, prepare()
   # Because simulations are not replicated, variance-covariance matrix is not used by default in CAMPSIS
@@ -83,11 +85,11 @@ setMethod("create_scenarios", signature = c("sensitivity_analysis"), definition 
     modelDown <- model # Other direction of tornado plot (direction down)
 
     for (change in changes@list) {
-      name <- change %>% get_name()
+      name <- change |> get_name()
       where <- change@where
 
       if (where == "equation") {
-        equation <- model %>% find(Equation(name))
+        equation <- model |> find(Equation(name))
         if (is.null(equation)) {
           stop(paste0("Equation ", name, " cannot be found in model"))
         }
@@ -98,14 +100,14 @@ setMethod("create_scenarios", signature = c("sensitivity_analysis"), definition 
           equationDown@rhs <- paste0("(", equationDown@rhs, ") / ", change@down) # Division
         } else {
           # Use values as is
-          equationUp@rhs <- change@up %>% as.character()
-          equationDown@rhs <- change@down %>% as.character()
+          equationUp@rhs <- change@up |> as.character()
+          equationDown@rhs <- change@down |> as.character()
         }
 
-        modelUp <- modelUp %>% campsismod::replace(equationUp)
-        modelDown <- modelDown %>% campsismod::replace(equationDown)
+        modelUp <- modelUp |> campsismod::replace(equationUp)
+        modelDown <- modelDown |> campsismod::replace(equationDown)
       } else if (where == "theta") {
-        theta <- model %>% find(Theta(name))
+        theta <- model |> find(Theta(name))
         if (is.null(theta)) {
           stop(paste0("Theta ", name, " cannot be found in model"))
         }
@@ -131,16 +133,16 @@ setMethod("create_scenarios", signature = c("sensitivity_analysis"), definition 
           }
         }
 
-        modelUp <- modelUp %>% campsismod::replace(thetaUp)
-        modelDown <- modelDown %>% campsismod::replace(thetaDown)
+        modelUp <- modelUp |> campsismod::replace(thetaUp)
+        modelDown <- modelDown |> campsismod::replace(thetaDown)
       } else {
         # Should not happen
         stop(paste0("Unknown where argument: ", where))
       }
     }
-    scenarios <- scenarios %>%
-      add(campsis::Scenario(name = paste0(item %>% get_name(), ", up"), model = modelUp)) %>%
-      add(campsis::Scenario(name = paste0(item %>% get_name(), ", down"), model = modelDown))
+    scenarios <- scenarios |>
+      add(campsis::Scenario(name = paste0(item |> get_name(), ", up"), model = modelUp)) |>
+      add(campsis::Scenario(name = paste0(item |> get_name(), ", down"), model = modelDown))
   }
   return(scenarios)
 })
@@ -155,6 +157,7 @@ setMethod("create_scenarios", signature = c("sensitivity_analysis"), definition 
 #' @param label_nsig number of significant digits in label
 #' @param geom_hline_color color argument of method geom_hline
 #' @param geom_text_size size argument of method geom_text
+#' @importFrom campsis get_names
 setMethod(
   "get_tornado_plot",
   signature = c("sensitivity_analysis", "integer", "logical", "logical", "logical", "numeric"),
@@ -185,14 +188,14 @@ setMethod(
 
     # Tornado plots are bidirectional, forest plots aren't
     if (isSensitivityAnalysis) {
-      results <- results %>%
+      results <- results |>
         tidyr::separate(col = "SCENARIO", sep = ", ", into = c("ITEM_NAME", "DIRECTION"))
     } else {
-      results <- results %>%
+      results <- results |>
         dplyr::mutate(ITEM_NAME = .data$SCENARIO, DIRECTION = "up")
     }
 
-    noOfScenarios <- object@items %>% length()
+    noOfScenarios <- object@items |> length()
     formula <- preprocess_function(fun = ~ (.x - .y) * 100 / .y, name = "tornado_plot_fct")
 
     if ("replicate" %in% colnames(results)) {
@@ -202,26 +205,26 @@ setMethod(
     # Always compute change from baseline because arrange will always called on the absolute change
     results$CHANGE <- formula(results$value, baseline)
 
-    summary <- results %>%
-      dplyr::group_by(dplyr::across(c("ITEM_NAME", "DIRECTION"))) %>%
-      dplyr::summarise(MED_CHANGE = median(.data$CHANGE), MED_VALUE = median(.data$value)) %>% # If several replicates
-      dplyr::group_by(dplyr::across("ITEM_NAME")) %>%
-      dplyr::mutate(MAX_MED_CHANGE = max(abs(.data$MED_CHANGE))) %>%
-      dplyr::arrange(abs(.data$MAX_MED_CHANGE)) %>%
-      dplyr::ungroup() %>%
+    summary <- results |>
+      dplyr::group_by(dplyr::across(c("ITEM_NAME", "DIRECTION"))) |>
+      dplyr::summarise(MED_CHANGE = median(.data$CHANGE), MED_VALUE = median(.data$value)) |> # If several replicates
+      dplyr::group_by(dplyr::across("ITEM_NAME")) |>
+      dplyr::mutate(MAX_MED_CHANGE = max(abs(.data$MED_CHANGE))) |>
+      dplyr::arrange(abs(.data$MAX_MED_CHANGE)) |>
+      dplyr::ungroup() |>
       dplyr::mutate(DIRECTION = factor(.data$DIRECTION, levels = c("up", "down"), labels = c("Up", "Down")))
 
     # Customize item name if sensitivity analysis object
     if (isSensitivityAnalysis) {
-      itemNames <- object@items %>% get_names()
-      itemLabels <- object@items@list %>% purrr::map_chr(~ .x %>% get_label(object@model))
+      itemNames <- object@items |> get_names()
+      itemLabels <- object@items@list |> purrr::map_chr(\(x) x |> get_label(object@model))
       order <- order(match(itemNames, unique(summary$ITEM_NAME)))
       itemNames <- itemNames[order]
       itemLabels <- itemLabels[order]
-      summary <- summary %>%
+      summary <- summary |>
         dplyr::mutate(ITEM_NAME = factor(.data$ITEM_NAME, levels = itemNames, labels = itemLabels))
     } else {
-      summary <- summary %>%
+      summary <- summary |>
         dplyr::mutate(ITEM_NAME = factor(.data$ITEM_NAME, levels = unique(.data$ITEM_NAME)))
     }
 
@@ -233,7 +236,7 @@ setMethod(
     }
 
     # Relative or absolute
-    summary <- summary %>%
+    summary <- summary |>
       dplyr::mutate(
         TORNADO_VALUE = if (relative) {
           .data$MED_CHANGE
@@ -243,11 +246,11 @@ setMethod(
       )
 
     # Label
-    summary$LABEL <- paste0(signif(summary %>% dplyr::pull(TORNADO_VALUE), digits = label_nsig))
+    summary$LABEL <- paste0(signif(summary |> dplyr::pull(.data$TORNADO_VALUE), digits = label_nsig))
 
     plot <- ggplot2::ggplot(
       data = summary,
-      mapping = ggplot2::aes(x = ITEM_NAME, y = TORNADO_VALUE, fill = DIRECTION, label = LABEL)
+      mapping = ggplot2::aes(x = .data$ITEM_NAME, y = .data$TORNADO_VALUE, fill = .data$DIRECTION, label = .data$LABEL)
     ) +
       ggplot2::coord_flip(ylim = limits) +
       ggplot2::geom_bar(stat = "identity", position = "identity", width = geom_bar_width)
@@ -267,11 +270,11 @@ setMethod(
 
     if (relative) {
       plot <- plot +
-        ggplot2::ylab(paste0("Change in ", output %>% get_name(), " (%)"))
+        ggplot2::ylab(paste0("Change in ", output |> get_name(), " (%)"))
     } else {
       plot <- plot +
         ggplot2::scale_y_continuous(trans = shift_trans(baseline)) +
-        ggplot2::ylab(paste0(output %>% get_name()))
+        ggplot2::ylab(paste0(output |> get_name()))
     }
 
     return(plot)

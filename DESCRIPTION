@@ -54,6 +54,7 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 Collate:
+    'campsismisc-package.R'
     'check.R'
     'utilities.R'
     'generic.R'

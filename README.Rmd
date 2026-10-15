@@ -45,9 +45,10 @@ model <- model %>%
 ### Configure your simulation settings
 
 ```{r, message=F}
-# Configure hardware
-settings <- Settings(Hardware(cpu = 4, replicate_parallel = TRUE))
-dest <- "mrgsolve" # Much faster than RxODE
+settings <- Settings(
+  Hardware(cpu = 4, replicate_parallel = TRUE),
+  DefaultSettings(replicates = 100, engine = "mrgsolve", seed = 1)
+)
 ```
 
 
@@ -58,14 +59,14 @@ Let's show how the metabolism effect and the weight influence the clearance or t
 ```{r, message=F}
 outputs <- c("CL", "VC")
 
-fp <- ForestPlot(model = model, outputs = outputs, replicates = 100, dest = dest, settings = settings) %>%
+fp <- ForestPlot(model = model, outputs = outputs) %>%
   add(ForestPlotItem(Covariate("METAB", 0))) %>%
   add(ForestPlotItem(Covariate("METAB", 1))) %>%
   add(ForestPlotItem(Covariate("WT", 60))) %>%
   add(ForestPlotItem(Covariate("WT", 80)))
 
 fp <- with_progress({
-  fp %>% prepare()
+  fp %>% prepare(settings = settings)
 })
 ```
 

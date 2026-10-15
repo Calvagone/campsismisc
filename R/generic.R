@@ -31,14 +31,15 @@ no_default_function_provided_debug <- function(args_list, fun_name) {
 #' Prepare.
 #'
 #' @param object generic object
+#' @param settings Campsis settings
 #' @return same object
 #' @export
 #' @rdname prepare
-prepare <- function(object) {
+prepare <- function(object, settings) {
   stop("No default function is provided")
 }
 
-setGeneric("prepare", function(object) {
+setGeneric("prepare", function(object, settings) {
   standardGeneric("prepare")
 })
 

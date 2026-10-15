@@ -2,15 +2,17 @@
 % Please edit documentation in R/generic.R, R/oat_analysis.R
 \name{prepare}
 \alias{prepare}
-\alias{prepare,oat_analysis-method}
+\alias{prepare,oat_analysis,simulation_settings-method}
 \title{Prepare.}
 \usage{
-prepare(object)
+prepare(object, settings)
 
-\S4method{prepare}{oat_analysis}(object)
+\S4method{prepare}{oat_analysis,simulation_settings}(object, settings)
 }
 \arguments{
 \item{object}{generic object}
+
+\item{settings}{Campsis settings}
 }
 \value{
 same object

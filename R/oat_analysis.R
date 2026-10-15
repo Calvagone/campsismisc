@@ -12,13 +12,9 @@ setClass(
     model = "campsis_model",
     dataset = "dataset",
     outputs = "nca_analysis",
-    replicates = "integer",
-    seed = "integer",
-    dest = "character",
-    settings = "simulation_settings",
     results = "oat_analysis_results"
   ),
-  prototype = prototype(model = CampsisModel(), dataset = campsis::Dataset(), seed = 1L)
+  prototype = prototype(model = CampsisModel(), dataset = campsis::Dataset())
 )
 
 #_______________________________________________________________________________
@@ -125,7 +121,7 @@ post_process_scenarios <- function(object, output) {
 #' @importFrom campsis Outfun Outfuns NCATableOutfun simulate Scenario Covariate
 #' @importFrom campsisnca NCAAnalysis NCATable
 #' @importFrom progressr with_progress without_progress
-setMethod("prepare", signature = c("oat_analysis"), definition = function(object) {
+setMethod("prepare", signature = c("oat_analysis", "simulation_settings"), definition = function(object, settings) {
   # Fix IIV, VARCOV_OMEGA, VARCOV_SIGMA at the beginning!
   # This way, calling disable is not needed in the scenarios
   model <- object@model |> disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA"))
@@ -137,9 +133,11 @@ setMethod("prepare", signature = c("oat_analysis"), definition = function(object
   }
   items <- object@items
   outputs <- object@outputs
-  replicates <- object@replicates
-  dest <- object@dest
-  seed <- object@seed
+
+  # Preparing settings
+  settings_base_scenario <- settings
+  settings_base_scenario@hardware@cpu <- 1L
+  settings_base_scenario@hardware@replicate_parallel <- FALSE
 
   # Getting all necessary 'outvars' across all outputs
   # This in order to make 1 call to the simulate method
@@ -150,7 +148,7 @@ setMethod("prepare", signature = c("oat_analysis"), definition = function(object
   # Compute and store baseline value of each output
   # Progress from campsis is deactivated for the base scenario
   base_scenario <- progressr::without_progress(
-    simulate(model = model, dataset = base_dataset, outvars = outvars, seed = seed, dest = dest)
+    campsis::simulate(model = model, dataset = base_dataset, outvars = outvars, settings = settings_base_scenario)
   )
   baselines <- base_scenario |> compute_baseline(output = outputs)
 
@@ -171,12 +169,9 @@ setMethod("prepare", signature = c("oat_analysis"), definition = function(object
     model = model,
     dataset = base_dataset,
     scenarios = scenarios,
-    replicates = replicates,
-    seed = seed,
-    dest = dest,
     outvars = outvars,
     outfun = outfuns,
-    settings = object@settings
+    settings = settings
   )
 
   # Post-processing

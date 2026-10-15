@@ -72,9 +72,10 @@ fp <- with_progress({
 The forest plot for clearance can be otained as follows (use `index=1`):
 
 ```{r fp_metabolism_effect_on_cl, fig.align='center', fig.height=4, fig.width=8, message=F}
+library(ggplot2)
 fp %>%
   get_forest_plot(index = 1) +
-  ggplot2::scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
+  scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
 ```
 
 Similarly, the forest plot for volume can be obtained as follows (use `index=2`):
@@ -82,7 +83,7 @@ Similarly, the forest plot for volume can be obtained as follows (use `index=2`)
 ```{r fp_metabolism_effect_on_vc, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>%
   get_forest_plot(index = 2) +
-  ggplot2::scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
+  scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
 ```
 
 ### Effect of metabolism and weight on PK metrics
@@ -131,7 +132,7 @@ We can look at AUC day 1 by doing:
 ```{r fp_metabolism_effect_on_auc_d1, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>%
   get_forest_plot(index = 1) +
-  ggplot2::scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
+  scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
 ```
 
 If we are interested to see the absolute change in AUC, argument relative can be set to FALSE as follows.
@@ -145,7 +146,7 @@ To look at AUC on day 7, we proceed as follows:
 ```{r fp_metabolism_effect_on_auc_d7, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>%
   get_forest_plot(index = 2) +
-  ggplot2::scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
+  scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
 ```
 
 Again, we can look at the absolute values.
@@ -159,7 +160,7 @@ Let's produce one more plot with Cmax on day 1.
 ```{r fp_metabolism_effect_on_cmax_d1, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>%
   get_forest_plot(index = 3) +
-  ggplot2::scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
+  scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
 ```
 
 And a final one with Cmax on day 7.
@@ -167,7 +168,7 @@ And a final one with Cmax on day 7.
 ```{r fp_metabolism_effect_on_cmax_d7, fig.align='center', fig.height=4, fig.width=8, message=F}
 fp %>%
   get_forest_plot(index = 4) +
-  ggplot2::scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
+  scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
 ```
 
 Finally, you need to know that you can combine model parameter ouputs together with NCA metric outputs, if you want! This will make your simulations even faster. In that specific case, Campsis will check that your model parameters do not vary over time (since several observations are provided in the dataset).

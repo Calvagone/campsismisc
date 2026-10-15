@@ -95,11 +95,26 @@ This model contains:
   exponent of 1
 - a variance-covariance matrix
 
+If covariates are not yet defined in the model (which is only possible
+if the model is provided in JSON format), they can be defined using
+campsismod syntax, as follows:
+
+``` r
+model <- model %>%
+  add(NumericCovariateDefinition(name = "WT", default_value = 70, label = "Weight", unit = "kg")) %>%
+  add(CategoricalCovariateDefinition(
+    name = "METAB",
+    default_value = 0,
+    label = "Metaboliser",
+    categories = c(Slow = 0, Fast = 1)
+  ))
+```
+
 ### Configure your simulation settings
 
 ``` r
 # Configure hardware
-settings <- Settings(Hardware(cpu=4, replicate_parallel=TRUE))
+settings <- Settings(Hardware(cpu = 4, replicate_parallel = TRUE))
 dest <- "mrgsolve" # Much faster than RxODE
 ```
 
@@ -111,22 +126,24 @@ clearance or the volume. This can be achieved as follows:
 ``` r
 outputs <- c("CL", "VC")
 
-fp <- ForestPlot(model=model, outputs=outputs, replicates=100, dest=dest, settings=settings) %>%
-    add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
-    add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
-    add(ForestPlotItem(Covariate("METAB", 0))) %>%
-    add(ForestPlotItem(Covariate("METAB", 1))) %>%
-    add(ForestPlotItem(Covariate("WT", 60))) %>%
-    add(ForestPlotItem(Covariate("WT", 80)))
+fp <- ForestPlot(model = model, outputs = outputs, replicates = 100, dest = dest, settings = settings) %>%
+  add(ForestPlotItem(Covariate("METAB", 0))) %>%
+  add(ForestPlotItem(Covariate("METAB", 1))) %>%
+  add(ForestPlotItem(Covariate("WT", 60))) %>%
+  add(ForestPlotItem(Covariate("WT", 80)))
 
-fp <- with_progress({fp %>% prepare()})
+fp <- with_progress({
+  fp %>% prepare()
+})
 ```
 
 The forest plot for clearance can be otained as follows (use `index=1`):
 
 ``` r
-fp %>% get_forest_plot(index=1) +
-  ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
+library(ggplot2)
+fp %>%
+  get_forest_plot(index = 1) +
+  scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_cl-1.png" alt="" style="display: block; margin: auto;" />
@@ -135,8 +152,9 @@ Similarly, the forest plot for volume can be obtained as follows (use
 `index=2`):
 
 ``` r
-fp %>% get_forest_plot(index=2) +
-  ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
+fp %>%
+  get_forest_plot(index = 2) +
+  scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_vc-1.png" alt="" style="display: block; margin: auto;" />
@@ -150,40 +168,47 @@ every day and we observe on day 1 and day 7.
 
 ``` r
 dataset <- Dataset(1) %>%
-    add(Infusion(time=0, amount=1000, compartment=1, ii=24, addl=6)) %>%
-    add(Observations(times=c(0:24, 144:168)))
+  add(Infusion(time = 0, amount = 1000, compartment = 1, ii = 24, addl = 6)) %>%
+  add(Observations(times = c(0:24, 144:168)))
 ```
 
 PK metrics can be added directly using the `campsisnca` API:
 
 ``` r
-outputs <- NCAAnalysis(variable="CONC") %>%
-  add(AUC(window=TimeWindow(0, 24), name="AUC Day 1")) %>%
-  add(AUC(window=TimeWindow(144, 168), name="AUC Day 7")) %>%
-  add(Cmax(window=TimeWindow(0, 24), name="Cmax Day 1")) %>%
-  add(Cmax(window=TimeWindow(144, 168), name="Cmax Day 7"))
+outputs <- NCAAnalysis(variable = "CONC") %>%
+  add(AUC(window = TimeWindow(0, 24), name = "AUC Day 1")) %>%
+  add(AUC(window = TimeWindow(144, 168), name = "AUC Day 7")) %>%
+  add(Cmax(window = TimeWindow(0, 24), name = "Cmax Day 1")) %>%
+  add(Cmax(window = TimeWindow(144, 168), name = "Cmax Day 7"))
 ```
 
 A forest plot object can be instantiated and run as follows:
 
 ``` r
-fp <- ForestPlot(model=model, dataset=dataset, outputs=outputs,
-                 replicates=100, dest=dest, settings=settings) %>%
-    add(CategoricalLabeledCovariate(name="METAB", default_value=0, label="Metaboliser", categories=c(Slow=0, Fast=1))) %>%
-    add(LabeledCovariate(name="WT", default_value=70, label="Weight", unit="kg")) %>%
-    add(ForestPlotItem(Covariate("METAB", 0))) %>%
-    add(ForestPlotItem(Covariate("METAB", 1))) %>%
-    add(ForestPlotItem(Covariate("WT", 60))) %>%
-    add(ForestPlotItem(Covariate("WT", 80)))
+fp <- ForestPlot(
+  model = model,
+  dataset = dataset,
+  outputs = outputs,
+  replicates = 100,
+  dest = dest,
+  settings = settings
+) %>%
+  add(ForestPlotItem(Covariate("METAB", 0))) %>%
+  add(ForestPlotItem(Covariate("METAB", 1))) %>%
+  add(ForestPlotItem(Covariate("WT", 60))) %>%
+  add(ForestPlotItem(Covariate("WT", 80)))
 
-fp <- with_progress({fp %>% prepare()})
+fp <- with_progress({
+  fp %>% prepare()
+})
 ```
 
 We can look at AUC day 1 by doing:
 
 ``` r
-fp %>% get_forest_plot(index=1) +
-  ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
+fp %>%
+  get_forest_plot(index = 1) +
+  scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d1-1.png" alt="" style="display: block; margin: auto;" />
@@ -192,7 +217,7 @@ If we are interested to see the absolute change in AUC, argument
 relative can be set to FALSE as follows.
 
 ``` r
-fp %>% get_forest_plot(index=1, relative=FALSE)
+fp %>% get_forest_plot(index = 1, relative = FALSE)
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d1_absolute-1.png" alt="" style="display: block; margin: auto;" />
@@ -200,8 +225,9 @@ fp %>% get_forest_plot(index=1, relative=FALSE)
 To look at AUC on day 7, we proceed as follows:
 
 ``` r
-fp %>% get_forest_plot(index=2) +
-  ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
+fp %>%
+  get_forest_plot(index = 2) +
+  scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d7-1.png" alt="" style="display: block; margin: auto;" />
@@ -209,7 +235,7 @@ fp %>% get_forest_plot(index=2) +
 Again, we can look at the absolute values.
 
 ``` r
-fp %>% get_forest_plot(index=2, relative=FALSE)
+fp %>% get_forest_plot(index = 2, relative = FALSE)
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_auc_d7_absolute-1.png" alt="" style="display: block; margin: auto;" />
@@ -217,8 +243,9 @@ fp %>% get_forest_plot(index=2, relative=FALSE)
 Let’s produce one more plot with Cmax on day 1.
 
 ``` r
-fp %>% get_forest_plot(index=3) +
-  ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
+fp %>%
+  get_forest_plot(index = 3) +
+  scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_cmax_d1-1.png" alt="" style="display: block; margin: auto;" />
@@ -226,8 +253,9 @@ fp %>% get_forest_plot(index=3) +
 And a final one with Cmax on day 7.
 
 ``` r
-fp %>% get_forest_plot(index=4) +
-  ggplot2::scale_y_continuous(breaks=c(0.7,0.8,1,1.25,1.4), limits=c(0.5, 1.5))
+fp %>%
+  get_forest_plot(index = 4) +
+  scale_y_continuous(breaks = c(0.7, 0.8, 1, 1.25, 1.4), limits = c(0.5, 1.5))
 ```
 
 <img src="README_files/figure-gfm/fp_metabolism_effect_on_cmax_d7-1.png" alt="" style="display: block; margin: auto;" />
@@ -251,25 +279,25 @@ below. However if parameter uncertainty is used, you can still call
 `get_forest_plot()` on this new type of object.
 
 ``` r
-outputs <- NCAAnalysis(variable="CONC") %>%
+outputs <- NCAAnalysis(variable = "CONC") %>%
   add(AUC()) %>%
   add(Cmax())
 
 dataset <- Dataset(1) %>%
-  add(Infusion(time=0, amount=1000, compartment=1)) %>%
-  add(Observations(times=seq(0, 24, by=0.1))) %>%
+  add(Infusion(time = 0, amount = 1000, compartment = 1)) %>%
+  add(Observations(times = seq(0, 24, by = 0.1))) %>%
   add(Covariate("METAB", 0)) %>%
   add(Covariate("WT", 70))
 
-object <- SensitivityAnalysis(model=model, dataset=dataset, outputs=outputs) %>%
-  add(SensitivityAnalysisItem(Change("DUR", up=2, down=2, log=TRUE))) %>%
-  add(SensitivityAnalysisItem(Change("VC", up=2, down=2, log=TRUE))) %>%
-  add(SensitivityAnalysisItem(Change("VP", up=2, down=2, log=TRUE))) %>%
-  add(SensitivityAnalysisItem(Change("Q", up=2, down=2, log=TRUE))) %>%
-  add(SensitivityAnalysisItem(Change("CL", up=2, down=2, log=TRUE)))
+object <- SensitivityAnalysis(model = model, dataset = dataset, outputs = outputs) %>%
+  add(SensitivityAnalysisItem(Change("DUR", up = 2, down = 2, log = TRUE))) %>%
+  add(SensitivityAnalysisItem(Change("VC", up = 2, down = 2, log = TRUE))) %>%
+  add(SensitivityAnalysisItem(Change("VP", up = 2, down = 2, log = TRUE))) %>%
+  add(SensitivityAnalysisItem(Change("Q", up = 2, down = 2, log = TRUE))) %>%
+  add(SensitivityAnalysisItem(Change("CL", up = 2, down = 2, log = TRUE)))
 
 object <- object %>% prepare()
-object %>% get_tornado_plot(index=1)
+object %>% get_tornado_plot(index = 1)
 ```
 
 <img src="README_files/figure-gfm/sensibility_analysis_auc_example-1.png" alt="" style="display: block; margin: auto;" />
@@ -277,7 +305,7 @@ object %>% get_tornado_plot(index=1)
 Absolute values may also be shown:
 
 ``` r
-object %>% get_tornado_plot(index=1, relative=FALSE)
+object %>% get_tornado_plot(index = 1, relative = FALSE)
 ```
 
 <img src="README_files/figure-gfm/sensibility_analysis_auc_example_absolute-1.png" alt="" style="display: block; margin: auto;" />
@@ -285,7 +313,7 @@ object %>% get_tornado_plot(index=1, relative=FALSE)
 Cmax can also be shown using `index=2`.
 
 ``` r
-object %>% get_tornado_plot(index=2)
+object %>% get_tornado_plot(index = 2)
 ```
 
 <img src="README_files/figure-gfm/sensibility_analysis_cmax_example-1.png" alt="" style="display: block; margin: auto;" />

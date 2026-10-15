@@ -69,7 +69,7 @@ setMethod("add", signature = c("sensitivity_analysis", "sensitivity_analysis_ite
 
 #' @rdname create_scenarios
 #' @param model Campsis model
-#' @importFrom campsis Scenarios Scenario 
+#' @importFrom campsis Scenarios Scenario
 setMethod("create_scenarios", signature = c("sensitivity_analysis"), definition = function(object, model, ...) {
   # Note, IIV, VARCOV_OMEGA, VARCOV_SIGMA was already disabled in the given model, see oat_analysis.R, prepare()
   # Because simulations are not replicated, variance-covariance matrix is not used by default in CAMPSIS
@@ -157,6 +157,7 @@ setMethod("create_scenarios", signature = c("sensitivity_analysis"), definition 
 #' @param geom_text_size size argument of method geom_text
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom tidyr separate
+#' @importFrom dplyr mutate group_by across summarise arrange ungroup pull
 setMethod(
   "get_tornado_plot",
   signature = c("sensitivity_analysis", "integer", "logical", "logical", "logical", "numeric"),

@@ -40,6 +40,7 @@ setGeneric("compute_baseline", function(object, output) {
 })
 
 #' @importFrom campsisnca calculate NCAAnalysis NCATable
+#' @importFrom dplyr pull
 #' @rdname compute_baseline
 setMethod("compute_baseline", signature = c("tbl_df", "nca_metric"), definition = function(object, output) {
   nca <- campsisnca::NCAAnalysis() |>
@@ -110,6 +111,7 @@ process_outputs <- function(outputs) {
 #----                               prepare                                 ----
 #_______________________________________________________________________________
 
+#' @importFrom dplyr filter select all_of mutate relocate any_of
 post_process_scenarios <- function(object, output) {
   outputName <- output |> get_name()
   results <- object |>

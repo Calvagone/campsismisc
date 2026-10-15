@@ -24,7 +24,6 @@ exportClasses(sensitivity_analysis_change)
 exportClasses(sensitivity_analysis_changes)
 exportClasses(sensitivity_analysis_item)
 exportClasses(sensitivity_analysis_items)
-import(dplyr)
 import(ggplot2)
 importFrom(assertthat,assert_that)
 importFrom(campsis,
@@ -55,6 +54,20 @@ importFrom(campsisnca,
   NCAAnalysis,
   NCATable,
   calculate
+)
+importFrom(dplyr,
+  across,
+  all_of,
+  any_of,
+  arrange,
+  filter,
+  group_by,
+  mutate,
+  pull,
+  relocate,
+  select,
+  summarise,
+  ungroup
 )
 importFrom(ggrepel,geom_text_repel)
 importFrom(lifecycle,

@@ -1,11 +1,15 @@
 {
   "permission": {
     "edit": {
-      "*.md": "allow"
+      "*.md": "allow",
+      "*.R": "allow"
     },
     "bash": {
       "Rscript *": "allow",
       "air *": "allow"
+    },
+    "executeCode": {
+      "*": "allow"
     }
   }
 }

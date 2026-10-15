@@ -97,6 +97,7 @@ setMethod("create_scenarios", signature = c("forest_plot"), definition = functio
 #' @param geom_label_size size argument of method geom_label
 #' @param label_nsig number of significant digits in label
 #' @param geom_hline_color color argument of method geom_hline
+#' @importFrom dplyr group_by across summarise
 setMethod(
   "get_forest_plot",
   signature = c("forest_plot", "integer", "logical", "logical", "logical", "logical", "numeric", "numeric", "numeric"),

@@ -2,8 +2,11 @@ Type: Package
 Package: campsismisc
 Title: Miscellaneous Utilities for the Campsis Ecosystem
 Version: 1.1.0
-Authors@R: 
-    person("Nicolas", "Luyckx", , "nicolas.luyckx@calvagone.com", role = c("aut", "cre"))
+Authors@R: c(
+    person("Nicolas", "Luyckx", email = "nicolas.luyckx@lynxsoft.be", role = c("aut", "cre")),
+    person("Calvagone", role = "cph")
+  )
+Maintainer: Nicolas Luyckx <nicolas.luyckx@lynxsoft.be>
 Description: A collection of utilities extending the 'campsis' ecosystem,
     with a primary focus on sensitivity analysis and uncertainty
     visualization in pharmacometric workflows.  The package provides a

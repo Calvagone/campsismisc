@@ -113,9 +113,8 @@ process_outputs <- function(outputs) {
 
 #' @importFrom dplyr filter select all_of mutate relocate any_of
 post_process_scenarios <- function(object, output) {
-  outputName <- output |> get_name()
   results <- object |>
-    dplyr::filter(.data$metric == outputName) |>
+    dplyr::filter(.data$metric == output |> get_name()) |>
     dplyr::select(-dplyr::all_of(c("discrete_value", "metric"))) |> # TODO
     dplyr::mutate(SCENARIO = factor(.data$SCENARIO, levels = unique(.data$SCENARIO) |> rev())) |>
     dplyr::relocate(dplyr::any_of(c("replicate", "id", "value", "SCENARIO")))

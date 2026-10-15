@@ -22,8 +22,8 @@ setClass(
 #' @export
 SensitivityAnalysisItem <- function(...) {
   args <- list(...)
-  areChanges <- args |> purrr::map_lgl(\(x) is(x, "sensitivity_analysis_change"))
-  assertthat::assert_that(all(areChanges), msg = "Sensitivity analysis item can only accept one or multiple changes")
+  are_changes <- args |> purrr::map_lgl(\(x) is(x, "sensitivity_analysis_change"))
+  assertthat::assert_that(all(are_changes), msg = "Sensitivity analysis item can only accept one or multiple changes")
   changes <- SensitivityAnalysisChanges() |> add(args)
   return(new("sensitivity_analysis_item", changes = changes))
 }

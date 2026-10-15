@@ -176,11 +176,11 @@ setMethod(
     geom_text_size = 3,
     ...
   ) {
-    isSensitivityAnalysis <- is(object, "sensitivity_analysis")
-    iResults <- object@results@list[[index]]
-    output <- iResults@output
-    results <- iResults@results
-    baseline <- iResults@baseline
+    is_sensitivity_analysis <- is(object, "sensitivity_analysis")
+    i_results <- object@results@list[[index]]
+    output <- i_results@output
+    results <- i_results@results
+    baseline <- i_results@baseline
 
     # Check limits argument
     if (any(is.na(limits))) {
@@ -188,7 +188,7 @@ setMethod(
     }
 
     # Tornado plots are bidirectional, forest plots aren't
-    if (isSensitivityAnalysis) {
+    if (is_sensitivity_analysis) {
       results <- results |>
         tidyr::separate(col = "SCENARIO", sep = ", ", into = c("ITEM_NAME", "DIRECTION"))
     } else {
@@ -196,7 +196,6 @@ setMethod(
         dplyr::mutate(ITEM_NAME = .data$SCENARIO, DIRECTION = "up")
     }
 
-    noOfScenarios <- object@items |> length()
     formula <- preprocess_function(fun = ~ (.x - .y) * 100 / .y, name = "tornado_plot_fct")
 
     if ("replicate" %in% colnames(results)) {
@@ -216,14 +215,14 @@ setMethod(
       dplyr::mutate(DIRECTION = factor(.data$DIRECTION, levels = c("up", "down"), labels = c("Up", "Down")))
 
     # Customize item name if sensitivity analysis object
-    if (isSensitivityAnalysis) {
-      itemNames <- object@items |> get_names()
-      itemLabels <- object@items@list |> purrr::map_chr(\(x) x |> get_label(object@model))
-      order <- order(match(itemNames, unique(summary$ITEM_NAME)))
-      itemNames <- itemNames[order]
-      itemLabels <- itemLabels[order]
+    if (is_sensitivity_analysis) {
+      item_names <- object@items |> get_names()
+      item_labels <- object@items@list |> purrr::map_chr(\(x) x |> get_label(object@model))
+      order <- order(match(item_names, unique(summary$ITEM_NAME)))
+      item_names <- item_names[order]
+      item_labels <- item_labels[order]
       summary <- summary |>
-        dplyr::mutate(ITEM_NAME = factor(.data$ITEM_NAME, levels = itemNames, labels = itemLabels))
+        dplyr::mutate(ITEM_NAME = factor(.data$ITEM_NAME, levels = item_names, labels = item_labels))
     } else {
       summary <- summary |>
         dplyr::mutate(ITEM_NAME = factor(.data$ITEM_NAME, levels = unique(.data$ITEM_NAME)))

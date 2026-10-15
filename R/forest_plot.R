@@ -122,10 +122,10 @@ setMethod(
   ) {
     alpha <- (1 - ci) / 2
     formula <- preprocess_function(fun = ~ .x / .y, name = "forest_plot_fct")
-    iResults <- object@results@list[[index]]
-    output <- iResults@output
-    results <- iResults@results
-    baseline <- iResults@baseline
+    i_results <- object@results@list[[index]]
+    output <- i_results@output
+    results <- i_results@results
+    baseline <- i_results@baseline
 
     # Check limits argument
     if (any(is.na(limits))) {

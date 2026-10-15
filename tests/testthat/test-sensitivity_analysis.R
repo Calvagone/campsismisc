@@ -33,7 +33,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
       Hardware(cpu = 1, replicate_parallel = FALSE),
       DefaultSettings(replicates = 3, engine = destEngine, seed = 1)
     ),
-    object <- progressr::with_progress(object %>% prepare(model = model, dataset = dataset, settings = settings))
+    object <- progressr::with_progress(object %>% run_analysis(model = model, dataset = dataset, settings = settings))
   )
 
   test <- expression(
@@ -72,7 +72,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
       Hardware(cpu = 1, replicate_parallel = FALSE),
       DefaultSettings(replicates = 1, engine = destEngine, seed = 1)
     ),
-    object <- progressr::with_progress(object %>% prepare(model = model, dataset = dataset, settings = settings))
+    object <- progressr::with_progress(object %>% run_analysis(model = model, dataset = dataset, settings = settings))
   )
 
   test <- expression(
@@ -94,7 +94,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax (rxode2/mr
     add(Observations(times = 0:24)) %>%
     add(Covariate("METAB", 0)) %>%
     add(Covariate("WT", 70))
-
+ 
   results <- simulate(model = model %>% disable("IIV"), dataset = dataset)
   spaghettiPlot(results, "CONC")
 
@@ -112,7 +112,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax (rxode2/mr
       Hardware(cpu = 1, replicate_parallel = FALSE),
       DefaultSettings(replicates = 3, engine = destEngine, seed = 1)
     ),
-    object <- progressr::with_progress(object %>% prepare(model = model, dataset = dataset, settings = settings))
+    object <- progressr::with_progress(object %>% run_analysis(model = model, dataset = dataset, settings = settings))
   )
 
   test <- expression(
@@ -150,7 +150,7 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
       Hardware(cpu = 1, replicate_parallel = FALSE),
       DefaultSettings(replicates = 1, engine = destEngine, seed = 1)
     ),
-    sens <- progressr::with_progress(sens %>% prepare(model = model, dataset = dataset_sens, settings = settings)),
+    sens <- progressr::with_progress(sens %>% run_analysis(model = model, dataset = dataset_sens, settings = settings)),
     tictoc::toc(), # rxode2: 15.43 sec, mrgsolve: 7.19 sec
     sens
   )
@@ -189,7 +189,7 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
       Hardware(cpu = 1, replicate_parallel = FALSE),
       DefaultSettings(replicates = 1, engine = destEngine, seed = 1)
     ),
-    sens <- progressr::with_progress(sens %>% prepare(model = model, dataset = dataset_sens, settings = settings)),
+    sens <- progressr::with_progress(sens %>% run_analysis(model = model, dataset = dataset_sens, settings = settings)),
     tictoc::toc(), # rxode2: 40.75 sec, mrgsolve: 35.78 sec
     sens
   )

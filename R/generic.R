@@ -25,23 +25,23 @@ no_default_function_provided_debug <- function(args_list, fun_name) {
 }
 
 #_______________________________________________________________________________
-#----                              prepare                                  ----
+#----                              run_analysis                             ----
 #_______________________________________________________________________________
 
-#' Prepare.
+#' Run OAT analysis.
 #'
-#' @param object generic object
+#' @param object OAT analysis
 #' @param model Campsis model
 #' @param dataset Campsis dataset
 #' @param settings Campsis settings
-#' @return same object
+#' @return OAT analysis including the results
 #' @export
-#' @rdname prepare
-prepare <- function(object, model, dataset, settings) {
+#' @rdname run_analysis
+run_analysis <- function(object, model, dataset, settings) {
   stop("No default function is provided")
 }
 
-setGeneric("prepare", function(object, model, dataset=NULL, settings=NULL) {
+setGeneric("run_analysis", function(object, model, dataset=NULL, settings=NULL) {
   if (is.null(dataset)) {
     dataset <- campsis::Dataset(1) |>
       add(campsis::Observations(times = 0))
@@ -49,7 +49,7 @@ setGeneric("prepare", function(object, model, dataset=NULL, settings=NULL) {
   if (is.null(settings)) {
     settings <- campsis::Settings()
   }
-  standardGeneric("prepare")
+  standardGeneric("run_analysis")
 })
 
 #_______________________________________________________________________________

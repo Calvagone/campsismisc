@@ -30,7 +30,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (rxode2/mrgsolve)", {
       Hardware(cpu = 1, replicate_parallel = FALSE),
       DefaultSettings(replicates = 10, engine = destEngine, seed = 1)
     ),
-    object <- progressr::with_progress(object %>% prepare(model = model, settings = settings))
+    object <- progressr::with_progress(object %>% run_analysis(model = model, settings = settings))
   )
 
   test <- expression(
@@ -72,7 +72,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC0-24 (rxode2/mrgsolve
       Hardware(cpu = 1, replicate_parallel = FALSE),
       DefaultSettings(replicates = 10, engine = destEngine, seed = 1)
     ),
-    object <- progressr::with_progress(object %>% prepare(model = model, dataset = dataset, settings = settings))
+    object <- progressr::with_progress(object %>% run_analysis(model = model, dataset = dataset, settings = settings))
   )
 
   test <- expression(
@@ -110,7 +110,7 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (rxode2/mrgso
       Hardware(cpu = 1, replicate_parallel = FALSE),
       DefaultSettings(replicates = 2, engine = destEngine, seed = 1)
     ),
-    object <- progressr::with_progress(object %>% prepare(model = model, dataset = dataset, settings = settings))
+    object <- progressr::with_progress(object %>% run_analysis(model = model, dataset = dataset, settings = settings))
   )
 
   test <- expression(
@@ -140,7 +140,7 @@ test_that("Forest plots must work when only 1 item is simulated (rxode2/mrgsolve
       Hardware(cpu = 1, replicate_parallel = FALSE),
       DefaultSettings(replicates = 2, engine = destEngine, seed = 1)
     ),
-    object <- progressr::with_progress(object %>% prepare(model = model, settings = settings))
+    object <- progressr::with_progress(object %>% run_analysis(model = model, settings = settings))
   )
 
   test <- expression(

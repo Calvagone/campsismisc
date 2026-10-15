@@ -103,7 +103,7 @@ process_outputs <- function(outputs) {
 }
 
 #_______________________________________________________________________________
-#----                               prepare                                 ----
+#----                               run_analysis                            ----
 #_______________________________________________________________________________
 
 #' @importFrom dplyr filter select all_of mutate relocate any_of
@@ -116,12 +116,12 @@ post_process_scenarios <- function(object, output) {
   return(results)
 }
 
-#' @rdname prepare
+#' @rdname run_analysis
 #' @importFrom campsis Outfun Outfuns NCATableOutfun simulate Scenario Covariate
 #' @importFrom campsisnca NCAAnalysis NCATable
 #' @importFrom progressr with_progress without_progress
 setMethod(
-  "prepare",
+  "run_analysis",
   signature = c("oat_analysis", "campsis_model", "dataset", "simulation_settings"),
   definition = function(object, model, dataset, settings) {
     # Store model in object

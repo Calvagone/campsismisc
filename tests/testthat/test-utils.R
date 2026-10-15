@@ -15,7 +15,7 @@ getModel <- function(name) {
 #' @param object OAT analysis object
 #' @param filename filename of expected results
 #' @param index output index to be checked
-#'
+#' @importFrom tibble as_tibble
 oatAnalysisRegressionTest <- function(object, filename, index = 1) {
   iResults <- object@results@list[[index]]
   results <- iResults@results %>%

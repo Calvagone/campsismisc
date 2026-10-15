@@ -4,7 +4,6 @@
 
 #' Forest plot class.
 #'
-#' @importFrom campsismod CampsisModel
 #' @importFrom campsis Dataset
 #' @export
 setClass(
@@ -71,7 +70,6 @@ setMethod("add", signature = c("forest_plot", "forest_plot_item"), definition = 
 #' @rdname create_scenarios
 #' @param dataset Campsis dataset
 #' @importFrom campsis Scenarios Scenario
-#' @importFrom campsismod replace
 setMethod("create_scenarios", signature = c("forest_plot"), definition = function(object, dataset, ...) {
   scenarios <- campsis::Scenarios()
   items <- object@items

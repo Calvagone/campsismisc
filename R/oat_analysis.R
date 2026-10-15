@@ -39,7 +39,6 @@ setGeneric("compute_baseline", function(object, output) {
   standardGeneric("compute_baseline")
 })
 
-#' @importFrom campsismod add disable export get_name 
 #' @importFrom campsisnca calculate NCAAnalysis NCATable
 #' @rdname compute_baseline
 setMethod("compute_baseline", signature = c("tbl_df", "nca_metric"), definition = function(object, output) {

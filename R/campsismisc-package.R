@@ -6,5 +6,4 @@
 #' @importFrom rlang .data
 #' @importFrom campsismod add CampsisModel disable Equation export find get_name get_names replace Theta
 #' @importFrom progressr with_progress without_progress
-#' @importFrom lifecycle badge deprecate_warn
 NULL

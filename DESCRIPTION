@@ -31,7 +31,6 @@ Imports:
     dplyr,
     ggplot2,
     ggrepel,
-    lifecycle,
     methods,
     progressr,
     purrr,

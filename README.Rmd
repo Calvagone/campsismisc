@@ -110,9 +110,7 @@ outputs <- NCAAnalysis(variable = "CONC") %>%
 A forest plot object can be instantiated and run as follows:
 
 ```{r, message=F}
-fp <- ForestPlot(
-  outputs = outputs
-) %>%
+fp <- ForestPlot(outputs = outputs) %>%
   add(ForestPlotItem(Covariate("METAB", 0))) %>%
   add(ForestPlotItem(Covariate("METAB", 1))) %>%
   add(ForestPlotItem(Covariate("WT", 60))) %>%

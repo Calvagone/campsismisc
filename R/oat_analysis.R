@@ -41,6 +41,7 @@ setMethod("compute_baseline", signature = c("tbl_df", "nca_metric"), definition 
     add(output)
   table <- campsisnca::NCATable() |>
     add(nca)
+  print(object)
   baseline <- table |>
     campsisnca::calculate(x = object) |>
     campsismod::export(dest = "dataframe", type = "individual")
@@ -146,6 +147,7 @@ setMethod(
     settings_base_scenario <- settings
     settings_base_scenario@hardware@cpu <- 1L
     settings_base_scenario@hardware@replicate_parallel <- FALSE
+    settings_base_scenario@default@replicates <- 1L 
 
     # Getting all necessary 'outvars' across all outputs
     # This in order to make 1 call to the simulate method
@@ -153,13 +155,16 @@ setMethod(
       purrr::map_chr(\(x) if (is.na(x@variable)) outputs@variable else x@variable) |>
       unique()
 
+    # Storing outvars in the default arguments
+    settings_base_scenario@default@outvars <- outvars
+    settings@default@outvars <- outvars
+
     # Compute and store baseline value of each output
     # Progress from campsis is deactivated for the base scenario
     base_scenario <- progressr::without_progress(
       campsis::simulate(
         model = model_no_var,
         dataset = base_dataset,
-        outvars = outvars,
         settings = settings_base_scenario
       )
     )
@@ -179,13 +184,14 @@ setMethod(
     outfuns <- campsis::Outfuns() |>
       add(outfun)
 
+    # Storing outfuns in the default arguments
+    settings@default@outfuns <- outfuns
+
     # Simulate
     all_results <- campsis::simulate(
       model = model_no_var,
       dataset = base_dataset,
       scenarios = scenarios,
-      outvars = outvars,
-      outfun = outfuns,
       settings = settings
     )
 

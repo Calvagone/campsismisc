@@ -19,12 +19,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
   results <- simulate(model = model %>% disable("IIV"), dataset = dataset)
   spaghettiPlot(results, "CONC")
 
-  object <- SensitivityAnalysis(
-    model = model,
-    dataset = dataset,
-    outputs = AUC(variable = "CONC"),
-    replicates = 3
-  ) %>%
+  object <- SensitivityAnalysis(outputs = AUC(variable = "CONC")) %>%
     add(SensitivityAnalysisItem(Change("DUR", up = 2, down = 2, log = TRUE))) %>%
     add(SensitivityAnalysisItem(Change("VC", up = 2, down = 2, log = TRUE))) %>%
     add(SensitivityAnalysisItem(Change("VP", up = 2, down = 2, log = TRUE))) %>%
@@ -34,8 +29,11 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
   expect_equal(object@items %>% get_names(), c("DUR", "VC", "VP", "Q", "CL"))
 
   simulation <- expression(
-    object@dest <- destEngine,
-    object <- progressr::with_progress(object %>% prepare())
+    settings <- Settings(
+      Hardware(cpu = 1, replicate_parallel = FALSE),
+      DefaultSettings(replicates = 3, engine = destEngine, seed = 1)
+    ),
+    object <- progressr::with_progress(object %>% prepare(model = model, dataset = dataset, settings = settings))
   )
 
   test <- expression(
@@ -60,7 +58,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
   results <- simulate(model = model %>% disable("IIV"), dataset = dataset)
   spaghettiPlot(results, "CONC")
 
-  object <- SensitivityAnalysis(model = model, dataset = dataset, outputs = AUC(variable = "CONC")) %>%
+  object <- SensitivityAnalysis(outputs = AUC(variable = "CONC")) %>%
     add(SensitivityAnalysisItem(Change("DUR", up = 2, down = 2, log = TRUE))) %>%
     add(SensitivityAnalysisItem(Change("VC", up = 2, down = 2, log = TRUE))) %>%
     add(SensitivityAnalysisItem(Change("VP", up = 2, down = 2, log = TRUE))) %>%
@@ -70,8 +68,11 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
   expect_equal(object@items %>% get_names(), c("DUR", "VC", "VP", "Q", "CL"))
 
   simulation <- expression(
-    object@dest <- destEngine,
-    object <- progressr::with_progress(object %>% prepare())
+    settings <- Settings(
+      Hardware(cpu = 1, replicate_parallel = FALSE),
+      DefaultSettings(replicates = 1, engine = destEngine, seed = 1)
+    ),
+    object <- progressr::with_progress(object %>% prepare(model = model, dataset = dataset, settings = settings))
   )
 
   test <- expression(
@@ -97,12 +98,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax (rxode2/mr
   results <- simulate(model = model %>% disable("IIV"), dataset = dataset)
   spaghettiPlot(results, "CONC")
 
-  object <- SensitivityAnalysis(
-    model = model,
-    dataset = dataset,
-    outputs = Cmax(variable = "CONC"),
-    replicates = 3
-  ) %>%
+  object <- SensitivityAnalysis(outputs = Cmax(variable = "CONC")) %>%
     add(SensitivityAnalysisItem(Change("DUR", up = 2, down = 2, log = TRUE))) %>%
     add(SensitivityAnalysisItem(Change("VC", up = 2, down = 2, log = TRUE))) %>%
     add(SensitivityAnalysisItem(Change("VP", up = 2, down = 2, log = TRUE))) %>%
@@ -112,8 +108,11 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax (rxode2/mr
   expect_equal(object@items %>% get_names(), c("DUR", "VC", "VP", "Q", "CL"))
 
   simulation <- expression(
-    object@dest <- destEngine,
-    object <- progressr::with_progress(object %>% prepare())
+    settings <- Settings(
+      Hardware(cpu = 1, replicate_parallel = FALSE),
+      DefaultSettings(replicates = 3, engine = destEngine, seed = 1)
+    ),
+    object <- progressr::with_progress(object %>% prepare(model = model, dataset = dataset, settings = settings))
   )
 
   test <- expression(
@@ -139,7 +138,7 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
 
   dataset_sens <- Dataset() %>% add(arm1) %>% add(DatasetConfig(exportTSLD = TRUE, exportTDOS = TRUE))
 
-  sens <- SensitivityAnalysis(model = model, dataset = dataset_sens, outputs = outputs) %>%
+  sens <- SensitivityAnalysis(outputs = outputs) %>%
     add(SensitivityAnalysisItem(Change("BIO", up = 2, down = 2))) %>%
     add(SensitivityAnalysisItem(Change("KA", up = 2, down = 2))) %>%
     add(SensitivityAnalysisItem(Change("CL", up = 2, down = 2))) %>%
@@ -147,8 +146,11 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
 
   simulation <- expression(
     tictoc::tic(),
-    sens@dest <- destEngine,
-    sens <- progressr::with_progress(sens %>% prepare()),
+    settings <- Settings(
+      Hardware(cpu = 1, replicate_parallel = FALSE),
+      DefaultSettings(replicates = 1, engine = destEngine, seed = 1)
+    ),
+    sens <- progressr::with_progress(sens %>% prepare(model = model, dataset = dataset_sens, settings = settings)),
     tictoc::toc(), # rxode2: 15.43 sec, mrgsolve: 7.19 sec
     sens
   )
@@ -183,8 +185,11 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
 
   simulation <- expression(
     tictoc::tic(),
-    sens@dest <- destEngine,
-    sens <- progressr::with_progress(sens %>% prepare()),
+    settings <- Settings(
+      Hardware(cpu = 1, replicate_parallel = FALSE),
+      DefaultSettings(replicates = 1, engine = destEngine, seed = 1)
+    ),
+    sens <- progressr::with_progress(sens %>% prepare(model = model, dataset = dataset_sens, settings = settings)),
     tictoc::toc(), # rxode2: 40.75 sec, mrgsolve: 35.78 sec
     sens
   )

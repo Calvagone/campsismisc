@@ -59,14 +59,14 @@ Let's show how the metabolism effect and the weight influence the clearance or t
 ```{r, message=F}
 outputs <- c("CL", "VC")
 
-fp <- ForestPlot(model = model, outputs = outputs) %>%
+fp <- ForestPlot(outputs = outputs) %>%
   add(ForestPlotItem(Covariate("METAB", 0))) %>%
   add(ForestPlotItem(Covariate("METAB", 1))) %>%
   add(ForestPlotItem(Covariate("WT", 60))) %>%
   add(ForestPlotItem(Covariate("WT", 80)))
 
 fp <- with_progress({
-  fp %>% prepare(settings = settings)
+  fp %>% prepare(model = model, settings = settings)
 })
 ```
 
@@ -111,12 +111,7 @@ A forest plot object can be instantiated and run as follows:
 
 ```{r, message=F}
 fp <- ForestPlot(
-  model = model,
-  dataset = dataset,
-  outputs = outputs,
-  replicates = 100,
-  dest = dest,
-  settings = settings
+  outputs = outputs
 ) %>%
   add(ForestPlotItem(Covariate("METAB", 0))) %>%
   add(ForestPlotItem(Covariate("METAB", 1))) %>%
@@ -124,7 +119,7 @@ fp <- ForestPlot(
   add(ForestPlotItem(Covariate("WT", 80)))
 
 fp <- with_progress({
-  fp %>% prepare()
+  fp %>% prepare(model = model, dataset = dataset, settings = settings)
 })
 ```
 
@@ -191,14 +186,14 @@ dataset <- Dataset(1) %>%
   add(Covariate("METAB", 0)) %>%
   add(Covariate("WT", 70))
 
-object <- SensitivityAnalysis(model = model, dataset = dataset, outputs = outputs) %>%
+object <- SensitivityAnalysis(outputs = outputs) %>%
   add(SensitivityAnalysisItem(Change("DUR", up = 2, down = 2, log = TRUE))) %>%
   add(SensitivityAnalysisItem(Change("VC", up = 2, down = 2, log = TRUE))) %>%
   add(SensitivityAnalysisItem(Change("VP", up = 2, down = 2, log = TRUE))) %>%
   add(SensitivityAnalysisItem(Change("Q", up = 2, down = 2, log = TRUE))) %>%
   add(SensitivityAnalysisItem(Change("CL", up = 2, down = 2, log = TRUE)))
 
-object <- object %>% prepare()
+object <- object %>% prepare(model = model, dataset = dataset)
 object %>% get_tornado_plot(index = 1)
 ```
 

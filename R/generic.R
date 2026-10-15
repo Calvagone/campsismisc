@@ -31,15 +31,24 @@ no_default_function_provided_debug <- function(args_list, fun_name) {
 #' Prepare.
 #'
 #' @param object generic object
+#' @param model Campsis model
+#' @param dataset Campsis dataset
 #' @param settings Campsis settings
 #' @return same object
 #' @export
 #' @rdname prepare
-prepare <- function(object, settings) {
+prepare <- function(object, model, dataset, settings) {
   stop("No default function is provided")
 }
 
-setGeneric("prepare", function(object, settings) {
+setGeneric("prepare", function(object, model, dataset=NULL, settings=NULL) {
+  if (is.null(dataset)) {
+    dataset <- campsis::Dataset(1) |>
+      add(campsis::Observations(times = 0))
+  }
+  if (is.null(settings)) {
+    settings <- campsis::Settings()
+  }
   standardGeneric("prepare")
 })
 

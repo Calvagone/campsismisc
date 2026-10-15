@@ -4,18 +4,13 @@
 \alias{ForestPlot}
 \title{Create a forest plot.}
 \usage{
-ForestPlot(model, outputs, dataset = NULL)
+ForestPlot(outputs)
 }
 \arguments{
-\item{model}{CAMPSIS model}
-
 \item{outputs}{output(s) of interest, e.g. 'CL' or a PK metric from campsisnca or a list of them}
-
-\item{dataset}{CAMPSIS dataset, if NULL, minimalist dataset with 1 subject
-and single observation at time 0 is created}
 }
 \value{
-an empty forest plot
+a forest plot object
 }
 \description{
 Create a forest plot.

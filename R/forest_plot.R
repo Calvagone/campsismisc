@@ -4,42 +4,23 @@
 
 #' Forest plot class.
 #'
-#' @importFrom campsis Dataset
 #' @export
 setClass(
   "forest_plot",
   representation(
     items = "forest_plot_items"
   ),
-  contains = "oat_analysis",
-  prototype = prototype(model = CampsisModel(), dataset = campsis::Dataset())
-)
+  contains = "oat_analysis")
 
 #' Create a forest plot.
 #'
-#' @param model CAMPSIS model
 #' @param outputs output(s) of interest, e.g. 'CL' or a PK metric from campsisnca or a list of them
-#' @param dataset CAMPSIS dataset, if NULL, minimalist dataset with 1 subject
-#' and single observation at time 0 is created
-#' @return an empty forest plot
+#' @return a forest plot object
 #' @importFrom campsis Dataset Observations Settings
 #' @export
-ForestPlot <- function(
-  model,
-  outputs,
-  dataset = NULL
-) {
-  if (is.null(dataset)) {
-    dataset <- campsis::Dataset(1) |>
-      add(campsis::Observations(times = 0))
-  }
+ForestPlot <- function(outputs) {
   outputs <- process_outputs(outputs)
-  return(new(
-    "forest_plot",
-    model = model,
-    outputs = outputs,
-    dataset = dataset
-  ))
+  return(new("forest_plot", outputs = outputs))
 }
 
 #_______________________________________________________________________________
@@ -58,21 +39,25 @@ setMethod("add", signature = c("forest_plot", "forest_plot_item"), definition = 
 #' @rdname create_scenarios
 #' @param dataset Campsis dataset
 #' @importFrom campsis Scenarios Scenario
-setMethod("create_scenarios", signature = c("forest_plot"), definition = function(object, dataset, ...) {
-  scenarios <- campsis::Scenarios()
-  items <- object@items
+setMethod(
+  "create_scenarios",
+  signature = c("forest_plot", "campsis_model", "dataset"),
+  definition = function(object, model, dataset) {
+    scenarios <- campsis::Scenarios()
+    items <- object@items
 
-  for (item in items@list) {
-    covariates <- item@covariates
-    dataset_ <- dataset
-    for (covariate in covariates@list) {
-      dataset_ <- dataset_ |> campsismod::replace(covariate)
+    for (item in items@list) {
+      covariates <- item@covariates
+      dataset_ <- dataset
+      for (covariate in covariates@list) {
+        dataset_ <- dataset_ |> campsismod::replace(covariate)
+      }
+      scenarios <- scenarios |>
+        add(campsis::Scenario(name = item |> get_label(model), dataset = dataset_))
     }
-    scenarios <- scenarios |>
-      add(campsis::Scenario(name = item |> get_label(object@model), dataset = dataset_))
+    return(scenarios)
   }
-  return(scenarios)
-})
+)
 
 #_______________________________________________________________________________
 #----                               get_forest_plot                           ----

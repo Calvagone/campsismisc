@@ -4,18 +4,13 @@
 \alias{SensitivityAnalysis}
 \title{Create an OAT-based sensitivity analysis object.}
 \usage{
-SensitivityAnalysis(model, outputs, dataset = NULL)
+SensitivityAnalysis(outputs)
 }
 \arguments{
-\item{model}{CAMPSIS model}
-
 \item{outputs}{outputs of interest, e.g. 'CL' or a PK metric from campsisnca or a list of them}
-
-\item{dataset}{CAMPSIS dataset, if NULL, minimalist dataset with 1 subject
-and single observation at time 0 is created}
 }
 \value{
-an empty OAT-based sensibility analysis object
+an OAT-based sensibility analysis object
 }
 \description{
 Create an OAT-based sensitivity analysis object.

@@ -4,17 +4,15 @@
 
 #' One-at-a-time analysis structure.
 #'
-#' @importFrom campsis Dataset
 #' @export
 setClass(
   "oat_analysis",
   representation(
-    model = "campsis_model",
-    dataset = "dataset",
     outputs = "nca_analysis",
-    results = "oat_analysis_results"
+    results = "oat_analysis_results",
+    transient_model = "campsis_model" # Transient field used to store the model
   ),
-  prototype = prototype(model = CampsisModel(), dataset = campsis::Dataset())
+  prototype = prototype(transient_model=campsismod::CampsisModel())
 )
 
 #_______________________________________________________________________________
@@ -68,14 +66,15 @@ setMethod("compute_baseline", signature = c("tbl_df", "nca_analysis"), definitio
 #' Create scenarios.
 #'
 #' @param object OAT analysis, type forest plot or sensitivity analysis
-#' @param ... extra arguments
+#' @param dataset Campsis dataset
+#' @param model Campsis model
 #' @return a list of CAMPSIS scenarios to be run
 #' @rdname create_scenarios
-create_scenarios <- function(object, ...) {
+create_scenarios <- function(object, model, dataset) {
   stop("No default function is provided")
 }
 
-setGeneric("create_scenarios", function(object, ...) {
+setGeneric("create_scenarios", function(object, model, dataset) {
   standardGeneric("create_scenarios")
 })
 
@@ -121,72 +120,89 @@ post_process_scenarios <- function(object, output) {
 #' @importFrom campsis Outfun Outfuns NCATableOutfun simulate Scenario Covariate
 #' @importFrom campsisnca NCAAnalysis NCATable
 #' @importFrom progressr with_progress without_progress
-setMethod("prepare", signature = c("oat_analysis", "simulation_settings"), definition = function(object, settings) {
-  # Fix IIV, VARCOV_OMEGA, VARCOV_SIGMA at the beginning!
-  # This way, calling disable is not needed in the scenarios
-  model <- object@model |> disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA"))
-  base_dataset <- object@dataset
-  if (is(object, "forest_plot")) {
-    for (cov_def in model@covariates@list) {
-      base_dataset <- base_dataset |> add(campsis::Covariate(name = cov_def@name, distribution = cov_def@default_value))
+setMethod(
+  "prepare",
+  signature = c("oat_analysis", "campsis_model", "dataset", "simulation_settings"),
+  definition = function(object, model, dataset, settings) {
+    # Store model in object
+    object@transient_model <- model
+
+    # Fix IIV, VARCOV_OMEGA, VARCOV_SIGMA at the beginning!
+    # This way, calling disable is not needed in the scenarios
+    model_no_var <- model |>
+      disable(c("IIV", "VARCOV_OMEGA", "VARCOV_SIGMA"))
+
+    base_dataset <- dataset
+    if (is(object, "forest_plot")) {
+      for (cov_def in model_no_var@covariates@list) {
+        base_dataset <- base_dataset |>
+          add(campsis::Covariate(name = cov_def@name, distribution = cov_def@default_value))
+      }
     }
-  }
-  items <- object@items
-  outputs <- object@outputs
+    items <- object@items
+    outputs <- object@outputs
 
-  # Preparing settings
-  settings_base_scenario <- settings
-  settings_base_scenario@hardware@cpu <- 1L
-  settings_base_scenario@hardware@replicate_parallel <- FALSE
+    # Preparing settings
+    settings_base_scenario <- settings
+    settings_base_scenario@hardware@cpu <- 1L
+    settings_base_scenario@hardware@replicate_parallel <- FALSE
 
-  # Getting all necessary 'outvars' across all outputs
-  # This in order to make 1 call to the simulate method
-  outvars <- outputs@metrics@list |>
-    purrr::map_chr(\(x) if (is.na(x@variable)) outputs@variable else x@variable) |>
-    unique()
+    # Getting all necessary 'outvars' across all outputs
+    # This in order to make 1 call to the simulate method
+    outvars <- outputs@metrics@list |>
+      purrr::map_chr(\(x) if (is.na(x@variable)) outputs@variable else x@variable) |>
+      unique()
 
-  # Compute and store baseline value of each output
-  # Progress from campsis is deactivated for the base scenario
-  base_scenario <- progressr::without_progress(
-    campsis::simulate(model = model, dataset = base_dataset, outvars = outvars, settings = settings_base_scenario)
-  )
-  baselines <- base_scenario |> compute_baseline(output = outputs)
-
-  # Generate scenarios
-  scenarios <- object |> create_scenarios(dataset = base_dataset, model = model)
-
-  # Prepare outfun function
-  nca <- object@outputs
-  nca@strata <- c(SCENARIO = "all")
-  nca@force_strat_vars <- "SCENARIO" # Even if there is only 1 level
-
-  outfun <- campsis::NCATableOutfun(table = campsisnca::NCATable() |> add(nca), export_type = "individual")
-  outfuns <- campsis::Outfuns() |>
-    add(outfun)
-
-  # Simulate
-  all_results <- campsis::simulate(
-    model = model,
-    dataset = base_dataset,
-    scenarios = scenarios,
-    outvars = outvars,
-    outfun = outfuns,
-    settings = settings
-  )
-
-  # Post-processing
-  tmp_results <- purrr::map2(.x = outputs@metrics@list, .y = baselines, .f = function(output, baseline) {
-    res <- OATResult(
-      output = output,
-      baseline = baseline,
-      results = post_process_scenarios(object = all_results, output = output)
+    # Compute and store baseline value of each output
+    # Progress from campsis is deactivated for the base scenario
+    base_scenario <- progressr::without_progress(
+      campsis::simulate(
+        model = model_no_var,
+        dataset = base_dataset,
+        outvars = outvars,
+        settings = settings_base_scenario
+      )
     )
-    return(res)
-  })
+    baselines <- base_scenario |>
+      compute_baseline(output = outputs)
 
-  # Save
-  object@results <- OATResults() |>
-    add(tmp_results)
+    # Generate scenarios
+    scenarios <- object |>
+      create_scenarios(model = model_no_var, dataset = base_dataset)
 
-  return(object)
-})
+    # Prepare outfun function
+    nca <- object@outputs
+    nca@strata <- c(SCENARIO = "all")
+    nca@force_strat_vars <- "SCENARIO" # Even if there is only 1 level
+
+    outfun <- campsis::NCATableOutfun(table = campsisnca::NCATable() |> add(nca), export_type = "individual")
+    outfuns <- campsis::Outfuns() |>
+      add(outfun)
+
+    # Simulate
+    all_results <- campsis::simulate(
+      model = model_no_var,
+      dataset = base_dataset,
+      scenarios = scenarios,
+      outvars = outvars,
+      outfun = outfuns,
+      settings = settings
+    )
+
+    # Post-processing
+    tmp_results <- purrr::map2(.x = outputs@metrics@list, .y = baselines, .f = function(output, baseline) {
+      res <- OATResult(
+        output = output,
+        baseline = baseline,
+        results = post_process_scenarios(object = all_results, output = output)
+      )
+      return(res)
+    })
+
+    # Save
+    object@results <- OATResults() |>
+      add(tmp_results)
+
+    return(object)
+  }
+)

@@ -2,15 +2,19 @@
 % Please edit documentation in R/generic.R, R/oat_analysis.R
 \name{prepare}
 \alias{prepare}
-\alias{prepare,oat_analysis,simulation_settings-method}
+\alias{prepare,oat_analysis,campsis_model,dataset,simulation_settings-method}
 \title{Prepare.}
 \usage{
-prepare(object, settings)
+prepare(object, model, dataset = NULL, settings = NULL)
 
-\S4method{prepare}{oat_analysis,simulation_settings}(object, settings)
+\S4method{prepare}{oat_analysis,campsis_model,dataset,simulation_settings}(object, model, dataset = NULL, settings = NULL)
 }
 \arguments{
 \item{object}{generic object}
+
+\item{model}{Campsis model}
+
+\item{dataset}{Campsis dataset}
 
 \item{settings}{Campsis settings}
 }

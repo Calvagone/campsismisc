@@ -44,6 +44,7 @@ importFrom(campsismod,
   add,
   disable,
   export,
+  find,
   get_name,
   get_names,
   replace

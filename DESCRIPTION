@@ -36,7 +36,6 @@ Imports:
     progressr,
     purrr,
     rlang,
-    tibble,
     tidyr
 Suggests: 
     devtools,
@@ -47,6 +46,7 @@ Suggests:
     roxygen2,
     rxode2,
     testthat,
+    tibble,
     tictoc
 Remotes:
     Calvagone/campsismod@develop

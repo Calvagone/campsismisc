@@ -1,7 +1,7 @@
 overwriteNonRegressionFiles <- FALSE
 testEngines <- c("rxode2", "mrgsolve")
 
-getModel <- function(name) {
+get_model <- function(name) {
   model <- read.campsis(file.path(getwd(), test_path(), "campsis_models", "/", name))
 
   # See strange regression in R base: #21

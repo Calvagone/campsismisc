@@ -41,7 +41,6 @@ setMethod("compute_baseline", signature = c("tbl_df", "nca_metric"), definition 
     add(output)
   table <- campsisnca::NCATable() |>
     add(nca)
-  print(object)
   baseline <- table |>
     campsisnca::calculate(x = object) |>
     campsismod::export(dest = "dataframe", type = "individual")

@@ -7,8 +7,8 @@ context("Test the sensitivity analysis feature")
 source(file.path(getwd(), test_path(), "test-utils.R"))
 
 test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several replicates)", {
-  model <- getModel("metaboliser_effect_on_cl")
-  regFilename <- "effect_of_parameters_on_auc"
+  model <- get_model("metaboliser_effect_on_cl")
+  reg_filename <- "effect_of_parameters_on_auc"
 
   dataset <- Dataset(1) %>%
     add(Infusion(time = 0, amount = 1000, compartment = 1)) %>%
@@ -37,7 +37,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = object, filename = regFilename),
+    oatAnalysisRegressionTest(object = object, filename = reg_filename),
     expect_warning(object %>% get_tornado_plot(), regexp = "Multiple replicates detected")
     # class(object) <- "forest_plot",
     # object %>% get_forest_plot(relative=FALSE)
@@ -46,8 +46,8 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
 })
 
 test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single replicate)", {
-  model <- getModel("metaboliser_effect_on_cl")
-  regFilename <- "effect_of_parameters_on_auc_1rep"
+  model <- get_model("metaboliser_effect_on_cl")
+  reg_filename <- "effect_of_parameters_on_auc_1rep"
 
   dataset <- Dataset(1) %>%
     add(Infusion(time = 0, amount = 1000, compartment = 1)) %>%
@@ -76,7 +76,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = object, filename = regFilename),
+    oatAnalysisRegressionTest(object = object, filename = reg_filename),
     object %>% get_tornado_plot(relative = TRUE),
     object %>% get_tornado_plot(relative = FALSE)
     # class(object) <- "forest_plot",
@@ -86,8 +86,8 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
 })
 
 test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax (rxode2/mrgsolve)", {
-  model <- getModel("metaboliser_effect_on_cl")
-  regFilename <- "effect_of_parameters_on_cmax"
+  model <- get_model("metaboliser_effect_on_cl")
+  reg_filename <- "effect_of_parameters_on_cmax"
 
   dataset <- Dataset(1) %>%
     add(Infusion(time = 0, amount = 1000, compartment = 1)) %>%
@@ -116,7 +116,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax (rxode2/mr
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = object, filename = regFilename),
+    oatAnalysisRegressionTest(object = object, filename = reg_filename),
     expect_warning(object %>% get_tornado_plot(), regexp = "Multiple replicates detected")
     # class(object) <- "forest_plot",
     # object %>% get_forest_plot()
@@ -126,7 +126,7 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax (rxode2/mr
 
 test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters on AUC (rxode2/mrgsolve, change applied on THETAS)", {
   model <- model_suite$pk$'1cpt_fo'
-  regFilename <- "sensitivity_bio_ka_cl_vc_on_auc"
+  reg_filename <- "sensitivity_bio_ka_cl_vc_on_auc"
 
   arm1 <- Arm(subjects = 10, label = "Arm 1") %>%
     add(Bolus(time = 0, amount = 1000, compartment = 1, ii = 24, addl = 0)) %>%
@@ -156,7 +156,7 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = sens, filename = regFilename),
+    oatAnalysisRegressionTest(object = sens, filename = reg_filename),
     sens %>% get_tornado_plot(), # Default plot
     sens %>% get_tornado_plot(limits = c(-15, 100), show_labels = FALSE) # Limits can be set, labels can be hidden, etc.
   )
@@ -165,7 +165,7 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
 
 test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters on AUC(rxode2/mrgsolve, change applied on equations)", {
   model <- model_suite$pk$'1cpt_fo'
-  regFilename <- "sensitivity_bio_ka_cl_vc_on_auc"
+  reg_filename <- "sensitivity_bio_ka_cl_vc_on_auc"
 
   arm1 <- Arm(subjects = 10, label = "Arm 1") %>%
     add(Bolus(time = 0, amount = 1000, compartment = 1, ii = 24, addl = 0)) %>%
@@ -177,7 +177,7 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
 
   dataset_sens <- Dataset() %>% add(arm1) %>% add(DatasetConfig(exportTSLD = TRUE, exportTDOS = TRUE))
 
-  sens <- SensitivityAnalysis(model = model, dataset = dataset_sens, outputs = outputs) %>%
+  sens <- SensitivityAnalysis(outputs = outputs) %>%
     add(SensitivityAnalysisItem(Change("BIO", up = 2, down = 2, where = "equation"))) %>%
     add(SensitivityAnalysisItem(Change("KA", up = 2, down = 2, where = "equation"))) %>%
     add(SensitivityAnalysisItem(Change("CL", up = 2, down = 2, where = "equation"))) %>%
@@ -195,7 +195,7 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = sens, filename = regFilename),
+    oatAnalysisRegressionTest(object = sens, filename = reg_filename),
     sens %>% get_tornado_plot(), # Default plot
     sens %>% get_tornado_plot(limits = c(-15, 100), show_labels = FALSE) # Limits can be set, labels can be hidden, etc.
   )

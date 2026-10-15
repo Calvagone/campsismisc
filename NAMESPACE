@@ -30,38 +30,53 @@ import(ggrepel)
 import(tibble)
 import(tidyr)
 importFrom(assertthat,assert_that)
-importFrom(campsis,CampsisModel)
-importFrom(campsis,Covariate)
-importFrom(campsis,Dataset)
-importFrom(campsis,Equation)
-importFrom(campsis,NCATableOutfun)
-importFrom(campsis,Observations)
-importFrom(campsis,Outfun)
-importFrom(campsis,Outfuns)
-importFrom(campsis,Scenario)
-importFrom(campsis,Scenarios)
-importFrom(campsis,Settings)
-importFrom(campsis,Theta)
-importFrom(campsis,get_name)
-importFrom(campsis,get_names)
-importFrom(campsis,simulate)
-importFrom(campsismod,add)
-importFrom(campsismod,disable)
-importFrom(campsismod,export)
-importFrom(campsismod,find)
-importFrom(campsismod,replace)
-importFrom(campsisnca,Last)
-importFrom(campsisnca,NCAAnalysis)
-importFrom(campsisnca,NCATable)
-importFrom(campsisnca,calculate)
-importFrom(lifecycle,badge)
-importFrom(lifecycle,deprecate_warn)
-importFrom(methods,is)
-importFrom(methods,new)
-importFrom(methods,slot)
-importFrom(progressr,with_progress)
-importFrom(progressr,without_progress)
-importFrom(rlang,.data)
-importFrom(rlang,as_function)
-importFrom(stats,median)
-importFrom(stats,quantile)
+importFrom(campsis,
+  Covariate,
+  Dataset,
+  NCATableOutfun,
+  Observations,
+  Outfun,
+  Outfuns,
+  Scenario,
+  Scenarios,
+  Settings,
+  simulate
+)
+importFrom(campsismod,
+  CampsisModel,
+  Equation,
+  Theta,
+  add,
+  disable,
+  export,
+  get_name,
+  get_names,
+  replace
+)
+importFrom(campsisnca,
+  Last,
+  NCAAnalysis,
+  NCATable,
+  calculate
+)
+importFrom(lifecycle,
+  badge,
+  deprecate_warn
+)
+importFrom(methods,
+  is,
+  new,
+  slot
+)
+importFrom(progressr,
+  with_progress,
+  without_progress
+)
+importFrom(rlang,
+  .data,
+  as_function
+)
+importFrom(stats,
+  median,
+  quantile
+)

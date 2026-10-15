@@ -4,6 +4,7 @@
 
 #' Sensitivity analysis class.
 #'
+#' @importFrom campsismod CampsisModel
 #' @importFrom campsis Dataset
 #' @export
 setClass(
@@ -26,8 +27,7 @@ setClass(
 #' @param dest destination engine: rxode2, RxODE or mrgsolve (default)
 #' @param settings simulation settings
 #' @return an empty OAT-based sensibility analysis object
-#' @importFrom campsis Dataset Observations Settings CampsisModel
-#' @importFrom campsisnca NCAAnalysis Last
+#' @importFrom campsis Dataset Observations Settings
 #' @export
 SensitivityAnalysis <- function(
   model,
@@ -70,8 +70,8 @@ setMethod("add", signature = c("sensitivity_analysis", "sensitivity_analysis_ite
 
 #' @rdname create_scenarios
 #' @param model Campsis model
-#' @importFrom campsis Scenarios Scenario Equation Theta
-#' @importFrom campsismod replace
+#' @importFrom campsis Scenarios Scenario 
+#' @importFrom campsismod replace Equation Theta
 setMethod("create_scenarios", signature = c("sensitivity_analysis"), definition = function(object, model, ...) {
   # Note, IIV, VARCOV_OMEGA, VARCOV_SIGMA was already disabled in the given model, see oat_analysis.R, prepare()
   # Because simulations are not replicated, variance-covariance matrix is not used by default in CAMPSIS
@@ -157,7 +157,7 @@ setMethod("create_scenarios", signature = c("sensitivity_analysis"), definition 
 #' @param label_nsig number of significant digits in label
 #' @param geom_hline_color color argument of method geom_hline
 #' @param geom_text_size size argument of method geom_text
-#' @importFrom campsis get_names
+#' @importFrom campsismod get_names
 setMethod(
   "get_tornado_plot",
   signature = c("sensitivity_analysis", "integer", "logical", "logical", "logical", "numeric"),

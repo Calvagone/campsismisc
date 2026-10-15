@@ -51,7 +51,7 @@ setMethod("get_label", signature = c("sensitivity_analysis_item"), definition = 
 
       parameter_label <- parameter_name
       if (where == "theta") {
-        theta <- model |> find(campsis::Theta(parameter_name))
+        theta <- model |> find(Theta(parameter_name))
         if (!is.null(theta) && !is.na(theta@label) && theta@label != "") {
           parameter_label <- theta@label
         }

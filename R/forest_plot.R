@@ -4,6 +4,7 @@
 
 #' Forest plot class.
 #'
+#' @importFrom campsismod CampsisModel
 #' @importFrom campsis Dataset
 #' @export
 setClass(
@@ -26,8 +27,7 @@ setClass(
 #' @param dest destination engine: rxode2, RxODE or mrgsolve (default)
 #' @param settings simulation settings
 #' @return an empty forest plot
-#' @importFrom campsis Dataset Observations Settings CampsisModel
-#' @importFrom campsisnca NCAAnalysis Last
+#' @importFrom campsis Dataset Observations Settings
 #' @export
 ForestPlot <- function(
   model,

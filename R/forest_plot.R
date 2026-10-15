@@ -98,6 +98,7 @@ setMethod("create_scenarios", signature = c("forest_plot"), definition = functio
 #' @param label_nsig number of significant digits in label
 #' @param geom_hline_color color argument of method geom_hline
 #' @importFrom dplyr group_by across summarise
+#' @importFrom ggplot2 ggplot aes geom_point geom_errorbar geom_hline geom_label coord_flip ylab xlab
 setMethod(
   "get_forest_plot",
   signature = c("forest_plot", "integer", "logical", "logical", "logical", "logical", "numeric", "numeric", "numeric"),

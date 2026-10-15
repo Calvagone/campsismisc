@@ -158,6 +158,7 @@ setMethod("create_scenarios", signature = c("sensitivity_analysis"), definition 
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom tidyr separate
 #' @importFrom dplyr mutate group_by across summarise arrange ungroup pull
+#' @importFrom ggplot2 ggplot aes coord_flip geom_bar xlab labs geom_hline ylab scale_y_continuous
 setMethod(
   "get_tornado_plot",
   signature = c("sensitivity_analysis", "integer", "logical", "logical", "logical", "numeric"),

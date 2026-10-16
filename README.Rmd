@@ -117,7 +117,7 @@ fp <- ForestPlot(outputs = outputs) %>%
   add(ForestPlotItem(Covariate("WT", 80)))
 
 fp <- with_progress({
-  fp %>% run_analysis(model = model, dataset = dataset, settings =  )
+  fp %>% run_analysis(model = model, dataset = dataset, settings = settings)
 })
 ```
 
@@ -191,7 +191,7 @@ object <- SensitivityAnalysis(outputs = outputs) %>%
   add(SensitivityAnalysisItem(Change("Q", up = 2, down = 2, log = TRUE))) %>%
   add(SensitivityAnalysisItem(Change("CL", up = 2, down = 2, log = TRUE)))
 
-object <- object %>% run_analysis(model = model, dataset = dataset)
+object <- object %>% run_analysis(model = model, dataset = dataset, seed = 1)
 object %>% get_tornado_plot(index = 1)
 ```
 

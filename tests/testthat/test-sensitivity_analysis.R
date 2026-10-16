@@ -37,12 +37,12 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (several re
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = object, filename = reg_filename),
+    oat_analysis_regression_test(object = object, filename = reg_filename),
     expect_warning(object %>% get_tornado_plot(), regexp = "Multiple replicates detected")
     # class(object) <- "forest_plot",
     # object %>% get_forest_plot(relative=FALSE)
   )
-  campsismiscTest(simulation, test, env = environment())
+  campsismisc_test(simulation, test, env = environment())
 })
 
 test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single replicate)", {
@@ -76,13 +76,13 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on AUC (single rep
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = object, filename = reg_filename),
+    oat_analysis_regression_test(object = object, filename = reg_filename),
     object %>% get_tornado_plot(relative = TRUE),
     object %>% get_tornado_plot(relative = FALSE)
     # class(object) <- "forest_plot",
     # object %>% get_forest_plot(relative=FALSE),
   )
-  campsismiscTest(simulation, test, env = environment())
+  campsismisc_test(simulation, test, env = environment())
 })
 
 test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax (rxode2/mrgsolve)", {
@@ -116,12 +116,12 @@ test_that("Sensitivity analysis: effect of DUR, VC, VP, Q, CL on Cmax (rxode2/mr
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = object, filename = reg_filename),
+    oat_analysis_regression_test(object = object, filename = reg_filename),
     expect_warning(object %>% get_tornado_plot(), regexp = "Multiple replicates detected")
     # class(object) <- "forest_plot",
     # object %>% get_forest_plot()
   )
-  campsismiscTest(simulation, test, env = environment())
+  campsismisc_test(simulation, test, env = environment())
 })
 
 test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters on AUC (rxode2/mrgsolve, change applied on THETAS)", {
@@ -156,11 +156,11 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = sens, filename = reg_filename),
+    oat_analysis_regression_test(object = sens, filename = reg_filename),
     sens %>% get_tornado_plot(), # Default plot
     sens %>% get_tornado_plot(limits = c(-15, 100), show_labels = FALSE) # Limits can be set, labels can be hidden, etc.
   )
-  campsismiscTest(simulation, test, env = environment())
+  campsismisc_test(simulation, test, env = environment())
 })
 
 test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters on AUC(rxode2/mrgsolve, change applied on equations)", {
@@ -195,9 +195,9 @@ test_that("Tornado plot: sensitivity analysis of the 1-cpt-fo model parameters o
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = sens, filename = reg_filename),
+    oat_analysis_regression_test(object = sens, filename = reg_filename),
     sens %>% get_tornado_plot(), # Default plot
     sens %>% get_tornado_plot(limits = c(-15, 100), show_labels = FALSE) # Limits can be set, labels can be hidden, etc.
   )
-  campsismiscTest(simulation, test, env = environment())
+  campsismisc_test(simulation, test, env = environment())
 })

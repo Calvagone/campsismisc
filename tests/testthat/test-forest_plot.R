@@ -34,14 +34,14 @@ test_that("Forest plot: effect of METAB (0/1) and WT on CL (rxode2/mrgsolve)", {
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = object, filename = reg_filename),
+    oat_analysis_regression_test(object = object, filename = reg_filename),
     object %>% get_forest_plot(), # Default forest plot
     object %>% get_forest_plot(limits = c(0.7, 1.5)) + ggplot2::scale_y_continuous(breaks = c(0.8, 1, 1.25))
     # class(object) <- "sensitivity_analysis",
     # # A tornado plot should work as well but a warning is thrown because it has more than 1 replicate
     # expect_warning(object %>% get_tornado_plot(), regexp="Multiple replicates detected")
   )
-  campsismiscTest(simulation, test, env = environment())
+  campsismisc_test(simulation, test, env = environment())
 })
 
 test_that("Forest plot: effect of METAB (0/1) and WT on AUC0-24 (rxode2/mrgsolve)", {
@@ -76,10 +76,10 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC0-24 (rxode2/mrgsolve
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = object, filename = reg_filename),
+    oat_analysis_regression_test(object = object, filename = reg_filename),
     object %>% get_forest_plot() # Default forest plot
   )
-  campsismiscTest(simulation, test, env = environment())
+  campsismisc_test(simulation, test, env = environment())
 })
 
 test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (rxode2/mrgsolve)", {
@@ -114,10 +114,10 @@ test_that("Forest plot: effect of METAB (0/1) and WT on AUC144-168 (rxode2/mrgso
   )
 
   test <- expression(
-    oatAnalysisRegressionTest(object = object, filename = reg_filename),
+    oat_analysis_regression_test(object = object, filename = reg_filename),
     object %>% get_forest_plot() # Default forest plot
   )
-  campsismiscTest(simulation, test, env = environment())
+  campsismisc_test(simulation, test, env = environment())
 })
 
 test_that("Forest plots must work when only 1 item is simulated (rxode2/mrgsolve)", {
@@ -150,5 +150,5 @@ test_that("Forest plots must work when only 1 item is simulated (rxode2/mrgsolve
     expect_true(is.numeric(results1$value)),
     expect_equal(as.character(results1$SCENARIO), rep("Weight: 60", 2))
   )
-  campsismiscTest(simulation, test, env = environment())
+  campsismisc_test(simulation, test, env = environment())
 })

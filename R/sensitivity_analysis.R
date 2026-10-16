@@ -15,13 +15,11 @@ setClass(
 
 #' Create an OAT-based sensitivity analysis object.
 #'
-#' @param outputs outputs of interest, e.g. 'CL' or a PK metric from campsisnca or a list of them
 #' @return an OAT-based sensibility analysis object
 #' @importFrom campsis Dataset Observations Settings
 #' @export
-SensitivityAnalysis <- function(outputs) {
-  outputs <- process_outputs(outputs)
-  return(new("sensitivity_analysis", outputs = outputs))
+SensitivityAnalysis <- function() {
+  return(new("sensitivity_analysis"))
 }
 
 #_______________________________________________________________________________

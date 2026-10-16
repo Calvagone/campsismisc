@@ -8,7 +8,6 @@
 setClass(
   "oat_analysis",
   representation(
-    outputs = "nca_analysis",
     results = "oat_analysis_results",
     transient_model = "campsis_model" # Transient field used to store the model
   ),
@@ -122,8 +121,11 @@ post_process_scenarios <- function(object, output) {
 #' @importFrom progressr with_progress without_progress
 setMethod(
   "run_analysis",
-  signature = c("oat_analysis", "campsis_model", "dataset", "simulation_settings"),
-  definition = function(object, model, dataset, settings) {
+  signature = c("oat_analysis", "ANY", "campsis_model", "dataset", "simulation_settings"),
+  definition = function(object, outputs, model, dataset, settings) {
+    # Process outputs
+    outputs <- process_outputs(outputs)
+
     # Store model in object
     object@transient_model <- model
 
@@ -140,7 +142,6 @@ setMethod(
       }
     }
     items <- object@items
-    outputs <- object@outputs
 
     # Preparing settings
     settings_base_scenario <- settings
@@ -175,7 +176,7 @@ setMethod(
       create_scenarios(model = model_no_var, dataset = base_dataset)
 
     # Prepare outfun function
-    nca <- object@outputs
+    nca <- outputs
     nca@strata <- c(SCENARIO = "all")
     nca@force_strat_vars <- "SCENARIO" # Even if there is only 1 level
 

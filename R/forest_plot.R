@@ -14,13 +14,11 @@ setClass(
 
 #' Create a forest plot.
 #'
-#' @param outputs output(s) of interest, e.g. 'CL' or a PK metric from campsisnca or a list of them
 #' @return a forest plot object
 #' @importFrom campsis Dataset Observations Settings
 #' @export
-ForestPlot <- function(outputs) {
-  outputs <- process_outputs(outputs)
-  return(new("forest_plot", outputs = outputs))
+ForestPlot <- function() {
+  return(new("forest_plot"))
 }
 
 #_______________________________________________________________________________

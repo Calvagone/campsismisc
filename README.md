@@ -130,14 +130,14 @@ clearance or the volume. This can be achieved as follows:
 ``` r
 outputs <- c("CL", "VC")
 
-fp <- ForestPlot(outputs = outputs) %>%
+fp <- ForestPlot() %>%
   add(ForestPlotItem(Covariate("METAB", 0))) %>%
   add(ForestPlotItem(Covariate("METAB", 1))) %>%
   add(ForestPlotItem(Covariate("WT", 60))) %>%
   add(ForestPlotItem(Covariate("WT", 80)))
 
 fp <- with_progress({
-  fp %>% run_analysis(model = model, settings = settings)
+  fp %>% run_analysis(outputs = outputs, model = model, settings = settings)
 })
 ```
 
@@ -189,14 +189,14 @@ outputs <- NCAAnalysis(variable = "CONC") %>%
 A forest plot object can be instantiated and run as follows:
 
 ``` r
-fp <- ForestPlot(outputs = outputs) %>%
+fp <- ForestPlot() %>%
   add(ForestPlotItem(Covariate("METAB", 0))) %>%
   add(ForestPlotItem(Covariate("METAB", 1))) %>%
   add(ForestPlotItem(Covariate("WT", 60))) %>%
   add(ForestPlotItem(Covariate("WT", 80)))
 
 fp <- with_progress({
-  fp %>% run_analysis(model = model, dataset = dataset, settings = settings)
+  fp %>% run_analysis(outputs = outputs, model = model, dataset = dataset, settings = settings)
 })
 ```
 
@@ -286,7 +286,7 @@ dataset <- Dataset(1) %>%
   add(Covariate("METAB", 0)) %>%
   add(Covariate("WT", 70))
 
-object <- SensitivityAnalysis(outputs = outputs) %>%
+object <- SensitivityAnalysis() %>%
   add(SensitivityAnalysisItem(Change("DUR", up = 2, down = 2, log = TRUE))) %>%
   add(SensitivityAnalysisItem(Change("VC", up = 2, down = 2, log = TRUE))) %>%
   add(SensitivityAnalysisItem(Change("VP", up = 2, down = 2, log = TRUE))) %>%
@@ -299,7 +299,7 @@ settings <- Settings(
   DefaultSettings(replicates = 1, engine = "mrgsolve", seed = 1)
 )
 
-object <- object %>% run_analysis(model = model, dataset = dataset, settings = settings)
+object <- object %>% run_analysis(outputs = outputs, model = model, dataset = dataset, settings = settings)
 object %>% get_tornado_plot(index = 1)
 ```
 

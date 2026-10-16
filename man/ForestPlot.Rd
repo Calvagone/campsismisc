@@ -4,10 +4,7 @@
 \alias{ForestPlot}
 \title{Create a forest plot.}
 \usage{
-ForestPlot(outputs)
-}
-\arguments{
-\item{outputs}{output(s) of interest, e.g. 'CL' or a PK metric from campsisnca or a list of them}
+ForestPlot()
 }
 \value{
 a forest plot object

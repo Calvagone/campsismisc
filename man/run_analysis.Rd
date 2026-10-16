@@ -2,15 +2,17 @@
 % Please edit documentation in R/generic.R, R/oat_analysis.R
 \name{run_analysis}
 \alias{run_analysis}
-\alias{run_analysis,oat_analysis,campsis_model,dataset,simulation_settings-method}
+\alias{run_analysis,oat_analysis,ANY,campsis_model,dataset,simulation_settings-method}
 \title{Run OAT analysis.}
 \usage{
-run_analysis(object, model, dataset = NULL, settings = NULL)
+run_analysis(object, outputs, model, dataset = NULL, settings = NULL)
 
-\S4method{run_analysis}{oat_analysis,campsis_model,dataset,simulation_settings}(object, model, dataset = NULL, settings = NULL)
+\S4method{run_analysis}{oat_analysis,ANY,campsis_model,dataset,simulation_settings}(object, outputs, model, dataset = NULL, settings = NULL)
 }
 \arguments{
 \item{object}{OAT analysis}
+
+\item{outputs}{outputs, character vector or nca_analysis object}
 
 \item{model}{Campsis model}
 

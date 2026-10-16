@@ -4,10 +4,7 @@
 \alias{SensitivityAnalysis}
 \title{Create an OAT-based sensitivity analysis object.}
 \usage{
-SensitivityAnalysis(outputs)
-}
-\arguments{
-\item{outputs}{outputs of interest, e.g. 'CL' or a PK metric from campsisnca or a list of them}
+SensitivityAnalysis()
 }
 \value{
 an OAT-based sensibility analysis object

@@ -112,6 +112,9 @@ model <- model %>%
 
 ### Configure your simulation settings
 
+Generating forest plots can be accelerated by running the replicates in
+parallel. The following configuration will use 4 CPU cores.
+
 ``` r
 settings <- Settings(
   Hardware(cpu = 4, replicate_parallel = TRUE),
@@ -193,7 +196,7 @@ fp <- ForestPlot(outputs = outputs) %>%
   add(ForestPlotItem(Covariate("WT", 80)))
 
 fp <- with_progress({
-  fp %>% run_analysis(model = model, dataset = dataset, settings =  )
+  fp %>% run_analysis(model = model, dataset = dataset, settings = settings)
 })
 ```
 
@@ -290,7 +293,13 @@ object <- SensitivityAnalysis(outputs = outputs) %>%
   add(SensitivityAnalysisItem(Change("Q", up = 2, down = 2, log = TRUE))) %>%
   add(SensitivityAnalysisItem(Change("CL", up = 2, down = 2, log = TRUE)))
 
-object <- object %>% run_analysis(model = model, dataset = dataset)
+# Use single-replicate settings for sensitivity analysis
+settings <- Settings(
+  Hardware(cpu = 1, replicate_parallel = FALSE),
+  DefaultSettings(replicates = 1, engine = "mrgsolve", seed = 1)
+)
+
+object <- object %>% run_analysis(model = model, dataset = dataset, settings = settings)
 object %>% get_tornado_plot(index = 1)
 ```
 

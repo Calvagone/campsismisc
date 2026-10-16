@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://calvagone.github.io/campsis.doc/schema/1.0/forest_plot.schema.json",
+  "title": "Forest Plot JSON Schema",
+  "$ref": "#/$defs/forest_plot",
+  "$defs": {
+    "forest_plot": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/forest_plot_item"
+          }
+        }
+      },
+      "required": [
+        "items"
+      ]
+    },
+    "forest_plot_item": {
+      "type": "object",
+      "properties": {
+        "covariates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fixed_covariate"
+          }
+        }
+      },
+      "required": [
+        "covariates"
+      ]
+    },
+    "fixed_covariate": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    }
+  }
+}

@@ -31,6 +31,8 @@ Imports:
     dplyr,
     ggplot2,
     ggrepel,
+    jsonlite,
+    jsonvalidate,
     methods,
     progressr,
     purrr,
@@ -56,6 +58,7 @@ Collate:
     'campsismisc-package.R'
     'check.R'
     'utilities.R'
+    'json_interface.R'
     'generic.R'
     'oat_analysis_result.R'
     'oat_analysis_results.R'

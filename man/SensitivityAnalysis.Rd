@@ -4,7 +4,10 @@
 \alias{SensitivityAnalysis}
 \title{Create an OAT-based sensitivity analysis object.}
 \usage{
-SensitivityAnalysis()
+SensitivityAnalysis(json = NULL)
+}
+\arguments{
+\item{json}{path to JSON sensitivity analysis file or JSON content in string form}
 }
 \value{
 an OAT-based sensibility analysis object

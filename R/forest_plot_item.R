@@ -37,6 +37,16 @@ setMethod("get_name", signature = c("forest_plot_item"), definition = function(x
 })
 
 #_______________________________________________________________________________
+#----                          load_from_json                               ----
+#_______________________________________________________________________________
+
+setMethod("load_from_json", signature = c("forest_plot_item", "json_element"), definition = function(object, json) {
+  object@covariates@list <- json@data$covariates %>%
+    purrr::map(~ campsis::Covariate(name = .x$name, distribution = .x$value))
+  return(object)
+})
+
+#_______________________________________________________________________________
 #----                              get_label                                ----
 #_______________________________________________________________________________
 

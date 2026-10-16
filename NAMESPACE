@@ -38,6 +38,7 @@ importFrom(campsis,
 importFrom(campsismod,
   CampsisModel,
   Equation,
+  JSONElement,
   Theta,
   add,
   disable,
@@ -45,6 +46,8 @@ importFrom(campsismod,
   find,
   get_name,
   get_names,
+  load_from_json,
+  map_json_properties_to_s4_slots,
   replace
 )
 importFrom(campsisnca,
@@ -82,6 +85,8 @@ importFrom(ggplot2,
   ylab
 )
 importFrom(ggrepel,geom_text_repel)
+importFrom(jsonlite,parse_json)
+importFrom(jsonvalidate,json_schema)
 importFrom(methods,
   is,
   new,

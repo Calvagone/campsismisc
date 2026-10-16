@@ -15,11 +15,16 @@ setClass(
 
 #' Create an OAT-based sensitivity analysis object.
 #'
+#' @param json path to JSON sensitivity analysis file or JSON content in string form
 #' @return an OAT-based sensibility analysis object
 #' @importFrom campsis Dataset Observations Settings
 #' @export
-SensitivityAnalysis <- function() {
-  return(new("sensitivity_analysis"))
+SensitivityAnalysis <- function(json = NULL) {
+  if (is.null(json)) {
+    return(new("sensitivity_analysis"))
+  } else {
+    return(load_from_json(new("sensitivity_analysis"), json = json))
+  }
 }
 
 #_______________________________________________________________________________
@@ -116,6 +121,26 @@ setMethod(
     return(scenarios)
   }
 )
+
+#_______________________________________________________________________________
+#----                          load_from_json                               ----
+#_______________________________________________________________________________
+
+setMethod("load_from_json", signature = c("sensitivity_analysis", "json_element"), definition = function(object, json) {
+  object@items@list <- json@data$items %>%
+    purrr::map(~ load_from_json(new("sensitivity_analysis_item"), JSONElement(.x)))
+  return(object)
+})
+
+setMethod("load_from_json", signature = c("sensitivity_analysis", "character"), definition = function(object, json) {
+  schema <- system.file("extdata", "sensitivity_analysis.schema.json", package = "campsismisc")
+  return(load_from_json(object = object, json = open_json(json = json, schema = schema)))
+})
+
+setMethod("load_from_json", signature = c("sensitivity_analysis", "list"), definition = function(object, json) {
+  schema <- system.file("extdata", "sensitivity_analysis.schema.json", package = "campsismisc")
+  return(load_from_json(object = object, json = open_json(json = json, schema = schema)))
+})
 
 #_______________________________________________________________________________
 #----                             get_tornado_plot                            ----

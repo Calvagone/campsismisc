@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://calvagone.github.io/campsis.doc/schema/1.0/sensitivity_analysis.schema.json",
+  "title": "Sensitivity Analysis JSON Schema",
+  "$ref": "#/$defs/sensitivity_analysis",
+  "$defs": {
+    "sensitivity_analysis": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sensitivity_analysis_item"
+          }
+        }
+      },
+      "required": [
+        "items"
+      ]
+    },
+    "sensitivity_analysis_item": {
+      "type": "object",
+      "properties": {
+        "changes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/change"
+          }
+        }
+      },
+      "required": [
+        "changes"
+      ]
+    },
+    "change": {
+      "type": "object",
+      "properties": {
+        "parameter": {
+          "type": "string"
+        },
+        "up": {
+          "type": "number"
+        },
+        "down": {
+          "type": "number"
+        },
+        "up_down_as_factor": {
+          "type": "boolean"
+        },
+        "where": {
+          "type": "string",
+          "enum": [
+            "theta",
+            "equation"
+          ]
+        },
+        "log": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "parameter",
+        "up",
+        "down"
+      ]
+    }
+  }
+}

@@ -16,6 +16,11 @@ setClass(
     log = "logical"
   ),
   contains = "pmx_element",
+  prototype = prototype(
+    up_down_as_factor = TRUE,
+    where = "theta",
+    log = FALSE
+  ),
   validity = function(object) {
     return(c(
       expect_one(object, "parameter"),
@@ -71,4 +76,12 @@ check_where_argument <- function(x) {
 
 setMethod("get_name", signature = c("sensitivity_analysis_change"), definition = function(x) {
   return(x@parameter)
+})
+
+#_______________________________________________________________________________
+#----                          load_from_json                               ----
+#_______________________________________________________________________________
+
+setMethod("load_from_json", signature = c("sensitivity_analysis_change", "json_element"), definition = function(object, json) {
+  return(map_json_properties_to_s4_slots(object = object, json = json))
 })

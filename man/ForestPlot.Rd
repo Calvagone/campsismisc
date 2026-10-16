@@ -4,7 +4,10 @@
 \alias{ForestPlot}
 \title{Create a forest plot.}
 \usage{
-ForestPlot()
+ForestPlot(json = NULL)
+}
+\arguments{
+\item{json}{path to JSON forest plot file or JSON content in string form}
 }
 \value{
 a forest plot object

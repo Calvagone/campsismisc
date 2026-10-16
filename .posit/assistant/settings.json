@@ -3,11 +3,14 @@
     "edit": {
       "*.md": "allow",
       "*.R": "allow",
-      "*.Rmd": "allow"
+      "*.Rmd": "allow",
+      "*.json": "allow",
+      "*/DESCRIPTION": "allow"
     },
     "bash": {
       "Rscript *": "allow",
-      "air *": "allow"
+      "air *": "allow",
+      "mkdir *": "allow"
     },
     "executeCode": {
       "*": "allow"

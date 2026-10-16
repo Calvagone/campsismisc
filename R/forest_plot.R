@@ -14,11 +14,16 @@ setClass(
 
 #' Create a forest plot.
 #'
+#' @param json path to JSON forest plot file or JSON content in string form
 #' @return a forest plot object
 #' @importFrom campsis Dataset Observations Settings
 #' @export
-ForestPlot <- function() {
-  return(new("forest_plot"))
+ForestPlot <- function(json = NULL) {
+  if (is.null(json)) {
+    return(new("forest_plot"))
+  } else {
+    return(load_from_json(new("forest_plot"), json = json))
+  }
 }
 
 #_______________________________________________________________________________
@@ -56,6 +61,26 @@ setMethod(
     return(scenarios)
   }
 )
+
+#_______________________________________________________________________________
+#----                          load_from_json                               ----
+#_______________________________________________________________________________
+
+setMethod("load_from_json", signature = c("forest_plot", "json_element"), definition = function(object, json) {
+  object@items@list <- json@data$items %>%
+    purrr::map(~ load_from_json(new("forest_plot_item"), JSONElement(.x)))
+  return(object)
+})
+
+setMethod("load_from_json", signature = c("forest_plot", "character"), definition = function(object, json) {
+  schema <- system.file("extdata", "forest_plot.schema.json", package = "campsismisc")
+  return(load_from_json(object = object, json = open_json(json = json, schema = schema)))
+})
+
+setMethod("load_from_json", signature = c("forest_plot", "list"), definition = function(object, json) {
+  schema <- system.file("extdata", "forest_plot.schema.json", package = "campsismisc")
+  return(load_from_json(object = object, json = open_json(json = json, schema = schema)))
+})
 
 #_______________________________________________________________________________
 #----                               get_forest_plot                           ----

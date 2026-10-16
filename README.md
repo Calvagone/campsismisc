@@ -113,9 +113,10 @@ model <- model %>%
 ### Configure your simulation settings
 
 ``` r
-# Configure hardware
-settings <- Settings(Hardware(cpu = 4, replicate_parallel = TRUE))
-dest <- "mrgsolve" # Much faster than RxODE
+settings <- Settings(
+  Hardware(cpu = 4, replicate_parallel = TRUE),
+  DefaultSettings(replicates = 100, engine = "mrgsolve", seed = 1)
+)
 ```
 
 ### Effect of metabolism effect and weight on model parameters
@@ -126,14 +127,14 @@ clearance or the volume. This can be achieved as follows:
 ``` r
 outputs <- c("CL", "VC")
 
-fp <- ForestPlot(model = model, outputs = outputs, replicates = 100, dest = dest, settings = settings) %>%
+fp <- ForestPlot(outputs = outputs) %>%
   add(ForestPlotItem(Covariate("METAB", 0))) %>%
   add(ForestPlotItem(Covariate("METAB", 1))) %>%
   add(ForestPlotItem(Covariate("WT", 60))) %>%
   add(ForestPlotItem(Covariate("WT", 80)))
 
 fp <- with_progress({
-  fp %>% run_analysis()
+  fp %>% run_analysis(model = model, settings = settings)
 })
 ```
 
@@ -185,21 +186,14 @@ outputs <- NCAAnalysis(variable = "CONC") %>%
 A forest plot object can be instantiated and run as follows:
 
 ``` r
-fp <- ForestPlot(
-  model = model,
-  dataset = dataset,
-  outputs = outputs,
-  replicates = 100,
-  dest = dest,
-  settings = settings
-) %>%
+fp <- ForestPlot(outputs = outputs) %>%
   add(ForestPlotItem(Covariate("METAB", 0))) %>%
   add(ForestPlotItem(Covariate("METAB", 1))) %>%
   add(ForestPlotItem(Covariate("WT", 60))) %>%
   add(ForestPlotItem(Covariate("WT", 80)))
 
 fp <- with_progress({
-  fp %>% run_analysis()
+  fp %>% run_analysis(model = model, dataset = dataset, settings =  )
 })
 ```
 
@@ -289,14 +283,14 @@ dataset <- Dataset(1) %>%
   add(Covariate("METAB", 0)) %>%
   add(Covariate("WT", 70))
 
-object <- SensitivityAnalysis(model = model, dataset = dataset, outputs = outputs) %>%
+object <- SensitivityAnalysis(outputs = outputs) %>%
   add(SensitivityAnalysisItem(Change("DUR", up = 2, down = 2, log = TRUE))) %>%
   add(SensitivityAnalysisItem(Change("VC", up = 2, down = 2, log = TRUE))) %>%
   add(SensitivityAnalysisItem(Change("VP", up = 2, down = 2, log = TRUE))) %>%
   add(SensitivityAnalysisItem(Change("Q", up = 2, down = 2, log = TRUE))) %>%
   add(SensitivityAnalysisItem(Change("CL", up = 2, down = 2, log = TRUE)))
 
-object <- object %>% run_analysis()
+object <- object %>% run_analysis(model = model, dataset = dataset)
 object %>% get_tornado_plot(index = 1)
 ```
 

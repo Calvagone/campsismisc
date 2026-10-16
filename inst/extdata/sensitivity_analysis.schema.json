@@ -11,7 +11,8 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/sensitivity_analysis_item"
-          }
+          },
+          "description": "List of sensitivity analysis items. Each item represents one or more parameters that will be varied."
         }
       },
       "required": [
@@ -25,7 +26,8 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/change"
-          }
+          },
+          "description": "List of changes associated with this sensitivity analysis item."
         }
       },
       "required": [
@@ -36,26 +38,32 @@
       "type": "object",
       "properties": {
         "parameter": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of the parameter (theta) or equation to be varied."
         },
         "up": {
-          "type": "number"
+          "type": "number",
+          "description": "Value used for the 'up' direction. Multiplier if up_down_as_factor is true, absolute value otherwise."
         },
         "down": {
-          "type": "number"
+          "type": "number",
+          "description": "Value used for the 'down' direction. Divider if up_down_as_factor is true, absolute value otherwise."
         },
         "up_down_as_factor": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If true (default), up and down values are treated as factor/multiplier/divider. If false, they are treated as absolute values."
         },
         "where": {
           "type": "string",
           "enum": [
             "theta",
             "equation"
-          ]
+          ],
+          "description": "Where to apply the change: 'theta' for model parameters or 'equation' for model code/equations."
         },
         "log": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Only used when where='theta'. If true, specifies that the theta is in log scale and the change should be applied in linear scale then back-transformed."
         }
       },
       "required": [

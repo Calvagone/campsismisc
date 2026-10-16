@@ -11,7 +11,8 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/forest_plot_item"
-          }
+          },
+          "description": "List of forest plot items. Each item represents a specific scenario to be compared to the baseline."
         }
       },
       "required": [
@@ -25,7 +26,8 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/fixed_covariate"
-          }
+          },
+          "description": "List of fixed covariates for this forest plot item."
         }
       },
       "required": [
@@ -36,10 +38,12 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of the covariate as defined in the model."
         },
         "value": {
-          "type": "number"
+          "type": "number",
+          "description": "Fixed value for this covariate in this scenario."
         }
       },
       "required": [
